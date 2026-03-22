@@ -24,7 +24,7 @@ Developing automotive applications for microprocessor-based HPCs is challenging 
 The Eclipse Automotive API Framework decouples application logic from the middleware stack and operating system in automotive HPC systems by providing an application-facing interface and defining the accompanying workflow.
 
 Standardized Application API
-=========================================
+============================
 
 **How the Application Software Developer Meets the Middleware Integrator: Through a Standardized API**
 
@@ -43,6 +43,20 @@ This separation ensures:
 
 
 For testing and demonstration purposes, the vehicle function could, for example, run on top of the open‑source project ``Eclipse Open Vehicle API``, while later the same function would operate on the target middleware without requiring changes to the application logic.
+
+
+Collaboration wanted
+====================
+
+We are currently working on defining a safety compliant C++ application interface intended for ASIL B (maybe even up to to ASIL D) capable vehicle functions. 
+
+The goal is to create a middleware independent API that ensures deterministic behavior, robust error propagation and strict memory safety guarantees in line with ISO 26262. 
+This includes defining safe state transitions, fault containment boundaries, end to end communication integrity, and standardized diagnostic reporting for safety critical services. 
+
+The overarching objective is to enable developers to implement ASIL relevant vehicle logic without coupling it tightly to specific middleware frameworks or transport layers. 
+
+We are seeking for collaboration partners interested in discussing architectural concepts, validating safety mechanisms and contributing to enhancements aligned with Covesa—especially around portable service definitions, API safety extensions, and cross platform execution models.
+
 
 
 .. raw:: html
