@@ -15,18 +15,9 @@
 Workflow (vaf-cli)
 ==================
 
-<<<<<<< HEAD
 According to the introduction, the Vehicle Application Framework (VAF) is not only a layer in the µP stack but also a tool and associated workflow that facilitates the work with this stack layer.
 
 The workflow can be divided in three parts, each one represented by a specific project type. The below figure illustrates the optional and mandatory steps on interface, app-module, and integration line.
-=======
-| According to the introduction, the Vehicle Application Framework (VAF)
-  is not only a layer in the µP stack but also a tool and associated
-  workflow that facilitates the work with this stack layer.
-| The workflow can be divided in three parts, each one represented by a
-  specific project type. The below figure illustrates the optional and
-  mandatory steps on interface, app-module, and integration line.
->>>>>>> 4440b85 (Add documentation including all readme files from other repos)
 
 .. image:: figures/vaf-map.svg
 

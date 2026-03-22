@@ -12,13 +12,8 @@
    # SPDX-License-Identifier: Apache-2.0
    #
    # Contributors:
-<<<<<<< HEAD
    #   Torsten Rosenbauer - first documentation
-=======
-   #   TTorsten Rosenbauer - first documentation
->>>>>>> 4440b85 (Add documentation including all readme files from other repos)
    # *******************************************************************************
-
 
 Requirements Documentation
 ==========================

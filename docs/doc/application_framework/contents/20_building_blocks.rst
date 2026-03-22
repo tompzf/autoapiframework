@@ -15,7 +15,6 @@
 Building blocks
 ===============
 
-<<<<<<< HEAD
 
 .. toctree::
    :maxdepth: 1
@@ -31,8 +30,6 @@ Building blocks
    9. Testing <29_testing>
    10. Glossary <30_glossary>
 
-=======
->>>>>>> 4440b85 (Add documentation including all readme files from other repos)
 The *Application Framework* is a compile-time solution that puts the
 focus on the executable. The essential building blocks of the framework
 are illustrated below. The workflow covers all steps, from project
@@ -52,21 +49,5 @@ developer in the scope of so-called application modules.
 **The definition of Application in this project is clear and unambiguous:**
 An *Application* is of distributed kind and considered a thematic bracket. On technical level it can consist of 1..N executables. Each executable in turn can consist of 1..M application modules.
 
-<<<<<<< HEAD
 
  
-=======
-.. toctree::
-   :maxdepth: 1
-
-   21_sw_architecture
-   22_workflow
-   23_model
-   24_api
-   25_configuration
-   26_platform_support
-   27_code_generation
-   28_sw_library
-   29_testing
-   30_glossary
->>>>>>> 4440b85 (Add documentation including all readme files from other repos)
