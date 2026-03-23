@@ -18,7 +18,7 @@
 Introduction
 ============
 
-To allow easier integration and re-usable data elements, it is necessary to establish a standard that allows easier and efficient exchange of data. 
+To allow easier integration and reusable data elements, it is necessary to establish a standard that allows easier and efficient exchange of data. 
 
 Here, we adopt the Vehicle Signal Specification (VSS) introduced by the Connected Vehicle Systems Alliance (COVESA). 
 It is an industry relevant data standard developed as part of the Connected Vehicle Interface Initiative (CVII), a collaboration between COVESA and World Wide Web Consortium (W3C). 

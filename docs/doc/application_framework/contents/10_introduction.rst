@@ -61,7 +61,7 @@ comes natural to engineers and computer scientists without automotive
 background. Programming language skills and an IDE with helpful plugins
 is all they need. When starting in automotive projects, this target
 group is confronted with automotive-specific terms and APIs for
-established communication patters as for example pub-sub messaging or
+established communication patterns as for example pub-sub messaging or
 remote procedure calls.
 
 In sum, different workflows, patterns, file formats and models exist.
