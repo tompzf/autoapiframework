@@ -1,19 +1,3 @@
-..
-   # *******************************************************************************
-   # Copyright (c) 2024 Contributors to the Eclipse Foundation
-   #
-   # See the NOTICE file(s) distributed with this work for additional
-   # information regarding copyright ownership.
-   #
-   # This program and the accompanying materials are made available under the
-   # terms of the Apache License Version 2.0 which is available at
-   # https://www.apache.org/licenses/LICENSE-2.0
-   #
-   # SPDX-License-Identifier: Apache-2.0
-   #
-   # Contributors:
-   #   Torsten Rosenbauer - first documentation
-   # *******************************************************************************
 
 Requirements
 ============
@@ -26,7 +10,7 @@ Common Fields Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Each interface (data or parameter) shall define the following attributes:
@@ -38,7 +22,7 @@ Common Fields Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Error interface extensions shall include fields for Datatype, Maturation
@@ -50,7 +34,7 @@ Common Fields Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Safety reaction extensions shall include fields for Datatype, Error list,
@@ -61,7 +45,7 @@ Common Fields Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Mode interface extensions shall include a Datatype definition.
@@ -71,7 +55,7 @@ Common Fields Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Scheduling interface extensions shall include detailed execution and
@@ -86,7 +70,7 @@ Data Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Standardization of interfaces shall also include coordinate system
@@ -104,7 +88,7 @@ Dependency Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The system shall allow explicit declaration of interface dependencies
@@ -115,7 +99,7 @@ Dependency Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    If an interface depends on another, the dependency chain shall be
@@ -126,7 +110,7 @@ Dependency Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Circular dependencies between interfaces shall be automatically flagged
@@ -141,7 +125,7 @@ Error Handling Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The system shall provide standardized error interfaces that enable
@@ -153,7 +137,7 @@ Error Handling Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The naming convention for error interfaces shall follow the format:
@@ -164,7 +148,7 @@ Error Handling Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Each error interface shall define the following attributes: Datatype,
@@ -176,7 +160,7 @@ Error Handling Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The system shall support consistent error handling and logging practices
@@ -191,7 +175,7 @@ Extensibility and Maintainability Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The system shall support adding new error or safety reaction types without
@@ -202,7 +186,7 @@ Extensibility and Maintainability Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The VSS extension schema shall support optional fields that can be populated
@@ -213,7 +197,7 @@ Extensibility and Maintainability Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Deprecated fields shall be marked clearly, and backward compatibility shall
@@ -228,7 +212,7 @@ Generic Requirements
    :rationale: Information
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Possible example interfaces that can be standardized across the systems.
@@ -238,7 +222,7 @@ Generic Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Thermal management interfaces shall be standardized for coolant, oil, and
@@ -249,7 +233,7 @@ Generic Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Compute resource interfaces shall be standardized:
@@ -261,7 +245,7 @@ Generic Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Network link interfaces shall be standardized for CAN, LIN, and Ethernet
@@ -272,7 +256,7 @@ Generic Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Localization fix quality shall be standardized:
@@ -283,7 +267,7 @@ Generic Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    OTA/software state shall be standardized:
@@ -294,7 +278,7 @@ Generic Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Variant and feature-coding information shall be standardized:
@@ -309,7 +293,7 @@ Interoperability Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Interfaces shall be designed to remain platform-independent, supporting
@@ -320,7 +304,7 @@ Interoperability Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The VSS extension shall provide mapping guidelines to AUTOSAR ports/signals
@@ -335,7 +319,7 @@ Mode Management Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The system shall provide mode management interfaces to convey system or
@@ -346,7 +330,7 @@ Mode Management Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The naming convention for mode management interfaces shall follow the
@@ -357,7 +341,7 @@ Mode Management Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Mode management interfaces shall support adaptation of applications to
@@ -368,7 +352,7 @@ Mode Management Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Each mode management interface shall define a Datatype for the mode signal.
@@ -382,7 +366,7 @@ Parameters Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Config parameters shall include validation constraints and
@@ -393,7 +377,7 @@ Parameters Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Service-only parameters shall be protected by role-based access and audit
@@ -404,7 +388,7 @@ Parameters Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Calibration artifacts shall declare calibrationId, calibrationDate, and
@@ -419,7 +403,7 @@ Safety Reaction Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The system shall provide safety reaction interfaces to communicate critical
@@ -430,7 +414,7 @@ Safety Reaction Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The naming convention for safety reaction interfaces shall follow the
@@ -441,7 +425,7 @@ Safety Reaction Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Each safety reaction interface shall define the following attributes:
@@ -452,7 +436,7 @@ Safety Reaction Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Safety reaction interfaces shall ensure that applications can respond
@@ -467,7 +451,7 @@ Scheduling Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The system shall provide scheduling interfaces as function calls instead of
@@ -478,7 +462,7 @@ Scheduling Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Scheduling interfaces shall be defined using the following mandatory
@@ -490,7 +474,7 @@ Scheduling Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Each scheduling interface shall include the following attributes, where
@@ -505,7 +489,7 @@ Scheduling Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Scheduling interfaces shall support watchdog supervision in the BSW, where
@@ -516,7 +500,7 @@ Scheduling Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Scheduling interfaces shall allow functions to declare memory requirements
@@ -527,7 +511,7 @@ Scheduling Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Components shall implement ``init()``, ``step()``, and ``terminate()`` with
@@ -538,7 +522,7 @@ Scheduling Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    ``Step()`` cycle time, priority, and debounce shall be configurable and
@@ -549,7 +533,7 @@ Scheduling Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    ``Init()`` shall read persisted state and configuration; ``terminate()``
@@ -564,7 +548,7 @@ Security and Safety Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Each interface shall include a mandatory ASIL classification.
@@ -574,7 +558,7 @@ Security and Safety Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Safety-related interfaces shall define fault containment regions (FCRs) they
@@ -585,7 +569,7 @@ Security and Safety Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Each interface extension shall include cybersecurity attributes, such as
@@ -596,7 +580,7 @@ Security and Safety Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Error and safety reaction interfaces shall define fallback behavior when the
@@ -611,7 +595,7 @@ Timing and Performance Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Each interface extension shall define latency requirements (maximum
@@ -622,7 +606,7 @@ Timing and Performance Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Cyclic scheduling interfaces shall define worst-case execution time (WCET)
@@ -633,7 +617,7 @@ Timing and Performance Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Mode and error interfaces shall support time-stamping to ensure
@@ -648,7 +632,7 @@ Tools and Validation Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    A validation tool shall check whether all VSS extensions conform to naming
@@ -659,7 +643,7 @@ Tools and Validation Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Interface definitions shall be exportable to commonly used formats
@@ -670,7 +654,7 @@ Tools and Validation Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Simulation/test stubs shall be automatically generatable for each
@@ -681,7 +665,7 @@ Tools and Validation Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    A static validator shall check naming conventions, mandatory fields, and
@@ -692,7 +676,7 @@ Tools and Validation Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Endianness and serialization format shall be declared per topic when binary
@@ -707,7 +691,7 @@ Architecture Requirements
    :rationale: Information
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
    
    Concept overview of VAPI and VSS coexistence and use cases explaining the
@@ -718,7 +702,7 @@ Architecture Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The architecture shall separate concerns into Application, VAPI Abstraction
@@ -730,7 +714,7 @@ Architecture Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    All northbound interfaces to the Application shall be expressed as VSS nodes
@@ -741,7 +725,7 @@ Architecture Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Southbound provider integrations shall be implemented as plug-ins loaded by
@@ -752,7 +736,7 @@ Architecture Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Cross-cutting concerns (time, logging, security, configuration) shall be provided only through Basic Services and not duplicated in providers.
@@ -762,7 +746,7 @@ Architecture Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The system shall support late binding: providers may be selected or replaced
@@ -773,7 +757,7 @@ Architecture Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    The architecture shall support multiple providers for the same VSS node with
@@ -784,7 +768,7 @@ Architecture Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    A declarative configuration file shall describe which providers populate
@@ -795,7 +779,7 @@ Architecture Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Abstraction Devices shall expose capability discovery including sensor type,
@@ -806,7 +790,7 @@ Architecture Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Abstraction Devices shall publish data via a common producer API with QoS
@@ -817,7 +801,7 @@ Architecture Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Providers shall report per-sample metadata: timestampSource, freshnessMs,
@@ -828,7 +812,7 @@ Architecture Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Providers shall surface health state and degradationMode and map them to
@@ -839,7 +823,7 @@ Architecture Requirements
    :rationale: Non Functional Requirement (NFR)
    :status: valid
    :reqtype: Non-Functional
-   :safety: QM
+   :safety: ASIL_B
    :security: NO
 
    Providers shall support configuration via typed parameters with validation

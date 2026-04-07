@@ -34,6 +34,14 @@ Requirements:
 
    doc/requirements/requirements   
 
+Meta Model:
+-----------
+
+.. toctree::
+   :maxdepth: 1
+
+   doc/meta_model/meta_model      
+
 VSS GUI Tool:
 -------------
 
