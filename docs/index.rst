@@ -45,6 +45,8 @@ Meta Model:
 VSS GUI Tool:
 -------------
 
+(will be moved to its own repository)
+
 .. toctree::
    :maxdepth: 1
 
@@ -54,6 +56,8 @@ VSS GUI Tool:
 
 Application Framework:
 ----------------------
+
+(will be moved to its own repository)
 
 The following documentation introduces to motivation and concept of this project, i.e., an Application Framework for automotive HPC projects. It further provides technical details of the building blocks it is made of. A glossary section finally lists terms and abbreviations that are used in this project.
 

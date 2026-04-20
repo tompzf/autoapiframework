@@ -15,6 +15,9 @@
    #   Thomas Pfleiderer - first documentation
    # *******************************************************************************
 
+.. figure:: figures/function_integration_workflow.png
+   :alt: function integration workflow
+
 **Background**
 
 Developing automotive applications for microprocessor-based HPCs is challenging because application code from conventional systems is often tightly coupled to the middleware and operating system. Low‑level middleware APIs add complexity, requiring developers to write and maintain extensive boilerplate for integration and testing, while also demanding deep automotive-specific knowledge of the HPC software stack.
@@ -59,6 +62,14 @@ We are seeking for collaboration partners interested in discussing architectural
 
 
 
+Production Readiness
+====================
+
+The target of Automotive API Framework is to integrate with S-CORE or Vector Adaptive Microsar to be production‑ready, whereas 'Open Vehicle API' mentioned below is just for demonstration purposes.
+
+.. figure:: figures/target_middle_ware.png
+   :alt: target middleware
+
 .. raw:: html
 
     <br><br>
@@ -66,12 +77,14 @@ We are seeking for collaboration partners interested in discussing architectural
 Auto Code Generation
 ====================
 
-For a standardized API each middleware can implement code generators which can be called by the ``Eclipse Autoapiframework``.
+The focus of this project is about standarization and separation the vehicle function implementation form the middle ware.
+
+But beside that we additionally will have a look for code generators which can be called by the ``Eclipse Autoapiframework``.
 
 .. figure:: figures/auto_code_generation.png
    :alt: auto code generation
 
-For a standardized application API, it becomes possible to generate code automatically for the target middleware. These code generators are part of the target‑middleware implementation and will not be included in the ``Eclipse Autoapiframework``.
+With a standardized application API, code generation for the target middleware is possible, though only to a certain extent. These code generators are part of the target‑middleware implementation and will not be included in the ``Eclipse Autoapiframework``.
 
 Why are auto code generators important?
 
@@ -140,7 +153,7 @@ Eclipse Open Vehicle API
 .. figure:: figures/Open_Vehicle_API_v1_white_cropped.jpg
    :alt: Open vehicle API
 
-For demonstration purposes we will use the open-source project ``Eclipse Open Vehicle API`` as an example of middleware. 
+As mentioned above only for demonstration purposes we will use the open-source project ``Eclipse Open Vehicle API`` as an example of middleware. It is not ment to become proction-ready.
 It is a modular, component‑based C++ framework that provides a scalable and platform‑abstracted vehicle software architecture. The communication between the components uses interfaces, so its ideally for demonstrating the ``Eclipse Autoapiframework``.
 
 Right now, there is no code generator available. Later such code generator will be in the project itself rather than here in the ``Eclipse Autoapiframework``.
