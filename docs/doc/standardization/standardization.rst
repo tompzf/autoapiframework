@@ -65,7 +65,7 @@ We are seeking for collaboration partners interested in discussing architectural
 Production Readiness
 ====================
 
-The target of Automotive API Framework is to integrate with S-CORE or Vector Adaptive Microsar to be production-ready, whereas 'Open Vehicle API' mentioned below is just for demonstration purposes.
+The target of ``Automotive API Framework`` is to integrate with S-CORE or Vector Adaptive Microsar to be production-ready, whereas ``Open Vehicle API`` mentioned below is just for demonstration purposes.
 
 .. figure:: figures/target_middle_ware.png
    :alt: target middleware
@@ -77,12 +77,15 @@ The target of Automotive API Framework is to integrate with S-CORE or Vector Ada
 Workflow & Auto Code Generation
 ===============================
 
-The focus of this project is about standarization and separation the vehicle function implementation form the middle ware.
+This project focuses on the standardization of application APIs and the separation of vehicle function implementations from the underlying middleware.
+The following illustration describes four processing steps, where steps 1 and 2 may be treated as a single combined step. These steps will be supported by tooling, including automatic code generation.
+Certain tools will be implemented within the ``Automotive API Framework``, while others will be handled by the respective middleware.
+
 
 .. figure:: figures/auto_code_generation_overview.png
    :alt: auto code generation
 
-But beside that we additionally will have a look for code generators which can be called by the ``Eclipse Autoapiframework``.
+The following figure presents an alternative representation of the ``Eclipse Autoapiframework`` concept already described in this document.
 
 .. figure:: figures/auto_code_generation.png
    :alt: auto code generation

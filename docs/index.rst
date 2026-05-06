@@ -42,31 +42,6 @@ Meta Model:
 
    doc/meta_model/meta_model      
 
-VSS GUI Tool:
--------------
-
-(will be moved to its own repository)
-
-.. toctree::
-   :maxdepth: 1
-
-   doc/vss_gui_tool/10_introduction
-   doc/vss_gui_tool/20_steps
-   doc/vss_gui_tool/30_openpoints
-
-Application Framework:
-----------------------
-
-(will be moved to its own repository)
-
-The following documentation introduces to motivation and concept of this project, i.e., an Application Framework for automotive HPC projects. It further provides technical details of the building blocks it is made of. A glossary section finally lists terms and abbreviations that are used in this project.
-
-.. toctree::
-   :maxdepth: 1
-
-   doc/application_framework/contents/10_introduction
-   doc/application_framework/contents/20_building_blocks
-
 Examples:
 ---------
 
