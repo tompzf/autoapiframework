@@ -19,19 +19,22 @@
 Meta Model
 ==========
 
+Meta Model File
+---------------
+
 .. literalinclude:: autoapiframework_metadata_V1.yaml
    :language: yaml
    :linenos:
 
-Data Type
----------
+Data Type Description
+---------------------
 
-``Standard Naming / Path Convention:`` Vehicle.<Domain>.<Signal>
+**Standard Naming / Path Convention:** ``Vehicle.<Domain>.<Signal>``
 
 .. table::  Meta Model Data Type: 
 
    +-------------------+---------------+----------------------------------------------------------------+----------------------------------------------------------------------------------+---------------------------------+--------------+
-   | **Property /      | **Mandatory** | **Description**                                                | **Reason for                                                                     | **Example / Notes**             | **Covert by  |
+   | **Property /      | **Mandatory** | **Description**                                                | **Reason for                                                                     | **Example / Notes**             | **Covered by |
    | Attribute**       |               |                                                                | considering it**                                                                 |                                 | COVESA VSS** |
    +-------------------+---------------+----------------------------------------------------------------+----------------------------------------------------------------------------------+---------------------------------+--------------+
    | name              | Yes           | Unique interface or node name.                                 | Needed for generated API identifiers, documentation, and traceability.           | Vehicle.Speed                   | yes          |
@@ -59,25 +62,22 @@ Data Type
    +-------------------+---------------+----------------------------------------------------------------+----------------------------------------------------------------------------------+---------------------------------+--------------+
    | minUpdatePeriodMs | Yes           | Minimum interval between updates.                              | Prevents uncontrolled publication rates and helps scheduling analysis.           | 10                              | No           |
    +-------------------+---------------+----------------------------------------------------------------+----------------------------------------------------------------------------------+---------------------------------+--------------+
-   | qualityCode       | Yes           | "Runtime quality status of the value.                          | Applications need qualifier information, not only the raw value.                 | Uninitialized / Invalid / Valid | No           |
-   |                   |               | Remark: It is not a static info and hence shall be transformed |                                                                                  |                                 |              |
-   |                   |               | into a separate signal as it gets updated runtime              |                                                                                  |                                 |              |
-   |                   |               | e.g., Vehicle.Speed.Value                                      |                                                                                  |                                 |              |
-   |                   |               | -> For signal value and Vehicle.Speed.Qualifier                |                                                                                  |                                 |              |
-   |                   |               | -> For quality code"                                           |                                                                                  |                                 |              |
+   | qualityCode       | Yes           | Runtime quality status of the value.  [1]_                     | Applications need qualifier information, not only the raw value.                 | Uninitialized / Invalid / Valid | No           |
    +-------------------+---------------+----------------------------------------------------------------+----------------------------------------------------------------------------------+---------------------------------+--------------+
    | accuracy          | Yes           | Expected measurement or estimation accuracy.                   | Important for control, fusion, analytics, and UI confidence.                     | ±0.2 km/h                       | No           |
    +-------------------+---------------+----------------------------------------------------------------+----------------------------------------------------------------------------------+---------------------------------+--------------+
 
-Parameter Type
---------------
+.. [1] **Remark:** It is not a static info and hence shall be transformed into a separate signal as it gets updated runtime e.g., Vehicle.Speed.Value -> For signal value and Vehicle.Speed.Qualifier -> For quality code
 
-``Standard Naming / Path Convention:`` Vehicle.<Domain>.<Parameter>
+Parameter Type Description
+--------------------------
+
+**Standard Naming / Path Convention:** ``Vehicle.<Domain>.<Parameter>``
 
 .. table::  Meta Model Parameter Type: 
 
    +--------------+---------------+--------------------------------------+-----------------------------------------------------+-----------------------------+--------------+
-   | **Property / | **Mandatory** | **Description**                      | **Reason for considering it**                       | **Example / Notes**         | **Covert by  |
+   | **Property / | **Mandatory** | **Description**                      | **Reason for considering it**                       | **Example / Notes**         | **Covered by |
    | Attribute**  |               |                                      |                                                     |                             | COVESA VSS** |
    +--------------+---------------+--------------------------------------+-----------------------------------------------------+-----------------------------+--------------+
    | name         | Yes           | Unique parameter name.               | Needed for API generation and calibration tooling.  | Vehicle.Brake.Gain          | yes          |
@@ -93,28 +93,27 @@ Parameter Type
    | unit         | Yes           | Engineering unit if numeric.         | Required for safe interpretation of tunable values. | bar                         | yes          |
    +--------------+---------------+--------------------------------------+-----------------------------------------------------+-----------------------------+--------------+
 
+Scheduling Type Description
+---------------------------
 
-Scheduling Type
----------------
-
-``Standard Naming / Path Convention:`` <FunctionName>.Init / .Step /.Terminate
+**Standard Naming / Path Convention:** ``<FunctionName>.Init/.Step/.Terminate``
 
 .. table::  Meta Model Scheduling Type: 
 
    +---------------------+---------------+---------------------------------------------+---------------------------------------------------------------+----------------------------------+--------------+
-   | **Property /        | **Mandatory** | **Description**                             | **Reason for considering it**                                 | **Example / Notes**              | **Covert by  |
+   | **Property /        | **Mandatory** | **Description**                             | **Reason for considering it**                                 | **Example / Notes**              | **Covered by |
    | Attribute**         |               |                                             |                                                               |                                  | COVESA VSS** |
    +---------------------+---------------+---------------------------------------------+---------------------------------------------------------------+----------------------------------+--------------+
-   | functionName        | Yes           | Runnable or callable function name.         | Defines execution contract and generated lifecycle API.       | WheelSpeedCalculation            | No*          |
+   | functionName        | Yes           | Runnable or callable function name.         | Defines execution contract and generated lifecycle API.       | WheelSpeedCalculation            | No [2]_      |
    +---------------------+---------------+---------------------------------------------+---------------------------------------------------------------+----------------------------------+--------------+
-   | runType             | Yes           | Activation type of the runnable.            | Needed for executable contract generation.                    | init / cyclic / event/ terminate | No*          |
+   | runType             | Yes           | Activation type of the runnable.            | Needed for executable contract generation.                    | init / cyclic / event/ terminate | No [2]_      |
    +---------------------+---------------+---------------------------------------------+---------------------------------------------------------------+----------------------------------+--------------+
-   | description         | Yes           | Purpose of the runnable.                    | Documents execution intent.                                   | Main cyclic calculation          | No*          |
+   | description         | Yes           | Purpose of the runnable.                    | Documents execution intent.                                   | Main cyclic calculation          | No [2]_      |
    +---------------------+---------------+---------------------------------------------+---------------------------------------------------------------+----------------------------------+--------------+
-   | cycleTimeMs         | Yes           | Runnable periodicity.                       | Needed for integration, scheduling, and watchdog supervision. | 10                               | No*          |
+   | cycleTimeMs         | Yes           | Runnable periodicity.                       | Needed for integration, scheduling, and watchdog supervision. | 10                               | No [2]_      |
    +---------------------+---------------+---------------------------------------------+---------------------------------------------------------------+----------------------------------+--------------+
-   | previousRunnableRef | Yes           | Runnable that shall precede this execution. | Useful for ordering constraints.                              |  SensorFusion.Step               | No*          |
+   | previousRunnableRef | Yes           | Runnable that shall precede this execution. | Useful for ordering constraints.                              |  SensorFusion.Step               | No [2]_      |
    +---------------------+---------------+---------------------------------------------+---------------------------------------------------------------+----------------------------------+--------------+
 
 
-*: Probably not applicable to be defined as a generic catalogue
+.. [2] Probably not applicable to be defined as a generic catalogue
