@@ -42,8 +42,24 @@ Meta Model:
 
    doc/meta_model/meta_model_purpose
    doc/meta_model/meta_model
-   doc/meta_model/meta_model_function_adapter
-   doc/meta_model/meta_model_examples  
+   doc/meta_model/meta_model_component_adapter
+
+Component Specification File:
+-----------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   doc/component_specification/component_specification_file
+   doc/component_specification/component_specification_examples
+   
+Software Architecture:
+----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   doc/runtime_specification/runtime_specification_file   
 
 Examples (for application-framework):
 -------------------------------------

@@ -111,7 +111,8 @@ metamodel:
           dataType: uint32
           description: Minimum allowed update interval.
 
-        qualityCode:
+        # dynamic attribute, value provided at runtime
+        qualityCode: 
           mandatory: true
           dataType: enum
           enumRef: DataQuality

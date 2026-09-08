@@ -16,33 +16,33 @@
    #   Thomas Pfleiderer - Meta model added
    # *******************************************************************************
    
-Function Adapter
-================
+Component Adapter
+=================
 
 Overview and Purpose
 --------------------
 
-The ``Function Adapter`` is a critical abstraction layer that bridges vehicle functions with underlying middleware platforms. 
+The ``Component Adapter`` is a critical abstraction layer that bridges vehicle functions with underlying middleware platforms. 
 It serves as a standardized wrapper that enables vehicle functions to be integrated and executed on any middleware without modification.
 
-Key Purposes of the ``Function Adapter``:
+Key Purposes of the ``Component Adapter``:
 
-1. **Middleware Abstraction**: The ``Function Adapter`` decouples the vehicle function implementation from the specific middleware platform, 
+1. **Middleware Abstraction**: The ``Component Adapter`` decouples the vehicle function implementation from the specific middleware platform, 
    allowing the same function logic to run on different runtimes and integration targets.
 
 2. **Static API Contract**: It implements the stable, agreed-upon static API contract derived from the meta model. 
    This contract ensures consistent interface definitions, data types, scheduling behavior, and safety semantics across different implementations.
 
-3. **Safety and Integrity**: The ``Function Adapter`` manages safety-critical aspects including:
+3. **Safety and Integrity**: The ``Component Adapter`` manages safety-critical aspects including:
 
-4. **Portability**: By using the ``Function Adapter`` pattern, vehicle functions become portable artifacts that can be:
+4. **Portability**: By using the ``Component Adapter`` pattern, vehicle functions become portable artifacts that can be:
 
-5. **Not a Full AUTOSAR Application**: The ``Function Adapter`` is not intended to be a complete replacement for an AUTOSAR Application. It focuses on portable function logic and signal access, while platform-specific capabilities such as middleware integration, lifecycle management, diagnostics, persistence, security, and deployment remain the responsibility of the surrounding runtime environment.
+5. **Not a Full AUTOSAR Application**: The ``Component Adapter`` is not intended to be a complete replacement for an AUTOSAR Application. It focuses on portable function logic and signal access, while platform-specific capabilities such as middleware integration, lifecycle management, diagnostics, persistence, security, and deployment remain the responsibility of the surrounding runtime environment.
    
-The ``Function Adapter`` essentially transforms the abstract specifications defined in the meta model and YAML instances into concrete, 
+The ``Component Adapter`` essentially transforms the abstract specifications defined in the meta model and YAML instances into concrete, 
 executable implementations that maintain the agreed contract regardless of the underlying middleware platform.
 
-.. figure:: figures/function_adapter.png
+.. figure:: figures/component_adapter.png
    :alt: signal protection within the stack
 
 Thoughts About Signal Protection
