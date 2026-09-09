@@ -19,123 +19,66 @@
 Summary
 =======
 
-Your naming actually suggests a nice separation of concerns:
+What we have so far:
 
-1. Component Specification
+1. Meta Model
+-------------
+
+2. Component Specification
+--------------------------
 
 Contains the definition of a single executable element:
 
-interface
-inputs/outputs
-signals
-parameters
-constraints
-implementation-independent behavior
-metadata
+- interface
+- inputs/outputs
+- signals
+- parameters
+- constraints
+- implementation-independent behavior
+- metadata
 
-Conceptually:
+Conceptually: Component = "Single function definition"
 
-Component = "What does this thing do?"
+   Examples:
 
+   | VehicleSpeed
+   | WheelSpeedFusion
+   | BatterySOC
+   | NavigationRoutePlanner
 
-Examples:
-
-VehicleSpeed
-WheelSpeedFusion
-BatterySOC
-NavigationRoutePlanner
-
-2. Runtime Specification
+3. Runtime Specification
+------------------------
 
 Contains the system composition:
 
-instantiated components
-dependencies
-execution sequence
-data flow
-event flow
-deployment hints
+- instantiated components
+- dependencies
+- execution sequence
+- data flow
+- event flow
+- deployment hints
 
-Conceptually:
+Conceptually: Runtime = "How do the components work together?"
 
-Runtime = "How do the components work together?"
+  Examples:
 
+  runtime:
 
-Examples:
-
-runtime:
   components:
     - VehicleSpeed
     - WheelSpeedFusion
 
   connections:
     - from: WheelSpeedFusion.Speed
-      to: VehicleSpeed.SpeedInput
+    - to: VehicleSpeed.SpeedInput
 
   dependencies:
     - VehicleSpeed depends_on WheelSpeedFusion
 
+4. Naming
+---------
 
-This is very similar to how many modeling approaches distinguish between:
+``*.acs``    Automotive Component Specification files
 
-Type Definition      -> Component Specification
-Composition Instance -> Runtime Specification
+``*.ars``    Automotive Runtime Specification files
 
-Naming
-
-I would use:
-
-``*.acs``    Automotive Component Specification
-``*.ars``    Automotive Runtime Specification
-
-
-The pair is easy to remember:
-
-vehicle_speed.acs
-vehicle_runtime.ars
-
-
-or
-
-WheelSpeedFusion.acs
-ADAS_System.ars
-
-
-The naming symmetry is attractive:
-
-ACS = Component
-ARS = Runtime
-
-
-Other options:
-
-ACS = Component Specification
-ASS = System Specification
-
-
-but ASS is probably unfortunate.
-
-Or:
-
-ACS = Component Specification
-AMS = System Model
-
-
-but then the relation is less obvious.
-
-My recommendation would be:
-
-
-
-``*.acs``  = Automotive Component Specification
-``*.ars``  = Automotive Runtime Specification
-
-
-because the distinction is immediately visible and the files naturally form a hierarchy:
-
-WheelSpeedFusion.acs
-VehicleSpeed.acs
-ADAS_Runtime.ars
-
-
-where the .ars file references and connects multiple .acs components. This aligns nicely with your description of "single function/component" versus "multiple components and their relationships."

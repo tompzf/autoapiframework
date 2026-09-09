@@ -466,48 +466,57 @@
                   
   <section id="summary">
 <h1>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h1>
-<p>Your naming actually suggests a nice separation of concerns:</p>
-<ol class="arabic simple">
-<li><p>Component Specification</p></li>
-</ol>
+<p>What we have so far:</p>
+<section id="meta-model">
+<h2>1. Meta Model<a class="headerlink" href="#meta-model" title="Link to this heading">#</a></h2>
+</section>
+<section id="component-specification">
+<h2>2. Component Specification<a class="headerlink" href="#component-specification" title="Link to this heading">#</a></h2>
 <p>Contains the definition of a single executable element:</p>
-<p>interface
-inputs/outputs
-signals
-parameters
-constraints
-implementation-independent behavior
-metadata</p>
-<p>Conceptually:</p>
-<p>Component = “What does this thing do?”</p>
-<p>Examples:</p>
-<p>VehicleSpeed
-WheelSpeedFusion
-BatterySOC
-NavigationRoutePlanner</p>
-<ol class="arabic simple" start="2">
-<li><p>Runtime Specification</p></li>
-</ol>
+<ul class="simple">
+<li><p>interface</p></li>
+<li><p>inputs/outputs</p></li>
+<li><p>signals</p></li>
+<li><p>parameters</p></li>
+<li><p>constraints</p></li>
+<li><p>implementation-independent behavior</p></li>
+<li><p>metadata</p></li>
+</ul>
+<p>Conceptually: Component = “Single function definition”</p>
+<blockquote>
+<div><p>Examples:</p>
+<div class="line-block">
+<div class="line">VehicleSpeed</div>
+<div class="line">WheelSpeedFusion</div>
+<div class="line">BatterySOC</div>
+<div class="line">NavigationRoutePlanner</div>
+</div>
+</div></blockquote>
+</section>
+<section id="runtime-specification">
+<h2>3. Runtime Specification<a class="headerlink" href="#runtime-specification" title="Link to this heading">#</a></h2>
 <p>Contains the system composition:</p>
-<p>instantiated components
-dependencies
-execution sequence
-data flow
-event flow
-deployment hints</p>
-<p>Conceptually:</p>
-<p>Runtime = “How do the components work together?”</p>
-<p>Examples:</p>
+<ul class="simple">
+<li><p>instantiated components</p></li>
+<li><p>dependencies</p></li>
+<li><p>execution sequence</p></li>
+<li><p>data flow</p></li>
+<li><p>event flow</p></li>
+<li><p>deployment hints</p></li>
+</ul>
+<p>Conceptually: Runtime = “How do the components work together?”</p>
+<blockquote>
+<div><p>Examples:</p>
+<p>runtime:</p>
 <dl class="simple">
-<dt>runtime:</dt><dd><dl class="simple">
 <dt>components:</dt><dd><ul class="simple">
 <li><p>VehicleSpeed</p></li>
 <li><p>WheelSpeedFusion</p></li>
 </ul>
 </dd>
 <dt>connections:</dt><dd><ul class="simple">
-<li><p>from: WheelSpeedFusion.Speed
-to: VehicleSpeed.SpeedInput</p></li>
+<li><p>from: WheelSpeedFusion.Speed</p></li>
+<li><p>to: VehicleSpeed.SpeedInput</p></li>
 </ul>
 </dd>
 <dt>dependencies:</dt><dd><ul class="simple">
@@ -515,40 +524,13 @@ to: VehicleSpeed.SpeedInput</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-</dl>
-<p>This is very similar to how many modeling approaches distinguish between:</p>
-<p>Type Definition      -&gt; Component Specification
-Composition Instance -&gt; Runtime Specification</p>
-<p>Naming</p>
-<p>I would use:</p>
-<p><code class="docutils literal notranslate"><span class="pre">*.acs</span></code>    Automotive Component Specification
-<code class="docutils literal notranslate"><span class="pre">*.ars</span></code>    Automotive Runtime Specification</p>
-<p>The pair is easy to remember:</p>
-<p>vehicle_speed.acs
-vehicle_runtime.ars</p>
-<p>or</p>
-<p>WheelSpeedFusion.acs
-ADAS_System.ars</p>
-<p>The naming symmetry is attractive:</p>
-<p>ACS = Component
-ARS = Runtime</p>
-<p>Other options:</p>
-<p>ACS = Component Specification
-ASS = System Specification</p>
-<p>but ASS is probably unfortunate.</p>
-<p>Or:</p>
-<p>ACS = Component Specification
-AMS = System Model</p>
-<p>but then the relation is less obvious.</p>
-<p>My recommendation would be:</p>
-<p><code class="docutils literal notranslate"><span class="pre">*.acs</span></code>  = Automotive Component Specification
-<code class="docutils literal notranslate"><span class="pre">*.ars</span></code>  = Automotive Runtime Specification</p>
-<p>because the distinction is immediately visible and the files naturally form a hierarchy:</p>
-<p>WheelSpeedFusion.acs
-VehicleSpeed.acs
-ADAS_Runtime.ars</p>
-<p>where the .ars file references and connects multiple .acs components. This aligns nicely with your description of “single function/component” versus “multiple components and their relationships.”</p>
+</div></blockquote>
+</section>
+<section id="naming">
+<h2>4. Naming<a class="headerlink" href="#naming" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">*.acs</span></code>    Automotive Component Specification files</p>
+<p><code class="docutils literal notranslate"><span class="pre">*.ars</span></code>    Automotive Runtime Specification files</p>
+</section>
 </section>
 
 
@@ -589,6 +571,21 @@ ADAS_Runtime.ars</p>
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#meta-model">1. Meta Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#component-specification">2. Component Specification</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-specification">3. Runtime Specification</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#naming">4. Naming</a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
