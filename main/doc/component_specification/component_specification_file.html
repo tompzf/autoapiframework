@@ -1,0 +1,761 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Component Specification File &#8212; Eclipse Automotive API Framework  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/score.css?v=6e51530f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/score_needs.css?v=e97392eb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/score_design.css?v=d9fd870c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=7ce7bdb0" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../../_static/sphinx-data-viewer/jsonview.bundle.js?v=18cd53c5"></script>
+    <script src="../../_static/sphinx-data-viewer/jsonview_loader.js?v=f7ff7e7d"></script>
+    <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
+    <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
+    <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'doc/component_specification/component_specification_file';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="SpeedHazardDetection Example" href="examples/speed_hazard_detection_example.html" />
+    <link rel="prev" title="Component Adapter" href="../meta_model/meta_model_component_adapter.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Eclipse Automotive API Framework</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../standardization/standardization.html">
+    Standardized Application API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../requirements/requirements.html">
+    Requirements
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../meta_model/meta_model_purpose.html">
+    Purpose of the Meta Model
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../meta_model/meta_model.html">
+    Meta Model
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../meta_model/meta_model_component_adapter.html">
+    Component Adapter
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#">
+    Component Specification File
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="component_specification_examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../runtime_specification/runtime_specification_file.html">
+    Software Architecture
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../runtime_specification/summary.html">
+    Summary
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../examples/bp-ifex-vaf/bp-ifex-vaf.html">
+    Blueprint project (IFEX + VAF)
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../examples/bp-vss-vaf/bp-vss-vaf.html">
+    Blueprint project (VSS + VAF)
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../standardization/standardization.html">
+    Standardized Application API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../requirements/requirements.html">
+    Requirements
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../meta_model/meta_model_purpose.html">
+    Purpose of the Meta Model
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../meta_model/meta_model.html">
+    Meta Model
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../meta_model/meta_model_component_adapter.html">
+    Component Adapter
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Component Specification File
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="component_specification_examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../runtime_specification/runtime_specification_file.html">
+    Software Architecture
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../runtime_specification/summary.html">
+    Summary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/bp-ifex-vaf/bp-ifex-vaf.html">
+    Blueprint project (IFEX + VAF)
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/bp-vss-vaf/bp-vss-vaf.html">
+    Blueprint project (VSS + VAF)
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">SpeedHazardDetection (single cyclic runnable)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/speed_hazard_detection_example.html">SpeedHazardDetection Example</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Component Specification File</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <p>Current status of the project</p>
+<section id="component-specification-file">
+<h1>Component Specification File<a class="headerlink" href="#component-specification-file" title="Link to this heading">#</a></h1>
+<p>A Component Specification File is characterized by a set of attributes and parameters. Attributes describe the signal itself (e.g., its properties and characteristics),
+while parameters provide additional configuration and implementation-specific information. Together, they define all information required for API generation and integration.</p>
+<p>A Component Specification File always describes exactly <strong>one</strong> function: its <code class="docutils literal notranslate"><span class="pre">dataInterfaces</span></code>, its <code class="docutils literal notranslate"><span class="pre">parameters</span></code> and the scheduling of
+its own runnables. It does not describe how this function is combined with other functions, how their signals are connected to each other,
+or in which order several functions execute relative to each other on a system. That system-level composition of multiple Component
+Specification Files is described by the <a class="reference internal" href="../runtime_specification/runtime_specification_file.html"><span class="doc">Runtime Specification File</span></a>.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id4">
+<caption><span class="caption-number">Table 6 </span><span class="caption-text">Component:</span><a class="headerlink" href="#id4" title="Link to this table">#</a></caption>
+<tbody>
+<tr class="row-odd"><td><p><strong>Property /
+Attribute</strong></p></td>
+<td><p><strong>Req.</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+<td><p><strong>Example / Notes</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>dataInterfaces</p></td>
+<td><p>Yes</p></td>
+<td><p>Collection of required signals</p></td>
+<td><ul>
+<li><p>namePath: Vehicle.Speed</p>
+<p>direction: input</p>
+<p>dataType: float</p>
+<p>unit: km/h</p>
+<p>etc.</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>parameters</p></td>
+<td><p>Yes</p></td>
+<td><p>Collection of parameterrs for calibration &amp; configuration</p></td>
+<td><ul>
+<li><p>namePath: Vehicle.Chassis.HazardRequestDurationMs</p>
+<p>dataType: uint32</p>
+<p>defaultValue: 3000</p>
+<p>unit: ms</p>
+<p>etc.</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>scheduling</p></td>
+<td><p>Yes</p></td>
+<td><p>Schedulling information for runnable/function entry point
+<a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></td>
+<td><ul>
+<li><p>functionName: SpeedHazardDetection.Init</p>
+<p>runType: init</p>
+<p>cycleTimeMs: 0</p>
+<p>ASIL: B</p>
+<p>previousRunnableRef: System.Startup</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p><strong>Remark:</strong> There may dependencies to other functions not included in this specification. This is allowed. The whole picture is in the runtime specification.</p>
+</aside>
+</aside>
+<section id="id3">
+<h2>Component Specification File<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>Template Version 0.0.1</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1"># *******************************************************************************</span>
+<span class="linenos"> 2</span><span class="c1"># Copyright (c) 2026 Contributors to the Eclipse Foundation</span>
+<span class="linenos"> 3</span><span class="c1">#</span>
+<span class="linenos"> 4</span><span class="c1"># See the NOTICE file(s) distributed with this work for additional</span>
+<span class="linenos"> 5</span><span class="c1"># information regarding copyright ownership.</span>
+<span class="linenos"> 6</span><span class="c1">#</span>
+<span class="linenos"> 7</span><span class="c1"># This program and the accompanying materials are made available under the</span>
+<span class="linenos"> 8</span><span class="c1"># terms of the Apache License Version 2.0 which is available at</span>
+<span class="linenos"> 9</span><span class="c1"># https://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="linenos">10</span><span class="c1">#</span>
+<span class="linenos">11</span><span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
+<span class="linenos">12</span><span class="c1"># *******************************************************************************</span>
+<span class="linenos">13</span><span class="c1">#</span>
+<span class="linenos">14</span><span class="c1"># TEMPLATE - Component Specification File (*.acs)</span>
+<span class="linenos">15</span><span class="c1">#</span>
+<span class="linenos">16</span><span class="c1"># Copy this file, rename it to &lt;YourFunctionName&gt;.acs and fill it in.</span>
+<span class="linenos">17</span><span class="c1"># Every &quot;row&quot; below is one signal/parameter/runnable and MUST provide exactly</span>
+<span class="linenos">18</span><span class="c1"># one value per entry listed under &quot;columns&quot;, in the same order.</span>
+<span class="linenos">19</span><span class="c1"># Remove this header and all &quot;# &lt;-- ...&quot; hints once the file is filled in.</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span><span class="nt">functionSpecification</span><span class="p">:</span>
+<span class="linenos">22</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;YourFunctionName&gt;</span><span class="w">              </span><span class="c1"># e.g. SpeedHazardDetection</span>
+<span class="linenos">23</span><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0.0</span><span class="w">                        </span><span class="c1"># semantic version of this component</span>
+<span class="linenos">24</span><span class="w">  </span><span class="nt">metaModelRef</span><span class="p">:</span>
+<span class="linenos">25</span><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Eclipse-autoapiframework-Metamodel</span>
+<span class="linenos">26</span><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.3.0</span><span class="w">                      </span><span class="c1"># meta model version this file was written against</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+<span class="linenos">29</span><span class="w">    </span><span class="no">&lt;One or two sentences describing what this function/component does.&gt;</span>
+<span class="linenos">30</span>
+<span class="linenos">31</span><span class="w">  </span><span class="c1"># -----------------------------------------------------------------------</span>
+<span class="linenos">32</span><span class="w">  </span><span class="c1"># 1) SIGNALS (dataInterfaces): one row per input/output signal.</span>
+<span class="linenos">33</span><span class="w">  </span><span class="c1">#    - direction: input | output</span>
+<span class="linenos">34</span><span class="w">  </span><span class="c1">#    - ASIL: QM | A | B | C | D</span>
+<span class="linenos">35</span><span class="w">  </span><span class="c1">#    - qualityCode: Uninitialized | Invalid | Valid (runtime value, use a default here)</span>
+<span class="linenos">36</span><span class="w">  </span><span class="c1">#    - protection: none | complement</span>
+<span class="linenos">37</span><span class="w">  </span><span class="c1">#    Add a new row for every additional signal you need. Quality qualifiers</span>
+<span class="linenos">38</span><span class="w">  </span><span class="c1">#    (e.g. &lt;Signal&gt;.Qualifier) are modeled as their own row, not a property.</span>
+<span class="linenos">39</span><span class="w">  </span><span class="c1"># -----------------------------------------------------------------------</span>
+<span class="linenos">40</span><span class="w">  </span><span class="nt">dataInterfaces</span><span class="p">:</span>
+<span class="linenos">41</span><span class="w">    </span><span class="nt">columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">namePath</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">direction</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">dataType</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">description</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">unit</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">min</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">max</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">defaultValue</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">resolution</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">precision</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ASIL</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">minUpdatePeriodMs</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">qualityCode</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">accuracy</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">protection</span><span class="p p-Indicator">]</span>
+<span class="linenos">42</span><span class="w">    </span><span class="nt">rows</span><span class="p">:</span>
+<span class="linenos">43</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Vehicle.&lt;Domain&gt;.&lt;Signal&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">input</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">float</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;Functional meaning of the signal.&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;unit&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;min&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;max&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;defaultValue&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;resolution&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;precision&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">QM</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;minUpdatePeriodMs&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Valid</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;expected accuracy&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">none</span><span class="p p-Indicator">]</span>
+<span class="linenos">44</span><span class="w">      </span><span class="c1"># - [Vehicle.&lt;Domain&gt;.&lt;OutputSignal&gt;, output, float, &lt;...&gt;, &lt;unit&gt;, &lt;min&gt;, &lt;max&gt;, &lt;defaultValue&gt;, &lt;resolution&gt;, &lt;precision&gt;, QM, &lt;minUpdatePeriodMs&gt;, Valid, &lt;expected accuracy&gt;, none]</span>
+<span class="linenos">45</span>
+<span class="linenos">46</span><span class="w">  </span><span class="c1"># -----------------------------------------------------------------------</span>
+<span class="linenos">47</span><span class="w">  </span><span class="c1"># 2) PARAMETERS: one row per calibration/configuration value.</span>
+<span class="linenos">48</span><span class="w">  </span><span class="c1"># -----------------------------------------------------------------------</span>
+<span class="linenos">49</span><span class="w">  </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="linenos">50</span><span class="w">    </span><span class="nt">columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">namePath</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">dataType</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">defaultValue</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">description</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">unit</span><span class="p p-Indicator">]</span>
+<span class="linenos">51</span><span class="w">    </span><span class="nt">rows</span><span class="p">:</span>
+<span class="linenos">52</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Vehicle.&lt;Domain&gt;.&lt;Parameter&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">float</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;defaultValue&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;Meaning and intended usage of the parameter.&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;unit&gt;</span><span class="p p-Indicator">]</span>
+<span class="linenos">53</span>
+<span class="linenos">54</span><span class="w">  </span><span class="c1"># -----------------------------------------------------------------------</span>
+<span class="linenos">55</span><span class="w">  </span><span class="c1"># 3) SCHEDULING: one row per runnable/function entry point.</span>
+<span class="linenos">56</span><span class="w">  </span><span class="c1">#    - runType: init | cyclic | event | terminate</span>
+<span class="linenos">57</span><span class="w">  </span><span class="c1">#    - Naming convention: &lt;FunctionName&gt;.Init / .Step / .Terminate</span>
+<span class="linenos">58</span><span class="w">  </span><span class="c1">#    - previousRunnableRef: name of the runnable that must run right before</span>
+<span class="linenos">59</span><span class="w">  </span><span class="c1">#      this one (use System.Startup for the very first runnable).</span>
+<span class="linenos">60</span><span class="w">  </span><span class="c1"># -----------------------------------------------------------------------</span>
+<span class="linenos">61</span><span class="w">  </span><span class="nt">scheduling</span><span class="p">:</span>
+<span class="linenos">62</span><span class="w">    </span><span class="nt">columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">functionName</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">runType</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">description</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">cycleTimeMs</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ASIL</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">previousRunnableRef</span><span class="p p-Indicator">]</span>
+<span class="linenos">63</span><span class="w">    </span><span class="nt">rows</span><span class="p">:</span>
+<span class="linenos">64</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">&lt;YourFunctionName&gt;.Init</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">init</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;Initialize internal states.&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">QM</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">System.Startup</span><span class="p p-Indicator">]</span>
+<span class="linenos">65</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">&lt;YourFunctionName&gt;.Step</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">cyclic</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;Evaluate inputs and calculate outputs.&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;cycleTimeMs&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">QM</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;YourFunctionName&gt;.Init</span><span class="p p-Indicator">]</span>
+<span class="linenos">66</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">&lt;YourFunctionName&gt;.Terminate</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">terminate</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;Shutdown cleanup.&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">QM</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">&lt;YourFunctionName&gt;.Step</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>What needs to be added for the SpeedHazardDetection example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nt">componentSpecification</span><span class="p">:</span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SpeedHazardDetection</span>
+<span class="linenos"> 3</span><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0.0</span>
+<span class="linenos"> 4</span><span class="w">  </span><span class="nt">metaModelRef</span><span class="p">:</span>
+<span class="linenos"> 5</span><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Eclipse-autoapiframework-Metamodel</span>
+<span class="linenos"> 6</span><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.3.0</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="no">Detects rapid acceleration and requests hazard warning lights if the</span>
+<span class="linenos">10</span><span class="w">    </span><span class="no">configured threshold is exceeded.</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="w">  </span><span class="c1"># Each interface/parameter/runnable is one row, in the same order as &quot;columns&quot;.</span>
+<span class="linenos">13</span><span class="w">  </span><span class="nt">dataInterfaces</span><span class="p">:</span>
+<span class="linenos">14</span><span class="w">    </span><span class="nt">columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">namePath</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">direction</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">dataType</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">description</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">unit</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">min</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">max</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">defaultValue</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">resolution</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">precision</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ASIL</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">minUpdatePeriodMs</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">qualityCode</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">accuracy</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">protection</span><span class="p p-Indicator">]</span>
+<span class="linenos">15</span><span class="w">    </span><span class="nt">rows</span><span class="p">:</span>
+<span class="linenos">16</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Vehicle.Speed</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">input</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">float</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Current vehicle speed value.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">km/h</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">300.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">B</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">valid</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;+/-0.2</span><span class="nv"> </span><span class="s">km/h&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">complement</span><span class="p p-Indicator">]</span>
+<span class="linenos">17</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Vehicle.Acceleration.Longitudinal</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">input</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">float</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Longitudinal acceleration used to detect strong acceleration events.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">m/s2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-20.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">20.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.01</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">B</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">valid</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;+/-0.05</span><span class="nv"> </span><span class="s">m/s2&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">complement</span><span class="p p-Indicator">]</span>
+<span class="linenos">18</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Vehicle.Body.Lights.Hazard.Request</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">output</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">boolean</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">True requests activation of hazard warning lights.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">boolean</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">false</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">B</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">20</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">valid</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">logical</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">complement</span><span class="p p-Indicator">]</span>
+<span class="linenos">19</span><span class="w">      </span><span class="c1"># Quality signals can be modeled as separate interfaces at runtime.</span>
+<span class="linenos">20</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Vehicle.Speed.Qualifier</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">input</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">uint8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Quality qualifier for Vehicle.Speed value.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">code</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">QM</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">valid</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">enum-based</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">none</span><span class="p p-Indicator">]</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="w">  </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="linenos">23</span><span class="w">    </span><span class="nt">columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">namePath</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">dataType</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">defaultValue</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">description</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">unit</span><span class="p p-Indicator">]</span>
+<span class="linenos">24</span><span class="w">    </span><span class="nt">rows</span><span class="p">:</span>
+<span class="linenos">25</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Vehicle.Chassis.SpeedHazardForward</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">float</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Relative speed increase threshold in percent for triggering hazard request while driving forward.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">percent</span><span class="p p-Indicator">]</span>
+<span class="linenos">26</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Vehicle.Chassis.HazardRequestDurationMs</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">uint32</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3000</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Hold time for hazard request after trigger.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ms</span><span class="p p-Indicator">]</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="w">  </span><span class="nt">scheduling</span><span class="p">:</span>
+<span class="linenos">29</span><span class="w">    </span><span class="nt">columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">functionName</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">runType</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">description</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">cycleTimeMs</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ASIL</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">previousRunnableRef</span><span class="p p-Indicator">]</span>
+<span class="linenos">30</span><span class="w">    </span><span class="nt">rows</span><span class="p">:</span>
+<span class="linenos">31</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">SpeedHazardDetection.Init</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">init</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Initialize internal states and latched outputs.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">B</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">System.Startup</span><span class="p p-Indicator">]</span>
+<span class="linenos">32</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">SpeedHazardDetection.Step</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">cyclic</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Evaluate inputs and calculate hazard request output.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">20</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">B</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">SpeedHazardDetection.Init</span><span class="p p-Indicator">]</span>
+<span class="linenos">33</span><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">SpeedHazardDetection.Terminate</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">terminate</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Shutdown cleanup for deterministic deactivation.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">QM</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">SpeedHazardDetection.Step</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">SpeedHazardDetection (single cyclic runnable)</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/speed_hazard_detection_example.html">SpeedHazardDetection Example</a></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../meta_model/meta_model_component_adapter.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Component Adapter</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="examples/speed_hazard_detection_example.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">SpeedHazardDetection Example</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Component Specification File</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/doc/component_specification/component_specification_file.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Function Adapter &#8212; Eclipse Automotive API Framework  documentation</title>
+    <title>Component Adapter &#8212; Eclipse Automotive API Framework  documentation</title>
   
   
   
@@ -38,11 +38,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=7ce7bdb0" />
   
@@ -63,10 +63,10 @@
     <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'doc/meta_model/meta_model_function_adapter';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'doc/meta_model/meta_model_component_adapter';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Examples" href="meta_model_examples.html" />
+    <link rel="next" title="Component Specification File" href="../component_specification/component_specification_file.html" />
     <link rel="prev" title="Meta Model" href="meta_model.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -176,7 +176,7 @@
 
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
-    Function Adapter
+    Component Adapter
   </a>
 </li>
 
@@ -189,8 +189,29 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="meta_model_examples.html">
+  <a class="nav-link dropdown-item nav-internal" href="../component_specification/component_specification_file.html">
+    Component Specification File
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../component_specification/component_specification_examples.html">
     Examples
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../runtime_specification/runtime_specification_file.html">
+    Software Architecture
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../runtime_specification/summary.html">
+    Summary
   </a>
 </li>
 
@@ -314,14 +335,35 @@
 
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
-    Function Adapter
+    Component Adapter
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="meta_model_examples.html">
+  <a class="nav-link nav-internal" href="../component_specification/component_specification_file.html">
+    Component Specification File
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../component_specification/component_specification_examples.html">
     Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../runtime_specification/runtime_specification_file.html">
+    Software Architecture
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../runtime_specification/summary.html">
+    Summary
   </a>
 </li>
 
@@ -405,7 +447,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Function Adapter</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Component Adapter</span></li>
   </ul>
 </nav>
 </div>
@@ -422,26 +464,26 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="function-adapter">
-<h1>Function Adapter<a class="headerlink" href="#function-adapter" title="Link to this heading">#</a></h1>
+  <section id="component-adapter">
+<h1>Component Adapter<a class="headerlink" href="#component-adapter" title="Link to this heading">#</a></h1>
 <section id="overview-and-purpose">
 <h2>Overview and Purpose<a class="headerlink" href="#overview-and-purpose" title="Link to this heading">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code> is a critical abstraction layer that bridges vehicle functions with underlying middleware platforms.
+<p>The <code class="docutils literal notranslate"><span class="pre">Component</span> <span class="pre">Adapter</span></code> is a critical abstraction layer that bridges vehicle functions with underlying middleware platforms.
 It serves as a standardized wrapper that enables vehicle functions to be integrated and executed on any middleware without modification.</p>
-<p>Key Purposes of the <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code>:</p>
+<p>Key Purposes of the <code class="docutils literal notranslate"><span class="pre">Component</span> <span class="pre">Adapter</span></code>:</p>
 <ol class="arabic simple">
-<li><p><strong>Middleware Abstraction</strong>: The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code> decouples the vehicle function implementation from the specific middleware platform,
+<li><p><strong>Middleware Abstraction</strong>: The <code class="docutils literal notranslate"><span class="pre">Component</span> <span class="pre">Adapter</span></code> decouples the vehicle function implementation from the specific middleware platform,
 allowing the same function logic to run on different runtimes and integration targets.</p></li>
 <li><p><strong>Static API Contract</strong>: It implements the stable, agreed-upon static API contract derived from the meta model.
 This contract ensures consistent interface definitions, data types, scheduling behavior, and safety semantics across different implementations.</p></li>
-<li><p><strong>Safety and Integrity</strong>: The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code> manages safety-critical aspects including:</p></li>
-<li><p><strong>Portability</strong>: By using the <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code> pattern, vehicle functions become portable artifacts that can be:</p></li>
-<li><p><strong>Not a Full AUTOSAR Application</strong>: The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code> is not intended to be a complete replacement for an AUTOSAR Application. It focuses on portable function logic and signal access, while platform-specific capabilities such as middleware integration, lifecycle management, diagnostics, persistence, security, and deployment remain the responsibility of the surrounding runtime environment.</p></li>
+<li><p><strong>Safety and Integrity</strong>: The <code class="docutils literal notranslate"><span class="pre">Component</span> <span class="pre">Adapter</span></code> manages safety-critical aspects including:</p></li>
+<li><p><strong>Portability</strong>: By using the <code class="docutils literal notranslate"><span class="pre">Component</span> <span class="pre">Adapter</span></code> pattern, vehicle functions become portable artifacts that can be:</p></li>
+<li><p><strong>Not a Full AUTOSAR Application</strong>: The <code class="docutils literal notranslate"><span class="pre">Component</span> <span class="pre">Adapter</span></code> is not intended to be a complete replacement for an AUTOSAR Application. It focuses on portable function logic and signal access, while platform-specific capabilities such as middleware integration, lifecycle management, diagnostics, persistence, security, and deployment remain the responsibility of the surrounding runtime environment.</p></li>
 </ol>
-<p>The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code> essentially transforms the abstract specifications defined in the meta model and YAML instances into concrete,
+<p>The <code class="docutils literal notranslate"><span class="pre">Component</span> <span class="pre">Adapter</span></code> essentially transforms the abstract specifications defined in the meta model and YAML instances into concrete,
 executable implementations that maintain the agreed contract regardless of the underlying middleware platform.</p>
 <figure class="align-default">
-<img alt="signal protection within the stack" src="../../_images/function_adapter.png" />
+<img alt="signal protection within the stack" src="../../_images/component_adapter.png" />
 </figure>
 </section>
 <section id="thoughts-about-signal-protection">
@@ -523,11 +565,11 @@ considered less critical, a lightweight supervision mechanism based on a complem
       </div>
     </a>
     <a class="right-next"
-       href="meta_model_examples.html"
+       href="../component_specification/component_specification_file.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Examples</p>
+        <p class="prev-next-title">Component Specification File</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -560,7 +602,7 @@ considered less critical, a lightweight supervision mechanism based on a complem
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/doc/meta_model/meta_model_function_adapter.rst.txt"
+      <li><a href="../../_sources/doc/meta_model/meta_model_component_adapter.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
