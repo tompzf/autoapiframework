@@ -60,6 +60,7 @@ Software Architecture:
    :maxdepth: 1
 
    doc/runtime_specification/runtime_specification_file   
+   doc/runtime_specification/summary
 
 Examples (for application-framework):
 -------------------------------------

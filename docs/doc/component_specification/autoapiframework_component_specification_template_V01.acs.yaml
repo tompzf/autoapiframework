@@ -1,0 +1,66 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+#
+# TEMPLATE - Component Specification File (*.acs)
+#
+# Copy this file, rename it to <YourFunctionName>.acs and fill it in.
+# Every "row" below is one signal/parameter/runnable and MUST provide exactly
+# one value per entry listed under "columns", in the same order.
+# Remove this header and all "# <-- ..." hints once the file is filled in.
+
+functionSpecification:
+  name: <YourFunctionName>              # e.g. SpeedHazardDetection
+  version: 1.0.0                        # semantic version of this component
+  metaModelRef:
+    name: Eclipse-autoapiframework-Metamodel
+    version: 0.3.0                      # meta model version this file was written against
+
+  description: >-
+    <One or two sentences describing what this function/component does.>
+
+  # -----------------------------------------------------------------------
+  # 1) SIGNALS (dataInterfaces): one row per input/output signal.
+  #    - direction: input | output
+  #    - ASIL: QM | A | B | C | D
+  #    - qualityCode: Uninitialized | Invalid | Valid (runtime value, use a default here)
+  #    - protection: none | complement
+  #    Add a new row for every additional signal you need. Quality qualifiers
+  #    (e.g. <Signal>.Qualifier) are modeled as their own row, not a property.
+  # -----------------------------------------------------------------------
+  dataInterfaces:
+    columns: [namePath, direction, dataType, description, unit, min, max, defaultValue, resolution, precision, ASIL, minUpdatePeriodMs, qualityCode, accuracy, protection]
+    rows:
+      - [Vehicle.<Domain>.<Signal>, input, float, <Functional meaning of the signal.>, <unit>, <min>, <max>, <defaultValue>, <resolution>, <precision>, QM, <minUpdatePeriodMs>, Valid, <expected accuracy>, none]
+      # - [Vehicle.<Domain>.<OutputSignal>, output, float, <...>, <unit>, <min>, <max>, <defaultValue>, <resolution>, <precision>, QM, <minUpdatePeriodMs>, Valid, <expected accuracy>, none]
+
+  # -----------------------------------------------------------------------
+  # 2) PARAMETERS: one row per calibration/configuration value.
+  # -----------------------------------------------------------------------
+  parameters:
+    columns: [namePath, dataType, defaultValue, description, unit]
+    rows:
+      - [Vehicle.<Domain>.<Parameter>, float, <defaultValue>, <Meaning and intended usage of the parameter.>, <unit>]
+
+  # -----------------------------------------------------------------------
+  # 3) SCHEDULING: one row per runnable/function entry point.
+  #    - runType: init | cyclic | event | terminate
+  #    - Naming convention: <FunctionName>.Init / .Step / .Terminate
+  #    - previousRunnableRef: name of the runnable that must run right before
+  #      this one (use System.Startup for the very first runnable).
+  # -----------------------------------------------------------------------
+  scheduling:
+    columns: [functionName, runType, description, cycleTimeMs, ASIL, previousRunnableRef]
+    rows:
+      - [<YourFunctionName>.Init, init, <Initialize internal states.>, 0, QM, System.Startup]
+      - [<YourFunctionName>.Step, cyclic, <Evaluate inputs and calculate outputs.>, <cycleTimeMs>, QM, <YourFunctionName>.Init]
+      - [<YourFunctionName>.Terminate, terminate, <Shutdown cleanup.>, 0, QM, <YourFunctionName>.Step]

@@ -1,0 +1,33 @@
+componentSpecification:
+  name: SpeedHazardDetection
+  version: 1.0.0
+  metaModelRef:
+    name: Eclipse-autoapiframework-Metamodel
+    version: 0.3.0
+
+  description: >-
+    Detects rapid acceleration and requests hazard warning lights if the
+    configured threshold is exceeded.
+
+  # Each interface/parameter/runnable is one row, in the same order as "columns".
+  dataInterfaces:
+    columns: [namePath, direction, dataType, description, unit, min, max, defaultValue, resolution, precision, ASIL, minUpdatePeriodMs, qualityCode, accuracy, protection]
+    rows:
+      - [Vehicle.Speed, input, float, Current vehicle speed value., km/h, 0.0, 300.0, 0.0, 0.1, 1, B, 10, valid, "+/-0.2 km/h", complement]
+      - [Vehicle.Acceleration.Longitudinal, input, float, Longitudinal acceleration used to detect strong acceleration events., m/s2, -20.0, 20.0, 0.0, 0.01, 2, B, 10, valid, "+/-0.05 m/s2", complement]
+      - [Vehicle.Body.Lights.Hazard.Request, output, boolean, True requests activation of hazard warning lights., boolean, 0, 1, false, 1, 1, B, 20, valid, logical, complement]
+      # Quality signals can be modeled as separate interfaces at runtime.
+      - [Vehicle.Speed.Qualifier, input, uint8, Quality qualifier for Vehicle.Speed value., code, 0, 5, 0, 1, 1, QM, 10, valid, enum-based, none]
+
+  parameters:
+    columns: [namePath, dataType, defaultValue, description, unit]
+    rows:
+      - [Vehicle.Chassis.SpeedHazardForward, float, 10.0, Relative speed increase threshold in percent for triggering hazard request while driving forward., percent]
+      - [Vehicle.Chassis.HazardRequestDurationMs, uint32, 3000, Hold time for hazard request after trigger., ms]
+
+  scheduling:
+    columns: [functionName, runType, description, cycleTimeMs, ASIL, previousRunnableRef]
+    rows:
+      - [SpeedHazardDetection.Init, init, Initialize internal states and latched outputs., 0, B, System.Startup]
+      - [SpeedHazardDetection.Step, cyclic, Evaluate inputs and calculate hazard request output., 20, B, SpeedHazardDetection.Init]
+      - [SpeedHazardDetection.Terminate, terminate, Shutdown cleanup for deterministic deactivation., 0, QM, SpeedHazardDetection.Step]
