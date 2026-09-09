@@ -62,18 +62,21 @@ Conceptually: Runtime = "How do the components work together?"
 
   Examples:
 
-  runtime:
+  runtime includes
 
   components:
-    - VehicleSpeed
-    - WheelSpeedFusion
+
+  - VehicleSpeed
+  - WheelSpeedFusion
 
   connections:
-    - from: WheelSpeedFusion.Speed
-    - to: VehicleSpeed.SpeedInput
+
+  - from: WheelSpeedFusion.Speed
+  - to: VehicleSpeed.SpeedInput
 
   dependencies:
-    - VehicleSpeed depends_on WheelSpeedFusion
+
+  - VehicleSpeed depends_on WheelSpeedFusion
 
 4. Naming
 ---------
