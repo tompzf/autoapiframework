@@ -60,7 +60,7 @@ Specification Files is described by the :doc:`Runtime Specification File </doc/r
    |                |          |                                                           |                                                     |
    |                |          |                                                           |   etc.                                              |
    +----------------+----------+-----------------------------------------------------------+-----------------------------------------------------+
-   | scheduling     | Yes      | Schedulling information for runnable/function entry point | - functionName: SpeedHazardDetection.Init           |
+   | scheduling     | Yes      | Scheduling information for runnable/function entry point  | - functionName: SpeedHazardDetection.Init           |
    |                |          | [1]_                                                      |                                                     |   
    |                |          |                                                           |   runType: init                                     |
    |                |          |                                                           |                                                     |   
@@ -71,7 +71,9 @@ Specification Files is described by the :doc:`Runtime Specification File </doc/r
    |                |          |                                                           |   previousRunnableRef: System.Startup               |
    +----------------+----------+-----------------------------------------------------------+-----------------------------------------------------+
 
-.. [1] **Remark:** There may dependencies to other functions not included in this specification. This is allowed. The whole picture is in the runtime specification.
+.. [1] **Remark:** There may be dependencies to other functions not included in this specification file. This is allowed. The whole picture is defined in the runtime specification, see :doc:`Software Architecture </doc/runtime_specification/runtime_specification_file>`.
+
+
 
 Component Specification File
 ----------------------------
