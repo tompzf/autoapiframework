@@ -493,8 +493,8 @@
 </div>
 </div></blockquote>
 </section>
-<section id="runtime-specification">
-<h2>3. Runtime Specification<a class="headerlink" href="#runtime-specification" title="Link to this heading">#</a></h2>
+<section id="runtime-specification-not-yet-defined">
+<h2>3. Runtime Specification (not yet defined)<a class="headerlink" href="#runtime-specification-not-yet-defined" title="Link to this heading">#</a></h2>
 <p>Contains the system composition:</p>
 <ul class="simple">
 <li><p>instantiated components</p></li>
@@ -507,23 +507,21 @@
 <p>Conceptually: Runtime = “How do the components work together?”</p>
 <blockquote>
 <div><p>Examples:</p>
-<p>runtime:</p>
-<dl class="simple">
-<dt>components:</dt><dd><ul class="simple">
+<p>runtime includes</p>
+<p>components:</p>
+<ul class="simple">
 <li><p>VehicleSpeed</p></li>
 <li><p>WheelSpeedFusion</p></li>
 </ul>
-</dd>
-<dt>connections:</dt><dd><ul class="simple">
+<p>connections:</p>
+<ul class="simple">
 <li><p>from: WheelSpeedFusion.Speed</p></li>
 <li><p>to: VehicleSpeed.SpeedInput</p></li>
 </ul>
-</dd>
-<dt>dependencies:</dt><dd><ul class="simple">
+<p>dependencies:</p>
+<ul class="simple">
 <li><p>VehicleSpeed depends_on WheelSpeedFusion</p></li>
 </ul>
-</dd>
-</dl>
 </div></blockquote>
 </section>
 <section id="naming">
@@ -582,7 +580,7 @@
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#meta-model">1. Meta Model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#component-specification">2. Component Specification</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-specification">3. Runtime Specification</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-specification-not-yet-defined">3. Runtime Specification (not yet defined)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#naming">4. Naming</a></li>
 </ul>
   </nav></div>
