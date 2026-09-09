@@ -46,8 +46,8 @@ Conceptually: Component = "Single function definition"
    | BatterySOC
    | NavigationRoutePlanner
 
-3. Runtime Specification
-------------------------
+3. Runtime Specification (not yet defined)
+------------------------------------------
 
 Contains the system composition:
 
