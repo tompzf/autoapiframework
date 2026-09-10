@@ -16,7 +16,7 @@
    #   Thomas Pfleiderer - Meta model added
    # *******************************************************************************
 
-Current status of the project
+Current status of the project:
 
 .. figure:: ../meta_model/figures/time_line.png
    :alt: time line of the project

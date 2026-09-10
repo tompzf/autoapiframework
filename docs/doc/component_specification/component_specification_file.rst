@@ -16,7 +16,7 @@
    #   Thomas Pfleiderer - Meta model added
    # *******************************************************************************
 
-Current status of the project
+Current status of the project:
 
 .. figure:: ../meta_model/figures/time_line.png
    :alt: time line of the project
@@ -36,40 +36,40 @@ Specification Files is described by the :doc:`Runtime Specification File </doc/r
 
 .. table::  Component: 
 
-   +----------------+----------+-----------------------------------------------------------+-----------------------------------------------------+
-   | **Property /   | **Req.** | **Description**                                           | **Example / Notes**                                 |
-   | Attribute**    |          |                                                           |                                                     |
-   +----------------+----------+-----------------------------------------------------------+-----------------------------------------------------+
-   | dataInterfaces | Yes      | Collection of required signals                            | - namePath: Vehicle.Speed                           |
-   |                |          |                                                           |                                                     |
-   |                |          |                                                           |   direction: input                                  |
-   |                |          |                                                           |                                                     |
-   |                |          |                                                           |   dataType: float                                   |
-   |                |          |                                                           |                                                     |
-   |                |          |                                                           |   unit: km/h                                        |
-   |                |          |                                                           |                                                     |
-   |                |          |                                                           |   etc.                                              |
-   +----------------+----------+-----------------------------------------------------------+-----------------------------------------------------+
-   | parameters     | Yes      | Collection of parameterrs for calibration & configuration | - namePath: Vehicle.Chassis.HazardRequestDurationMs |
-   |                |          |                                                           |                                                     |
-   |                |          |                                                           |   dataType: uint32                                  |
-   |                |          |                                                           |                                                     |
-   |                |          |                                                           |   defaultValue: 3000                                |
-   |                |          |                                                           |                                                     |
-   |                |          |                                                           |   unit: ms                                          |
-   |                |          |                                                           |                                                     |
-   |                |          |                                                           |   etc.                                              |
-   +----------------+----------+-----------------------------------------------------------+-----------------------------------------------------+
-   | scheduling     | Yes      | Scheduling information for runnable/function entry point  | - functionName: SpeedHazardDetection.Init           |
-   |                |          | [1]_                                                      |                                                     |   
-   |                |          |                                                           |   runType: init                                     |
-   |                |          |                                                           |                                                     |   
-   |                |          |                                                           |   cycleTimeMs: 0                                    |
-   |                |          |                                                           |                                                     |   
-   |                |          |                                                           |   ASIL: B                                           |
-   |                |          |                                                           |                                                     |   
-   |                |          |                                                           |   previousRunnableRef: System.Startup               |
-   +----------------+----------+-----------------------------------------------------------+-----------------------------------------------------+
+   +----------------+----------+----------------------------------------------------------+-----------------------------------------------------+
+   | **Property /   | **Req.** | **Description**                                          | **Example / Notes**                                 |
+   | Attribute**    |          |                                                          |                                                     |
+   +----------------+----------+----------------------------------------------------------+-----------------------------------------------------+
+   | dataInterfaces | Yes      | Collection of required signals                           | - namePath: Vehicle.Speed                           |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   direction: input                                  |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   dataType: float                                   |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   unit: km/h                                        |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   etc.                                              |
+   +----------------+----------+----------------------------------------------------------+-----------------------------------------------------+
+   | parameters     | Yes      | Collection of parameters for calibration & configuration | - namePath: Vehicle.Chassis.HazardRequestDurationMs |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   dataType: uint32                                  |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   defaultValue: 3000                                |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   unit: ms                                          |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   etc.                                              |
+   +----------------+----------+----------------------------------------------------------+-----------------------------------------------------+
+   | scheduling     | Yes      | Scheduling information for runnable/function entry point | - functionName: SpeedHazardDetection.Init           |
+   |                |          | [1]_                                                     |                                                     |   
+   |                |          |                                                          |   runType: init                                     |
+   |                |          |                                                          |                                                     |   
+   |                |          |                                                          |   cycleTimeMs: 0                                    |
+   |                |          |                                                          |                                                     |   
+   |                |          |                                                          |   ASIL: B                                           |
+   |                |          |                                                          |                                                     |   
+   |                |          |                                                          |   previousRunnableRef: System.Startup               |
+   +----------------+----------+----------------------------------------------------------+-----------------------------------------------------+
 
 .. [1] **Remark:** There may be dependencies to other functions not included in this specification file. This is allowed. The whole picture is defined in the runtime specification, see :doc:`Software Architecture </doc/runtime_specification/runtime_specification_file>`.
 
