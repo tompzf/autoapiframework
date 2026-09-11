@@ -1,0 +1,86 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "windows-vcpkg",
+            "displayName": "Windows (MSVC + vcpkg)",
+            "description": "Uses the default Visual Studio generator. Requires VCPKG_ROOT and 'vcpkg install wxwidgets'",
+            "binaryDir": "${sourceDir}/build/windows-vcpkg",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
+            "name": "windows-msvc",
+            "displayName": "Windows (MSVC, prebuilt wxWidgets)",
+            "description": "Uses the default Visual Studio generator. Requires wxWidgets_ROOT_DIR / wxWidgets_LIB_DIR to point to an existing wxWidgets build",
+            "binaryDir": "${sourceDir}/build/windows-msvc",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "windows-vs2022",
+            "displayName": "Windows x64 (Visual Studio 17 2022 + vcpkg)",
+            "inherits": "windows-vcpkg",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/build/windows-vs2022",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows"
+            }
+        },
+        {
+            "name": "linux-debug",
+            "displayName": "Linux (Ninja, Debug)",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux-debug",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "windows-vcpkg-debug",
+            "configurePreset": "windows-vcpkg",
+            "configuration": "Debug"
+        },
+        {
+            "name": "windows-vcpkg-release",
+            "configurePreset": "windows-vcpkg",
+            "configuration": "Release"
+        },
+        {
+            "name": "windows-vs2022-debug",
+            "configurePreset": "windows-vs2022",
+            "configuration": "Debug"
+        },
+        {
+            "name": "windows-msvc-debug",
+            "configurePreset": "windows-msvc",
+            "configuration": "Debug"
+        },
+        {
+            "name": "linux-debug",
+            "configurePreset": "linux-debug"
+        }
+    ]
+}
