@@ -92,6 +92,13 @@ endif()
 set_target_properties(AutoAPIComponentDesigner PROPERTIES
     VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:component_designer>")
 
+if(UNIX AND NOT APPLE)
+    set(ACD_LINUX_ICON_COMMAND
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_icon-128x128.png"
+                "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/autoapiframework_icon.png")
+endif()
+
 # The meta model and the sample specification are picked up next to the executable.
 add_custom_command(TARGET AutoAPIComponentDesigner POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -106,8 +113,14 @@ add_custom_command(TARGET AutoAPIComponentDesigner POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_logo.png"
             "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/autoapiframework_logo.png"
+    ${ACD_LINUX_ICON_COMMAND}
     VERBATIM)
 
 install(TARGETS AutoAPIComponentDesigner RUNTIME DESTINATION bin)
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/examples/autoapiframework_meta_model.yaml" DESTINATION bin)
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_logo.png" DESTINATION bin)
+if(UNIX AND NOT APPLE)
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_icon-128x128.png"
+            DESTINATION bin
+            RENAME autoapiframework_icon.png)
+endif()

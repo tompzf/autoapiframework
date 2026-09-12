@@ -32,6 +32,7 @@ namespace acd
     {
         constexpr const char* kMetaModelFileName = "autoapiframework_meta_model.yaml";
         constexpr const char* kLogoFileName = "autoapiframework_logo.png";
+        constexpr const char* kIconFileName = "autoapiframework_icon.png";
         constexpr int kMinColumnWidth = 90;
         constexpr int kMaxColumnWidth = 320;
 
@@ -139,6 +140,13 @@ namespace acd
     {
 #ifdef __WXMSW__
         SetIcon(wxIcon("IDI_APP_ICON", wxBITMAP_TYPE_ICO_RESOURCE));
+#endif
+#ifdef __WXGTK__
+        wxIcon appIcon(FindRuntimeFile(kIconFileName), wxBITMAP_TYPE_PNG);
+        if (appIcon.IsOk())
+        {
+            SetIcon(appIcon);
+        }
 #endif
         BuildUi();
         AutoLoadMetaModel();
