@@ -20,27 +20,28 @@
 
 #include "yaml_node.h"
 
-namespace acd {
+namespace acd 
+{
+    /// Serializes a YamlNode tree back into the block style layout used by the
+    /// autoapiframework function specification files.
+    class YamlWriter 
+    {
+    public:
+        /// Column at which folded scalars are wrapped.
+        void SetWrapColumn(int column) { m_wrapColumn = column; }
 
-/// Serializes a YamlNode tree back into the block style layout used by the
-/// autoapiframework function specification files.
-class YamlWriter {
-public:
-    /// Column at which folded scalars are wrapped.
-    void SetWrapColumn(int column) { m_wrapColumn = column; }
+        std::string WriteText(const YamlNodePtr& root) const;
+        /// Writes @p root to @p path. Returns false and fills @p error on failure.
+        bool WriteFile(const std::string& path, const YamlNodePtr& root, std::string& error) const;
 
-    std::string WriteText(const YamlNodePtr& root) const;
-    /// Writes @p root to @p path. Returns false and fills @p error on failure.
-    bool WriteFile(const std::string& path, const YamlNodePtr& root, std::string& error) const;
+    private:
+        void EmitNode(const YamlNodePtr& node, int indent, std::string& out, bool inSequenceItem = false) const;
+        void EmitMap(const YamlNodePtr& node, int indent, std::string& out, bool inSequenceItem) const;
+        void EmitSequence(const YamlNodePtr& node, int indent, std::string& out) const;
+        void EmitBlockScalar(const YamlNodePtr& node, int indent, std::string& out) const;
 
-private:
-    void EmitNode(const YamlNodePtr& node, int indent, std::string& out, bool inSequenceItem = false) const;
-    void EmitMap(const YamlNodePtr& node, int indent, std::string& out, bool inSequenceItem) const;
-    void EmitSequence(const YamlNodePtr& node, int indent, std::string& out) const;
-    void EmitBlockScalar(const YamlNodePtr& node, int indent, std::string& out) const;
-
-    int m_wrapColumn = 72;
-};
+        int m_wrapColumn = 72;
+    };
 
 } // namespace acd
 

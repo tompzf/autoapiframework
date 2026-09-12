@@ -17,17 +17,20 @@
 
 #include "main_frame.h"
 
-namespace acd {
-
-class DesignerApp : public wxApp {
-public:
-    bool OnInit() override {
-        SetAppName("AutomotiveComponentDesigner");
-        MainFrame* frame = new MainFrame();
-        frame->Show(true);
-        return true;
-    }
-};
+namespace acd 
+{
+    class DesignerApp : public wxApp 
+    {
+    public:
+        bool OnInit() override 
+        {
+            SetAppName("AutoAPI Component Designer");
+            wxInitAllImageHandlers();
+            MainFrame* frame = new MainFrame();
+            frame->Show(true);
+            return true;
+        }
+    };
 
 } // namespace acd
 

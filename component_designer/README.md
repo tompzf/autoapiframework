@@ -14,7 +14,7 @@
 #   Thomas Pfleiderer - initial API and implementation
 # *******************************************************************************
 #
-# AutomotiveComponentDesigner
+# AutoAPI Component Designer
 
 wxWidgets desktop application for reading, inspecting and writing Eclipse
 autoapiframework function specifications (`*.acs`, YAML content).
@@ -73,7 +73,7 @@ vcpkg install wxwidgets:x64-windows
 $env:VCPKG_ROOT = "C:\path\to\vcpkg"
 cmake --preset windows-vcpkg
 cmake --build --preset windows-vcpkg-debug
-.\build\windows-vcpkg\bin\Debug\AutomotiveComponentDesigner.exe
+.\build\windows-vcpkg\bin\Debug\AutoAPIComponentDesigner.exe
 ```
 
 With a prebuilt wxWidgets tree, use the `windows-msvc` preset and set the
@@ -86,7 +86,7 @@ sudo apt-get install cmake libwxgtk3.2-dev
 cd component_designer
 cmake --preset linux-debug
 cmake --build --preset linux-debug
-./build/linux-debug/bin/AutomotiveComponentDesigner
+./build/linux-debug/bin/AutoAPIComponentDesigner
 ```
 
 The meta model and the sample specification are copied next to the executable

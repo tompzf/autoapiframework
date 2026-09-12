@@ -61,7 +61,7 @@ else()
         "Linux: 'libwxgtk3.2-dev') or configure with -DACD_FETCH_WXWIDGETS=ON.")
 endif()
 
-add_executable(AutomotiveComponentDesigner WIN32
+add_executable(AutoAPIComponentDesigner WIN32
     src/main.cpp
     src/main_frame.cpp
     src/yaml_node.cpp
@@ -71,32 +71,36 @@ add_executable(AutomotiveComponentDesigner WIN32
     src/function_specification.cpp
 )
 
-target_include_directories(AutomotiveComponentDesigner PRIVATE src)
-target_link_libraries(AutomotiveComponentDesigner PRIVATE ${ACD_WX_LIBRARIES})
+target_include_directories(AutoAPIComponentDesigner PRIVATE src)
+target_link_libraries(AutoAPIComponentDesigner PRIVATE ${ACD_WX_LIBRARIES})
 
 if(MSVC)
-    target_compile_options(AutomotiveComponentDesigner PRIVATE /W4 /utf-8)
-    target_compile_definitions(AutomotiveComponentDesigner PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT AutomotiveComponentDesigner)
+    target_compile_options(AutoAPIComponentDesigner PRIVATE /W4 /utf-8)
+    target_compile_definitions(AutoAPIComponentDesigner PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT AutoAPIComponentDesigner)
 else()
-    target_compile_options(AutomotiveComponentDesigner PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(AutoAPIComponentDesigner PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
-set_target_properties(AutomotiveComponentDesigner PROPERTIES
+set_target_properties(AutoAPIComponentDesigner PROPERTIES
     VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:component_designer>")
 
 # The meta model and the sample specification are picked up next to the executable.
-add_custom_command(TARGET AutomotiveComponentDesigner POST_BUILD
+add_custom_command(TARGET AutoAPIComponentDesigner POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/examples/autoapiframework_meta_model.yaml"
-            "$<TARGET_FILE_DIR:component_designer>/autoapiframework_meta_model.yaml"
+            "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/autoapiframework_meta_model.yaml"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/examples/speed_hazard_detection.acs"
-            "$<TARGET_FILE_DIR:component_designer>/speed_hazard_detection.acs"
+            "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/speed_hazard_detection.acs"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/examples/vehicle_speed_fusion_multirate.acs"
-            "$<TARGET_FILE_DIR:component_designer>/vehicle_speed_fusion_multirate.acs"            
+            "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/vehicle_speed_fusion_multirate.acs"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_logo.png"
+            "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/autoapiframework_logo.png"
     VERBATIM)
 
-install(TARGETS AutomotiveComponentDesigner RUNTIME DESTINATION bin)
+install(TARGETS AutoAPIComponentDesigner RUNTIME DESTINATION bin)
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/examples/autoapiframework_meta_model.yaml" DESTINATION bin)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_logo.png" DESTINATION bin)

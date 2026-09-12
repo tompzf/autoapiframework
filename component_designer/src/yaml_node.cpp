@@ -16,55 +16,66 @@
  
 #include "yaml_node.h"
 
-namespace acd {
+namespace acd 
+{
+    YamlNodePtr YamlNode::MakeScalar(std::string value, ScalarStyle style) 
+    {
+        auto node = std::make_shared<YamlNode>();
+        node->m_type = Type::Scalar;
+        node->m_scalar = std::move(value);
+        node->m_style = style;
+        return node;
+    }
 
-YamlNodePtr YamlNode::MakeScalar(std::string value, ScalarStyle style) {
-    auto node = std::make_shared<YamlNode>();
-    node->m_type = Type::Scalar;
-    node->m_scalar = std::move(value);
-    node->m_style = style;
-    return node;
-}
+    YamlNodePtr YamlNode::MakeMap() 
+    {
+        auto node = std::make_shared<YamlNode>();
+        node->m_type = Type::Map;
+        return node;
+    }
 
-YamlNodePtr YamlNode::MakeMap() {
-    auto node = std::make_shared<YamlNode>();
-    node->m_type = Type::Map;
-    return node;
-}
+    YamlNodePtr YamlNode::MakeSequence() 
+    {
+        auto node = std::make_shared<YamlNode>();
+        node->m_type = Type::Sequence;
+        return node;
+    }
 
-YamlNodePtr YamlNode::MakeSequence() {
-    auto node = std::make_shared<YamlNode>();
-    node->m_type = Type::Sequence;
-    return node;
-}
-
-void YamlNode::Set(const std::string& key, YamlNodePtr value) {
-    for (auto& entry : m_map) {
-        if (entry.first == key) {
-            entry.second = std::move(value);
-            return;
+    void YamlNode::Set(const std::string& key, YamlNodePtr value) 
+    {
+        for (auto& entry : m_map) 
+        {
+            if (entry.first == key) 
+            {
+                entry.second = std::move(value);
+                return;
+            }
         }
+        m_map.emplace_back(key, std::move(value));
     }
-    m_map.emplace_back(key, std::move(value));
-}
 
-void YamlNode::Append(YamlNodePtr value) { m_sequence.push_back(std::move(value)); }
+    void YamlNode::Append(YamlNodePtr value) { m_sequence.push_back(std::move(value)); }
 
-YamlNodePtr YamlNode::Find(const std::string& key) const {
-    for (const auto& entry : m_map) {
-        if (entry.first == key) {
-            return entry.second;
+    YamlNodePtr YamlNode::Find(const std::string& key) const 
+    {
+        for (const auto& entry : m_map) 
+        {
+            if (entry.first == key) 
+            {
+                return entry.second;
+            }
         }
+        return nullptr;
     }
-    return nullptr;
-}
 
-std::string YamlNode::ScalarOf(const std::string& key) const {
-    const YamlNodePtr child = Find(key);
-    if (child && child->IsScalar()) {
-        return child->GetScalar();
+    std::string YamlNode::ScalarOf(const std::string& key) const 
+    {
+        const YamlNodePtr child = Find(key);
+        if (child && child->IsScalar()) 
+        {
+            return child->GetScalar();
+        }
+        return std::string();
     }
-    return std::string();
-}
 
 } // namespace acd
