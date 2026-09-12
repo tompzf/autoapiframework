@@ -61,6 +61,12 @@ else()
         "Linux: 'libwxgtk3.2-dev') or configure with -DACD_FETCH_WXWIDGETS=ON.")
 endif()
 
+if(WIN32)
+    enable_language(RC)
+    configure_file(src/app_icon.rc.in app_icon.rc @ONLY)
+    set(ACD_WINDOWS_RESOURCES "${CMAKE_CURRENT_BINARY_DIR}/app_icon.rc")
+endif()
+
 add_executable(AutoAPIComponentDesigner WIN32
     src/main.cpp
     src/main_frame.cpp
@@ -69,6 +75,7 @@ add_executable(AutoAPIComponentDesigner WIN32
     src/yaml_writer.cpp
     src/meta_model.cpp
     src/function_specification.cpp
+    ${ACD_WINDOWS_RESOURCES}
 )
 
 target_include_directories(AutoAPIComponentDesigner PRIVATE src)

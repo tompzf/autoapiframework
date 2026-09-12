@@ -52,32 +52,23 @@ wxWidgets.
 
 `cmake.sourceDirectory` in `.vscode/settings.json` already points to this
 folder, so *CMake: Select Configure Preset* -> *Configure* -> *Build* -> *Run*
-works from the repository window. Available presets: `windows-vcpkg`,
-`windows-msvc`, `windows-vs2022`, `linux-debug`. Only `windows-vs2022` pins a
-generator; the other presets use whatever toolchain CMake finds, so they also
-work with older Visual Studio versions, the Build Tools or MinGW
-(`set CMAKE_GENERATOR=MinGW Makefiles`).
+works from the repository window. Available presets: `windows-gcc` and
+`linux-debug`.
 
 ### Windows
 
-Nothing but Visual Studio (Desktop development with C++) and CMake is required:
-select the `windows-msvc` preset. If no wxWidgets installation is found, CMake
-downloads and builds wxWidgets 3.2.6 automatically (slow on the first
-configure, cached afterwards). Disable that with `-DACD_FETCH_WXWIDGETS=OFF`.
-
-Faster alternative with [vcpkg](https://vcpkg.io) - the `windows-vcpkg` preset
-only works when `VCPKG_ROOT` is set:
+Install CMake, MSYS2 UCRT64 GCC and `mingw32-make`. Ensure
+`C:\msys64\ucrt64\bin` is on `PATH`, then configure and build with GCC:
 
 ```powershell
-vcpkg install wxwidgets:x64-windows
-$env:VCPKG_ROOT = "C:\path\to\vcpkg"
-cmake --preset windows-vcpkg
-cmake --build --preset windows-vcpkg-debug
-.\build\windows-vcpkg\bin\Debug\AutoAPIComponentDesigner.exe
+cmake --preset windows-gcc
+cmake --build --preset windows-gcc-debug
+.\build\windows-gcc\bin\AutoAPIComponentDesigner.exe
 ```
 
-With a prebuilt wxWidgets tree, use the `windows-msvc` preset and set the
-`wxWidgets_ROOT_DIR` / `wxWidgets_LIB_DIR` CMake cache variables.
+If wxWidgets is not already installed, CMake downloads and builds wxWidgets
+3.2.6 automatically. This is slow only on the first configure and is cached
+afterwards. Disable it with `-DACD_FETCH_WXWIDGETS=OFF`.
 
 ### Linux
 
