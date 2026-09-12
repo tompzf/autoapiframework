@@ -17,6 +17,7 @@
 #include "main_frame.h"
 
 #include <wx/filename.h>
+#include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/listctrl.h>
 #include <wx/notebook.h>
@@ -136,6 +137,9 @@ namespace acd
     MainFrame::MainFrame()
         : wxFrame(nullptr, wxID_ANY, "AutoAPI Component Designer", wxDefaultPosition, wxSize(1200, 750)) 
     {
+#ifdef __WXMSW__
+        SetIcon(wxIcon("IDI_APP_ICON", wxBITMAP_TYPE_ICO_RESOURCE));
+#endif
         BuildUi();
         AutoLoadMetaModel();
         UpdateTitleAndStatus();
