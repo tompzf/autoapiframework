@@ -81,7 +81,7 @@ Conceptually: Runtime = "How do the components work together?"
 4. Naming
 ---------
 
-``*.acs``    Automotive Component Specification files
+``*.acs``    AutoAPI Component Specification files
 
-``*.ars``    Automotive Runtime Specification files
+``*.ars``    AutoAPI Runtime Specification files
 
