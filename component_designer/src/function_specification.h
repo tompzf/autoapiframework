@@ -37,8 +37,10 @@ namespace acd
         static constexpr const char* kParametersKey = "parameters";
         static constexpr const char* kSchedulingKey = "scheduling";
 
-        bool Load(const std::string& path, std::string& error);
+        bool Load(const std::string& expectedVersion, const std::string& path, std::string& error);
         bool Save(const std::string& path, std::string& error) const;
+        bool CheckMetaModelVersion(const YamlNodePtr ref, const std::string& expectedVersion, 
+            const std::string& path, std::string& error);
 
         bool IsLoaded() const { return m_root != nullptr; }
         const std::string& GetSourcePath() const { return m_sourcePath; }

@@ -53,7 +53,7 @@ namespace acd
         void OnExit(wxCommandEvent& event);
 
         void LoadSpecification(const wxString& path);
-        void LoadMetaModel(const wxString& path, bool reportErrors);
+        std::string LoadMetaModel(const wxString& path, bool reportErrors);
 
         void RefreshAll();
         void FillAttributes();
@@ -62,7 +62,8 @@ namespace acd
         void UpdateTitleAndStatus();
 
         FunctionSpecification m_specification;
-        MetaModel m_metaModel;
+        MetaModel   m_metaModel;
+        std::string m_metaModelVersion = "";
 
         wxNotebook* m_notebook = nullptr;
         wxListCtrl* m_attributeList = nullptr;

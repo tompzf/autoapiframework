@@ -281,7 +281,7 @@ namespace acd
         {
             if (wxFileName::FileExists(candidate)) 
             {
-                LoadMetaModel(candidate, false);
+                m_metaModelVersion = LoadMetaModel(candidate, true);
                 if (m_metaModel.IsLoaded()) 
                 {
                     return;
@@ -374,9 +374,9 @@ namespace acd
     {
         std::string error;
         FunctionSpecification specification;
-        if (!specification.Load(ToStd(path), error)) 
+        if (!specification.Load(m_metaModelVersion, ToStd(path), error)) 
         {
-            wxMessageBox("Could not read function specification:\n" + ToWx(error),
+            wxMessageBox("Could not read function specification:\n\n" + ToWx(error),
                         "AutoAPI Component Designer", wxOK | wxICON_ERROR, this);
             return;
         }
@@ -386,21 +386,22 @@ namespace acd
         UpdateTitleAndStatus();
     }
 
-    void MainFrame::LoadMetaModel(const wxString& path, bool reportErrors) 
+    std::string MainFrame::LoadMetaModel(const wxString& path, bool reportErrors) 
     {
         std::string error;
         if (!m_metaModel.Load(ToStd(path), error)) 
         {
             if (reportErrors) 
             {
-                wxMessageBox("Could not read meta model:\n" + ToWx(error), "AutoAPI Component Designer",
+                wxMessageBox("Could not read meta model:\n\n" + ToWx(error), "AutoAPI Component Designer",
                             wxOK | wxICON_ERROR, this);
             }
-            return;
+            return "";
         }
         m_metaModelLabel->SetLabel("Meta model: " + ToWx(m_metaModel.GetName()) + " " +
                                 ToWx(m_metaModel.GetVersion()));
         m_metaModelLabel->GetParent()->Layout();
+        return m_metaModel.GetVersion();
     }
 
     void MainFrame::RefreshAll() 

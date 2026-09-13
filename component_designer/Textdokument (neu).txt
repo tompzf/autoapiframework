@@ -1,0 +1,50 @@
+The most useful additions would be:
+
+1) Check compatibility with the loaded .acs
+
+The .acs file has functionSpecification.metaModelRef.name and version, exposed through function_specification.cpp:131 and function_specification.cpp:141.
+When loading a meta model, compare:
+
+m_metaModel.GetName() vs m_specification.GetMetaModelName()
+m_metaModel.GetVersion() vs m_specification.GetMetaModelVersion()
+If they differ, show a warning or reject the meta model.
+
+2) Validate that the meta model has the expected structure
+
+Loading currently accepts any file with a metamodel map in meta_model.cpp:34. It could also require expected interface types such as:
+
+Data
+Parameter
+Scheduling
+Otherwise the app should report something like: “This meta model does not define the interface types needed by this function specification.”
+
+3) Validate the .acs content against the meta model
+
+Once a compatible model is loaded, it can check each collection entry for:
+
+missing mandatory properties
+unknown properties
+invalid enum values
+invalid scalar/list/map shape
+unsupported data types
+This is probably the biggest value: the meta model becomes a validator, not just a column provider.
+
+4) Show validation status in the UI
+
+For example:
+
+status bar: Meta model matches specification
+warning dialog on mismatch
+additional “Validation” tab listing issues
+highlighted rows/cells in the existing collection lists
+5) Avoid silently applying a wrong manual meta model
+
+For AutoLoadMetaModel() it makes sense to silently skip incompatible candidates.
+For OnOpenMetaModel() it should report the mismatch and ask/deny before refreshing the UI.
+
+6) Move the hard-coded supported version check
+
+function_specification.cpp:51 currently hard-codes 0.3.0. If meta models are loadable at runtime, the app should either:
+
+compare the .acs against the loaded meta model version, or
+keep an explicit list of app-supported meta model versions in one central place.

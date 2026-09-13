@@ -21,7 +21,7 @@
 
 namespace acd 
 {
-    bool FunctionSpecification::Load(const std::string& path, std::string& error) 
+    bool FunctionSpecification::Load(const std::string& expectedVersion, const std::string& path, std::string& error) 
     {
         YamlParser parser;
         const YamlNodePtr root = parser.ParseFile(path, error);
@@ -35,9 +35,36 @@ namespace acd
             error = "'" + std::string(kRootKey) + "' root key not found in " + path;
             return false;
         }
+        const YamlNodePtr ref = spec->Find("metaModelRef");
+        if (!CheckMetaModelVersion(ref, expectedVersion,path, error))
+        {
+            return false;
+        }
+
         m_root = root;
         m_spec = spec;
         m_sourcePath = path;
+        return true;
+    }
+
+    bool FunctionSpecification::CheckMetaModelVersion(const YamlNodePtr ref, const std::string& expectedVersion, 
+        const std::string& path, std::string& error) 
+    {
+        if (ref && ref->IsMap() )
+        {
+            auto version = ref->ScalarOf("version");
+            if (version.compare(expectedVersion) != 0)
+            {
+                error = "Meta Model version '" + version + "' not supported, expected '" + expectedVersion + "'";
+                return false;
+            }
+        }
+        else
+        {
+            error = "'metaModelRef' not found or not a map in " + path;
+            return false;
+        }
+
         return true;
     }
 

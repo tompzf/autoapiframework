@@ -56,10 +56,18 @@ namespace acd
             return false;
         }
 
-        m_interfaceTypes.clear();
-        m_enums.clear();
         m_name = model->ScalarOf("name");
         m_version = model->ScalarOf("version");
+        if (m_name.compare("Eclipse-autoapiframework-Metamodel") != 0 ||
+            m_version.compare("") == 0)
+        {
+            error = "Incompatible metamodel file " + path;
+            return false;
+        }
+
+        m_interfaceTypes.clear();
+        m_enums.clear();
+
         m_sourcePath = path;
 
         if (const YamlNodePtr enums = model->Find("enums")) 
