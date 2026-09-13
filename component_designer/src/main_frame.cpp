@@ -229,7 +229,7 @@ namespace acd
                                 wxALIGN_CENTER_VERTICAL);
         editableAttributes->Add(m_versionText, 1, wxEXPAND);
         attributeSizer->Add(editableAttributes, 0, wxEXPAND | wxALL, 5);
-        attributeSizer->Add(new wxStaticText(attributePage, wxID_ANY, "Attributes"), 0, wxLEFT | wxTOP, 5);
+        attributeSizer->Add(new wxStaticText(attributePage, wxID_ANY, "Attributes (read only)"), 0, wxLEFT | wxTOP, 5);
         attributeSizer->Add(m_attributeList, 1, wxEXPAND | wxALL, 5);
         attributeSizer->Add(new wxStaticText(attributePage, wxID_ANY, "Description"), 0, wxLEFT, 5);
         attributeSizer->Add(m_descriptionText, 0, wxEXPAND | wxALL, 5);
