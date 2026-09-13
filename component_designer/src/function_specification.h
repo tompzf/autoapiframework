@@ -46,6 +46,9 @@ namespace acd
         std::string GetName() const;
         std::string GetVersion() const;
         std::string GetDescription() const;
+        void SetName(const std::string& value);
+        void SetVersion(const std::string& value);
+        void SetDescription(const std::string& value);
         std::string GetMetaModelName() const;
         std::string GetMetaModelVersion() const;
 
@@ -57,6 +60,7 @@ namespace acd
 
     private:
         const YamlNodePtr& Spec() const { return m_spec; }
+        void SetEditableAttribute(const std::string& key, const std::string& value);
 
         YamlNodePtr m_root;
         YamlNodePtr m_spec;

@@ -69,6 +69,8 @@ namespace acd
         wxListCtrl* m_signalList = nullptr;
         wxListCtrl* m_parameterList = nullptr;
         wxListCtrl* m_schedulingList = nullptr;
+        wxTextCtrl* m_nameText = nullptr;
+        wxTextCtrl* m_versionText = nullptr;
         wxTextCtrl* m_descriptionText = nullptr;
         wxStaticText* m_metaModelLabel = nullptr;
         wxButton* m_saveButton = nullptr;

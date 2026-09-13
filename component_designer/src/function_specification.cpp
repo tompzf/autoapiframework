@@ -67,6 +67,39 @@ namespace acd
         return m_spec ? m_spec->ScalarOf("description") : std::string();
     }
 
+    void FunctionSpecification::SetName(const std::string& value)
+    {
+        SetEditableAttribute("name", value);
+    }
+
+    void FunctionSpecification::SetVersion(const std::string& value)
+    {
+        SetEditableAttribute("version", value);
+    }
+
+    void FunctionSpecification::SetDescription(const std::string& value)
+    {
+        SetEditableAttribute("description", value);
+    }
+
+    void FunctionSpecification::SetEditableAttribute(const std::string& key, const std::string& value)
+    {
+        if (!m_spec)
+        {
+            return;
+        }
+
+        const YamlNodePtr attribute = m_spec->Find(key);
+        if (attribute && attribute->IsScalar())
+        {
+            attribute->SetScalar(value);
+        }
+        else
+        {
+            m_spec->Set(key, YamlNode::MakeScalar(value));
+        }
+    }
+
     std::string FunctionSpecification::GetMetaModelName() const 
     {
         if (!m_spec) 

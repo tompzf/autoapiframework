@@ -203,9 +203,32 @@ namespace acd
 
         wxPanel* attributePage = new wxPanel(m_notebook);
         m_attributeList = CreateReportList(attributePage);
+        m_nameText = new wxTextCtrl(attributePage, wxID_ANY);
+        m_versionText = new wxTextCtrl(attributePage, wxID_ANY);
         m_descriptionText = new wxTextCtrl(attributePage, wxID_ANY, wxEmptyString, wxDefaultPosition,
-                                        wxSize(-1, 140), wxTE_MULTILINE | wxTE_READONLY | wxTE_BESTWRAP);
+                                        wxSize(-1, 140), wxTE_MULTILINE | wxTE_BESTWRAP);
+        m_nameText->Bind(wxEVT_TEXT, [this](wxCommandEvent&)
+        {
+            m_specification.SetName(ToStd(m_nameText->GetValue()));
+        });
+        m_versionText->Bind(wxEVT_TEXT, [this](wxCommandEvent&)
+        {
+            m_specification.SetVersion(ToStd(m_versionText->GetValue()));
+        });
+        m_descriptionText->Bind(wxEVT_TEXT, [this](wxCommandEvent&)
+        {
+            m_specification.SetDescription(ToStd(m_descriptionText->GetValue()));
+        });
         wxBoxSizer* attributeSizer = new wxBoxSizer(wxVERTICAL);
+        wxFlexGridSizer* editableAttributes = new wxFlexGridSizer(2, 5, 5);
+        editableAttributes->AddGrowableCol(1, 1);
+        editableAttributes->Add(new wxStaticText(attributePage, wxID_ANY, "Name"), 0,
+                                wxALIGN_CENTER_VERTICAL);
+        editableAttributes->Add(m_nameText, 1, wxEXPAND);
+        editableAttributes->Add(new wxStaticText(attributePage, wxID_ANY, "Version"), 0,
+                                wxALIGN_CENTER_VERTICAL);
+        editableAttributes->Add(m_versionText, 1, wxEXPAND);
+        attributeSizer->Add(editableAttributes, 0, wxEXPAND | wxALL, 5);
         attributeSizer->Add(new wxStaticText(attributePage, wxID_ANY, "Attributes"), 0, wxLEFT | wxTOP, 5);
         attributeSizer->Add(m_attributeList, 1, wxEXPAND | wxALL, 5);
         attributeSizer->Add(new wxStaticText(attributePage, wxID_ANY, "Description"), 0, wxLEFT, 5);
@@ -404,10 +427,17 @@ namespace acd
         long row = 0;
         for (const auto& attribute : m_specification.GetAttributes()) 
         {
+            if (attribute.first == "name" || attribute.first == "version" ||
+                attribute.first == "description")
+            {
+                continue;
+            }
             m_attributeList->InsertItem(row, ToWx(attribute.first));
             m_attributeList->SetItem(row, 1, OneLine(attribute.second));
             ++row;
         }
+        m_nameText->SetValue(ToWx(m_specification.GetName()));
+        m_versionText->SetValue(ToWx(m_specification.GetVersion()));
         m_descriptionText->SetValue(ToWx(m_specification.GetDescription()));
     }
 
