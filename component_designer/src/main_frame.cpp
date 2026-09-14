@@ -160,6 +160,7 @@ namespace acd
 #endif
         BuildUi();
         AutoLoadMetaModel();
+        UpdateMetaModelButtonStates();
         UpdateTitleAndStatus();
     }
 
@@ -189,20 +190,19 @@ namespace acd
 
         wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
         m_newButton = new wxButton(panel, ID_NewSpecification, "New");
-        wxButton* readButton = new wxButton(panel, ID_OpenSpecification, "Read .acs file");
+        m_readButton = new wxButton(panel, ID_OpenSpecification, "Read .acs file");
         m_saveButton = new wxButton(panel, ID_SaveSpecification, "Save");
         m_saveButton->Enable(false);
         m_saveAsButton = new wxButton(panel, ID_SaveSpecificationAs, "Write .acs file as...");
         m_saveAsButton->Enable(false);
-        wxButton* metaButton = new wxButton(panel, ID_OpenMetaModel, "Load meta model...");
-        metaButton->Enable(false);
+        m_metaButton = new wxButton(panel, ID_OpenMetaModel, "Load meta model...");
         m_metaModelLabel = new wxStaticText(panel, wxID_ANY, "Meta model: <not loaded>");
 
         buttonSizer->Add(m_newButton, 0, wxALL, 5);
-        buttonSizer->Add(readButton, 0, wxALL, 5);
+        buttonSizer->Add(m_readButton, 0, wxALL, 5);
         buttonSizer->Add(m_saveButton, 0, wxALL, 5);
         buttonSizer->Add(m_saveAsButton, 0, wxALL, 5);
-        buttonSizer->Add(metaButton, 0, wxALL, 5);
+        buttonSizer->Add(m_metaButton, 0, wxALL, 5);
         buttonSizer->AddStretchSpacer();
         buttonSizer->Add(m_metaModelLabel, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
         wxImage logoImage(FindRuntimeFile(kLogoFileName), wxBITMAP_TYPE_PNG);
@@ -449,7 +449,10 @@ namespace acd
         {
             return;
         }
-        LoadMetaModel(dialog.GetPath(), true);
+        m_metaModelVersion = LoadMetaModel(dialog.GetPath(), true);
+        SetStatusText(m_metaModel.IsLoaded() ? "Meta model loaded" : "No meta model", 1);
+
+        UpdateMetaModelButtonStates();
         RefreshAll();
     }
 
@@ -726,6 +729,15 @@ namespace acd
         m_addButton->Enable(selectedList != nullptr);
         m_deleteButton->Enable(hasSelectedItem);
         m_editButton->Enable(hasSelectedItem);
+    }
+
+    void MainFrame::UpdateMetaModelButtonStates()
+    {
+        const bool metaModelLoaded = m_metaModel.IsLoaded();
+        const bool specificationLoaded = m_specification.IsLoaded();
+        m_newButton->Enable(metaModelLoaded && !specificationLoaded);
+        m_readButton->Enable(metaModelLoaded);
+        m_metaButton->Enable(!metaModelLoaded);
     }
 
     void MainFrame::UpdateTitleAndStatus() 

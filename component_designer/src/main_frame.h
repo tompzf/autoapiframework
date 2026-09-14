@@ -54,6 +54,7 @@ namespace acd
 
         void BuildUi();
         void AutoLoadMetaModel();
+        void UpdateMetaModelButtonStates();
 
         void OnNewSpecification(wxCommandEvent& event);
         void OnOpenSpecification(wxCommandEvent& event);
@@ -96,6 +97,8 @@ namespace acd
         wxTextCtrl* m_descriptionText = nullptr;
         wxStaticText* m_metaModelLabel = nullptr;
         wxButton* m_newButton = nullptr;
+        wxButton* m_readButton = nullptr;
+        wxButton* m_metaButton = nullptr;
         wxButton* m_saveButton = nullptr;
         wxButton* m_saveAsButton = nullptr;
         wxButton* m_addVisVssButton = nullptr;
