@@ -39,6 +39,8 @@ namespace acd
         static constexpr const char* kSchedulingKey = "scheduling";
 
         bool Load(const std::string& expectedVersion, const std::string& path, std::string& error);
+        /// Creates a fresh, empty function specification referencing the given meta model.
+        void New(const std::string& metaModelName, const std::string& metaModelVersion);
         bool Save(const std::string& path, std::string& error) const;
         std::string ToText() const;
         bool CheckMetaModelVersion(const YamlNodePtr ref, const std::string& expectedVersion, 

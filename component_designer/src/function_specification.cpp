@@ -47,6 +47,29 @@ namespace acd
         return true;
     }
 
+    void FunctionSpecification::New(const std::string& metaModelName, const std::string& metaModelVersion)
+    {
+        YamlNodePtr metaModelRef = YamlNode::MakeMap();
+        metaModelRef->Set("name", YamlNode::MakeScalar(metaModelName));
+        metaModelRef->Set("version", YamlNode::MakeScalar(metaModelVersion));
+
+        YamlNodePtr spec = YamlNode::MakeMap();
+        spec->Set("metaModelRef", metaModelRef);
+        spec->Set("name", YamlNode::MakeScalar("NewExample"));
+        spec->Set("version", YamlNode::MakeScalar("0.0.0"));
+        spec->Set("description", YamlNode::MakeScalar(""));
+        spec->Set(kDataInterfacesKey, YamlNode::MakeSequence());
+        spec->Set(kParametersKey, YamlNode::MakeSequence());
+        spec->Set(kSchedulingKey, YamlNode::MakeSequence());
+
+        YamlNodePtr root = YamlNode::MakeMap();
+        root->Set(kRootKey, spec);
+
+        m_root = root;
+        m_spec = spec;
+        m_sourcePath.clear();
+    }
+
     bool FunctionSpecification::CheckMetaModelVersion(const YamlNodePtr ref, const std::string& expectedVersion, 
         const std::string& path, std::string& error) 
     {

@@ -125,6 +125,7 @@ namespace acd
     } // namespace
 
     wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
+        EVT_BUTTON(MainFrame::ID_NewSpecification, MainFrame::OnNewSpecification)
         EVT_BUTTON(MainFrame::ID_OpenSpecification, MainFrame::OnOpenSpecification)
         EVT_BUTTON(MainFrame::ID_SaveSpecification, MainFrame::OnSaveSpecification)
         EVT_BUTTON(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
@@ -136,6 +137,7 @@ namespace acd
         EVT_BUTTON(MainFrame::ID_Validation, MainFrame::OnValidation)
         EVT_BUTTON(MainFrame::ID_Show, MainFrame::OnShow)
         EVT_BUTTON(MainFrame::ID_CreateApi, MainFrame::OnCreateApi)
+        EVT_MENU(MainFrame::ID_NewSpecification, MainFrame::OnNewSpecification)
         EVT_MENU(MainFrame::ID_OpenSpecification, MainFrame::OnOpenSpecification)
         EVT_MENU(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_MENU(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
@@ -164,6 +166,7 @@ namespace acd
     void MainFrame::BuildUi() 
     {
         wxMenu* fileMenu = new wxMenu();
+        fileMenu->Append(ID_NewSpecification, "&New function specification\tCtrl-N");
         fileMenu->Append(ID_OpenSpecification, "&Read function specification...\tCtrl-O");
         fileMenu->Append(ID_SaveSpecificationAs, "&Write function specification as...\tCtrl-S");
         fileMenu->AppendSeparator();
@@ -185,6 +188,7 @@ namespace acd
         wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
         wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+        m_newButton = new wxButton(panel, ID_NewSpecification, "New");
         wxButton* readButton = new wxButton(panel, ID_OpenSpecification, "Read .acs file");
         m_saveButton = new wxButton(panel, ID_SaveSpecification, "Save");
         m_saveButton->Enable(false);
@@ -194,6 +198,7 @@ namespace acd
         metaButton->Enable(false);
         m_metaModelLabel = new wxStaticText(panel, wxID_ANY, "Meta model: <not loaded>");
 
+        buttonSizer->Add(m_newButton, 0, wxALL, 5);
         buttonSizer->Add(readButton, 0, wxALL, 5);
         buttonSizer->Add(m_saveButton, 0, wxALL, 5);
         buttonSizer->Add(m_saveAsButton, 0, wxALL, 5);
@@ -343,6 +348,21 @@ namespace acd
                 }
             }
         }
+    }
+
+    void MainFrame::OnNewSpecification(wxCommandEvent&)
+    {
+        if (m_specification.IsLoaded())
+        {
+            return;
+        }
+
+        m_specification.New(m_metaModel.GetName(), m_metaModel.GetVersion());
+        m_newButton->Enable(false);
+        m_saveAsButton->Enable(true);
+        m_showButton->Enable(true);
+        RefreshAll();
+        UpdateTitleAndStatus();
     }
 
     void MainFrame::OnOpenSpecification(wxCommandEvent&) 
@@ -577,6 +597,7 @@ namespace acd
             return;
         }
         m_specification = std::move(specification);
+        m_newButton->Enable(false);
         m_saveButton->Enable(true);
         m_saveAsButton->Enable(true);
         m_showButton->Enable(true);

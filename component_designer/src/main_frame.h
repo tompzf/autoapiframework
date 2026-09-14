@@ -38,7 +38,8 @@ namespace acd
     private:
         enum 
         {
-            ID_OpenSpecification = wxID_HIGHEST + 1,
+            ID_NewSpecification = wxID_HIGHEST + 1,
+            ID_OpenSpecification,
             ID_SaveSpecification,
             ID_SaveSpecificationAs,
             ID_OpenMetaModel,
@@ -54,6 +55,7 @@ namespace acd
         void BuildUi();
         void AutoLoadMetaModel();
 
+        void OnNewSpecification(wxCommandEvent& event);
         void OnOpenSpecification(wxCommandEvent& event);
         void OnSaveSpecification(wxCommandEvent& event);
         void OnSaveSpecificationAs(wxCommandEvent& event);
@@ -93,6 +95,7 @@ namespace acd
         wxTextCtrl* m_versionText = nullptr;
         wxTextCtrl* m_descriptionText = nullptr;
         wxStaticText* m_metaModelLabel = nullptr;
+        wxButton* m_newButton = nullptr;
         wxButton* m_saveButton = nullptr;
         wxButton* m_saveAsButton = nullptr;
         wxButton* m_addVisVssButton = nullptr;
