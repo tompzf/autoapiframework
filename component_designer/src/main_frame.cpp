@@ -131,6 +131,7 @@ namespace acd
         EVT_BUTTON(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
         EVT_BUTTON(MainFrame::ID_Add, MainFrame::OnAdd)
         EVT_BUTTON(MainFrame::ID_Edit, MainFrame::OnEdit)
+        EVT_BUTTON(MainFrame::ID_Validation, MainFrame::OnValidation)
         EVT_MENU(MainFrame::ID_OpenSpecification, MainFrame::OnOpenSpecification)
         EVT_MENU(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_MENU(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
@@ -191,7 +192,7 @@ namespace acd
 
         buttonSizer->Add(readButton, 0, wxALL, 5);
         buttonSizer->Add(m_saveButton, 0, wxALL, 5);
-    buttonSizer->Add(m_saveAsButton, 0, wxALL, 5);
+        buttonSizer->Add(m_saveAsButton, 0, wxALL, 5);
         buttonSizer->Add(metaButton, 0, wxALL, 5);
         buttonSizer->AddStretchSpacer();
         buttonSizer->Add(m_metaModelLabel, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
@@ -211,8 +212,11 @@ namespace acd
         m_addButton->Enable(false);
         m_editButton = new wxButton(panel, ID_Edit, "Edit");
         m_editButton->Enable(false);
+        m_validationButton = new wxButton(panel, ID_Validation, "Validation");
+        m_validationButton->Enable(false);
         editButtonSizer->Add(m_addButton, 0, wxALL, 5);
         editButtonSizer->Add(m_editButton, 0, wxALL, 5);
+        editButtonSizer->Add(m_validationButton, 0, wxALL, 5);
         mainSizer->Add(editButtonSizer, 0, wxEXPAND);
 
         m_notebook = new wxNotebook(panel, wxID_ANY);
@@ -471,6 +475,10 @@ namespace acd
 
         wxUnusedVar(selectedTab);
         wxUnusedVar(selectedRow);
+    }
+
+    void MainFrame::OnValidation(wxCommandEvent&)
+    {
     }
 
     void MainFrame::OnAbout(wxCommandEvent&) 
