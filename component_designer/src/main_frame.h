@@ -43,9 +43,11 @@ namespace acd
             ID_SaveSpecificationAs,
             ID_OpenMetaModel,
             ID_Add,
+            ID_Delete,
             ID_Edit,
             ID_Validation,
-            ID_Show
+            ID_Show,
+            ID_CreateApi
         };
 
         void BuildUi();
@@ -56,9 +58,11 @@ namespace acd
         void OnSaveSpecificationAs(wxCommandEvent& event);
         void OnOpenMetaModel(wxCommandEvent& event);
         void OnAdd(wxCommandEvent& event);
+        void OnDelete(wxCommandEvent& event);
         void OnEdit(wxCommandEvent& event);
         void OnValidation(wxCommandEvent& event);
         void OnShow(wxCommandEvent& event);
+        void OnCreateApi(wxCommandEvent& event);
         void OnAbout(wxCommandEvent& event);
         void OnExit(wxCommandEvent& event);
 
@@ -89,9 +93,11 @@ namespace acd
         wxButton* m_saveButton = nullptr;
         wxButton* m_saveAsButton = nullptr;
         wxButton* m_addButton = nullptr;
+        wxButton* m_deleteButton = nullptr;
         wxButton* m_editButton = nullptr;
         wxButton* m_validationButton = nullptr;
         wxButton* m_showButton = nullptr;
+        wxButton* m_createApiButton = nullptr;
 
         wxDECLARE_EVENT_TABLE();
     };

@@ -130,9 +130,11 @@ namespace acd
         EVT_BUTTON(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_BUTTON(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
         EVT_BUTTON(MainFrame::ID_Add, MainFrame::OnAdd)
+        EVT_BUTTON(MainFrame::ID_Delete, MainFrame::OnDelete)
         EVT_BUTTON(MainFrame::ID_Edit, MainFrame::OnEdit)
         EVT_BUTTON(MainFrame::ID_Validation, MainFrame::OnValidation)
         EVT_BUTTON(MainFrame::ID_Show, MainFrame::OnShow)
+        EVT_BUTTON(MainFrame::ID_CreateApi, MainFrame::OnCreateApi)
         EVT_MENU(MainFrame::ID_OpenSpecification, MainFrame::OnOpenSpecification)
         EVT_MENU(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_MENU(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
@@ -211,16 +213,22 @@ namespace acd
         wxBoxSizer* editButtonSizer = new wxBoxSizer(wxHORIZONTAL);
         m_addButton = new wxButton(panel, ID_Add, "Add");
         m_addButton->Enable(false);
+        m_deleteButton = new wxButton(panel, ID_Delete, "Delete");
+        m_deleteButton->Enable(false);
         m_editButton = new wxButton(panel, ID_Edit, "Edit");
         m_editButton->Enable(false);
         m_validationButton = new wxButton(panel, ID_Validation, "Validation");
         m_validationButton->Enable(false);
         m_showButton = new wxButton(panel, ID_Show, "Show");
         m_showButton->Enable(false);
+        m_createApiButton = new wxButton(panel, ID_CreateApi, "Create API");
+        m_createApiButton->Enable(false);
         editButtonSizer->Add(m_addButton, 0, wxALL, 5);
+        editButtonSizer->Add(m_deleteButton, 0, wxALL, 5);
         editButtonSizer->Add(m_editButton, 0, wxALL, 5);
         editButtonSizer->Add(m_validationButton, 0, wxALL, 5);
         editButtonSizer->Add(m_showButton, 0, wxALL, 5);
+        editButtonSizer->Add(m_createApiButton, 0, wxALL, 5);
         mainSizer->Add(editButtonSizer, 0, wxEXPAND);
 
         m_notebook = new wxNotebook(panel, wxID_ANY);
@@ -449,6 +457,38 @@ namespace acd
         wxUnusedVar(selectedTab);   
     }
 
+    void MainFrame::OnDelete(wxCommandEvent&)
+    {
+        const int selectedTab = m_notebook->GetSelection();
+        wxListCtrl* selectedList = GetSelectedCollectionList();
+        const long selectedRow = selectedList
+            ? selectedList->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)
+            : -1;
+
+        std::string tabName = "";
+        switch (selectedTab)
+        {
+        case 1:
+            tabName = "Signals";
+            break;
+        case 2:
+            tabName = "Parameters";
+            break;
+        case 3:
+            tabName = "Scheduling";
+            break;
+        default:
+            tabName = "Attributes";
+            break;
+        }
+        wxMessageBox("Delete the selected item:\n\nTab: " + tabName + "\nRow: " + std::to_string(selectedRow),
+                        "AutoAPI Component Designer",
+                        wxOK | wxICON_ERROR, this);            
+
+        wxUnusedVar(selectedTab);
+        wxUnusedVar(selectedRow);
+    }
+
     void MainFrame::OnEdit(wxCommandEvent&) 
     {
         const int selectedTab = m_notebook->GetSelection();
@@ -483,6 +523,9 @@ namespace acd
 
     void MainFrame::OnValidation(wxCommandEvent&)
     {
+        wxMessageBox("Validation:\n\nnot implemented",
+                        "AutoAPI Component Designer",
+                        wxOK | wxICON_ERROR, this);          
     }
 
     void MainFrame::OnShow(wxCommandEvent&)
@@ -503,6 +546,13 @@ namespace acd
         dialog.SetSizer(sizer);
         dialog.CentreOnParent();
         dialog.ShowModal();
+    }
+
+    void MainFrame::OnCreateApi(wxCommandEvent&)
+    {
+        wxMessageBox("Create API:\n\nnot implemented",
+                        "AutoAPI Component Designer",
+                        wxOK | wxICON_ERROR, this);               
     }
 
     void MainFrame::OnAbout(wxCommandEvent&) 
@@ -553,6 +603,7 @@ namespace acd
 
     void MainFrame::RefreshAll() 
     {
+        m_deleteButton->Enable(false);
         m_editButton->Enable(false);
         FillAttributes();
         FillCollection(m_signalList, FunctionSpecification::kDataInterfacesKey, "Data");
@@ -634,8 +685,10 @@ namespace acd
     void MainFrame::UpdateCollectionButtonStates()
     {
         wxListCtrl* selectedList = GetSelectedCollectionList();
+        const bool hasSelectedItem = selectedList && selectedList->GetSelectedItemCount() > 0;
         m_addButton->Enable(selectedList != nullptr);
-        m_editButton->Enable(selectedList && selectedList->GetSelectedItemCount() > 0);
+        m_deleteButton->Enable(hasSelectedItem);
+        m_editButton->Enable(hasSelectedItem);
     }
 
     void MainFrame::UpdateTitleAndStatus() 
