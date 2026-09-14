@@ -17,6 +17,7 @@
 #ifndef ACD_FUNCTION_SPECIFICATION_H
 #define ACD_FUNCTION_SPECIFICATION_H
 
+#include <cstddef>
 #include <string>
 #include <utility>
 #include <vector>
@@ -60,6 +61,7 @@ namespace acd
 
         /// Entries of the signal, parameter or scheduling collection.
         std::vector<YamlNodePtr> GetCollection(const std::string& key) const;
+        bool RemoveCollectionItem(const std::string& key, std::size_t index);
 
     private:
         const YamlNodePtr& Spec() const { return m_spec; }

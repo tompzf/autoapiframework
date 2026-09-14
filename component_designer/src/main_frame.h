@@ -76,6 +76,7 @@ namespace acd
         void FillCollection(wxListCtrl* list, const std::string& collectionKey,
                             const std::string& interfaceTypeName);
         wxListCtrl* GetSelectedCollectionList() const;
+        const char* GetSelectedCollectionKey() const;
         void UpdateCollectionButtonStates();
         void UpdateTitleAndStatus();
 

@@ -470,34 +470,24 @@ namespace acd
 
     void MainFrame::OnDelete(wxCommandEvent&)
     {
-        const int selectedTab = m_notebook->GetSelection();
         wxListCtrl* selectedList = GetSelectedCollectionList();
-        const long selectedRow = selectedList
-            ? selectedList->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)
-            : -1;
-
-        std::string tabName = "";
-        switch (selectedTab)
+        const char* collectionKey = GetSelectedCollectionKey();
+        if (!selectedList || !collectionKey)
         {
-        case 1:
-            tabName = "Signals";
-            break;
-        case 2:
-            tabName = "Parameters";
-            break;
-        case 3:
-            tabName = "Scheduling";
-            break;
-        default:
-            tabName = "Attributes";
-            break;
+            return;
         }
-        wxMessageBox("Delete the selected item:\n\nTab: " + tabName + "\nRow: " + std::to_string(selectedRow),
-                        "AutoAPI Component Designer",
-                        wxOK | wxICON_ERROR, this);            
 
-        wxUnusedVar(selectedTab);
-        wxUnusedVar(selectedRow);
+        const long selectedRow = selectedList->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+        if (selectedRow < 0)
+        {
+            return;
+        }
+
+        if (m_specification.RemoveCollectionItem(collectionKey, static_cast<std::size_t>(selectedRow)))
+        {
+            RefreshAll();
+            SetStatusText(wxString::Format("Deleted item %ld", selectedRow + 1), 0);
+        }
     }
 
     void MainFrame::OnEdit(wxCommandEvent&) 
@@ -614,8 +604,6 @@ namespace acd
 
     void MainFrame::RefreshAll() 
     {
-        m_deleteButton->Enable(false);
-        m_editButton->Enable(false);
         FillAttributes();
         FillCollection(m_signalList, FunctionSpecification::kDataInterfacesKey, "Data");
         FillCollection(m_parameterList, FunctionSpecification::kParametersKey, "Parameter");
@@ -630,6 +618,7 @@ namespace acd
         m_notebook->SetPageText(3, wxString::Format(
             "Scheduling collection (%d)",
             static_cast<int>(m_specification.GetCollection(FunctionSpecification::kSchedulingKey).size())));
+        UpdateCollectionButtonStates();
     }
 
     void MainFrame::FillAttributes() 
@@ -688,6 +677,21 @@ namespace acd
             return m_parameterList;
         case 3:
             return m_schedulingList;
+        default:
+            return nullptr;
+        }
+    }
+
+    const char* MainFrame::GetSelectedCollectionKey() const
+    {
+        switch (m_notebook->GetSelection())
+        {
+        case 1:
+            return FunctionSpecification::kDataInterfacesKey;
+        case 2:
+            return FunctionSpecification::kParametersKey;
+        case 3:
+            return FunctionSpecification::kSchedulingKey;
         default:
             return nullptr;
         }

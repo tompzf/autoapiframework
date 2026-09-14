@@ -66,6 +66,7 @@ namespace acd
         /// Appends a key to a mapping. Duplicate keys are overwritten in place.
         void Set(const std::string& key, YamlNodePtr value);
         void Append(YamlNodePtr value);
+        bool RemoveAt(std::vector<YamlNodePtr>::size_type index);
 
         /// Returns the child for @p key or nullptr if absent / not a mapping.
         YamlNodePtr Find(const std::string& key) const;

@@ -56,6 +56,16 @@ namespace acd
 
     void YamlNode::Append(YamlNodePtr value) { m_sequence.push_back(std::move(value)); }
 
+    bool YamlNode::RemoveAt(std::vector<YamlNodePtr>::size_type index)
+    {
+        if (!IsSequence() || index >= m_sequence.size())
+        {
+            return false;
+        }
+        m_sequence.erase(m_sequence.begin() + static_cast<std::vector<YamlNodePtr>::difference_type>(index));
+        return true;
+    }
+
     YamlNodePtr YamlNode::Find(const std::string& key) const 
     {
         for (const auto& entry : m_map) 

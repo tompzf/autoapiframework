@@ -201,4 +201,17 @@ namespace acd
         return node->GetSequence();
     }
 
+    bool FunctionSpecification::RemoveCollectionItem(const std::string& key, std::size_t index)
+    {
+        if (!m_spec)
+        {
+            return false;
+        }
+        const YamlNodePtr node = m_spec->Find(key);
+        if (!node || !node->IsSequence())
+        {
+            return false;
+        }
+        return node->RemoveAt(index);
+    }
 } // namespace acd
