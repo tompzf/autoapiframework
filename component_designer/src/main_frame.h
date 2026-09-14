@@ -43,7 +43,7 @@ namespace acd
             ID_SaveSpecification,
             ID_SaveSpecificationAs,
             ID_OpenMetaModel,
-            ID_AddVisVss,
+            ID_AddViaVss,
             ID_Add,
             ID_Delete,
             ID_Edit,
@@ -61,7 +61,7 @@ namespace acd
         void OnSaveSpecification(wxCommandEvent& event);
         void OnSaveSpecificationAs(wxCommandEvent& event);
         void OnOpenMetaModel(wxCommandEvent& event);
-        void OnAddVisVss(wxCommandEvent& event);
+        void OnAddViaVss(wxCommandEvent& event);
         void OnAdd(wxCommandEvent& event);
         void OnDelete(wxCommandEvent& event);
         void OnEdit(wxCommandEvent& event);
@@ -101,7 +101,7 @@ namespace acd
         wxButton* m_metaButton = nullptr;
         wxButton* m_saveButton = nullptr;
         wxButton* m_saveAsButton = nullptr;
-        wxButton* m_addVisVssButton = nullptr;
+        wxButton* m_addViaVssButton = nullptr;
         wxButton* m_addButton = nullptr;
         wxButton* m_deleteButton = nullptr;
         wxButton* m_editButton = nullptr;

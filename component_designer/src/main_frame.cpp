@@ -130,7 +130,7 @@ namespace acd
         EVT_BUTTON(MainFrame::ID_SaveSpecification, MainFrame::OnSaveSpecification)
         EVT_BUTTON(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_BUTTON(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
-        EVT_BUTTON(MainFrame::ID_AddVisVss, MainFrame::OnAddVisVss)
+        EVT_BUTTON(MainFrame::ID_AddViaVss, MainFrame::OnAddViaVss)
         EVT_BUTTON(MainFrame::ID_Add, MainFrame::OnAdd)
         EVT_BUTTON(MainFrame::ID_Delete, MainFrame::OnDelete)
         EVT_BUTTON(MainFrame::ID_Edit, MainFrame::OnEdit)
@@ -217,8 +217,8 @@ namespace acd
         mainSizer->Add(buttonSizer, 0, wxEXPAND);
 
         wxBoxSizer* editButtonSizer = new wxBoxSizer(wxHORIZONTAL);
-    m_addVisVssButton = new wxButton(panel, ID_AddVisVss, "Add via vss");
-    m_addVisVssButton->Enable(false);
+    m_addViaVssButton = new wxButton(panel, ID_AddViaVss, "Add via vss");
+    m_addViaVssButton->Enable(false);
         m_addButton = new wxButton(panel, ID_Add, "Add");
         m_addButton->Enable(false);
         m_deleteButton = new wxButton(panel, ID_Delete, "Delete");
@@ -231,7 +231,7 @@ namespace acd
         m_showButton->Enable(false);
         m_createApiButton = new wxButton(panel, ID_CreateApi, "Create API");
         m_createApiButton->Enable(false);
-        editButtonSizer->Add(m_addVisVssButton, 0, wxALL, 5);
+        editButtonSizer->Add(m_addViaVssButton, 0, wxALL, 5);
         editButtonSizer->Add(m_addButton, 0, wxALL, 5);
         editButtonSizer->Add(m_deleteButton, 0, wxALL, 5);
         editButtonSizer->Add(m_editButton, 0, wxALL, 5);
@@ -361,6 +361,7 @@ namespace acd
         m_newButton->Enable(false);
         m_saveAsButton->Enable(true);
         m_showButton->Enable(true);
+		m_createApiButton->Enable(true);
         RefreshAll();
         UpdateTitleAndStatus();
     }
@@ -456,9 +457,9 @@ namespace acd
         RefreshAll();
     }
 
-    void MainFrame::OnAddVisVss(wxCommandEvent&)
+    void MainFrame::OnAddViaVss(wxCommandEvent&)
     {
-        wxMessageBox("Add signal via vss:\n\nnot implemented",
+        wxMessageBox("Add signal via vss:\n\n NOT IMPLEMENTED ",
                 "AutoAPI Component Designer",
                 wxOK | wxICON_ERROR, this);   
     }
@@ -484,7 +485,7 @@ namespace acd
             break;
         }
 
-        wxMessageBox("Add item to the selected tab:\n\nTab: " + tabName,
+        wxMessageBox("Add item to the selected tab:\n\nTab: " + tabName + "\n\n NOT IMPLEMENTED ",
                         "AutoAPI Component Designer",
                         wxOK | wxICON_ERROR, this);            
 
@@ -537,7 +538,7 @@ namespace acd
             tabName = "Attributes";
             break;
         }
-        wxMessageBox("Edit the selected item:\n\nTab: " + tabName + "\nRow: " + std::to_string(selectedRow),
+        wxMessageBox("Edit the selected item:\n\nTab: " + tabName + "\nRow: " + std::to_string(selectedRow) + "\n\n NOT IMPLEMENTED ",
                         "AutoAPI Component Designer",
                         wxOK | wxICON_ERROR, this);            
 
@@ -547,7 +548,7 @@ namespace acd
 
     void MainFrame::OnValidation(wxCommandEvent&)
     {
-        wxMessageBox("Validation:\n\nnot implemented",
+        wxMessageBox("Validation:\n\n NOT IMPLEMENTED ",
                         "AutoAPI Component Designer",
                         wxOK | wxICON_ERROR, this);          
     }
@@ -574,7 +575,7 @@ namespace acd
 
     void MainFrame::OnCreateApi(wxCommandEvent&)
     {
-        wxMessageBox("Create API:\n\nnot implemented",
+        wxMessageBox("Create API:\n\n NOT IMPLEMENTED ",
                         "AutoAPI Component Designer",
                         wxOK | wxICON_ERROR, this);               
     }
@@ -604,6 +605,7 @@ namespace acd
         m_saveButton->Enable(true);
         m_saveAsButton->Enable(true);
         m_showButton->Enable(true);
+		m_createApiButton->Enable(true);
         RefreshAll();
         UpdateTitleAndStatus();
     }
@@ -725,7 +727,7 @@ namespace acd
     {
         wxListCtrl* selectedList = GetSelectedCollectionList();
         const bool hasSelectedItem = selectedList && selectedList->GetSelectedItemCount() > 0;
-        m_addVisVssButton->Enable(m_notebook->GetSelection() == 1);
+        m_addViaVssButton->Enable(m_notebook->GetSelection() == 1);
         m_addButton->Enable(selectedList != nullptr);
         m_deleteButton->Enable(hasSelectedItem);
         m_editButton->Enable(hasSelectedItem);
