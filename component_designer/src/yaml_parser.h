@@ -36,6 +36,8 @@ namespace acd
         YamlNodePtr ParseText(const std::string& text, std::string& error);
         /// Reads and parses @p path. Returns nullptr and fills @p error on failure.
         YamlNodePtr ParseFile(const std::string& path, std::string& error);
+        /// Reads @p path. Returns file conent.
+        std::string GetFileContent(const std::string& path);        
     };
 
 } // namespace acd

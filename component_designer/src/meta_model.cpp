@@ -115,6 +115,7 @@ namespace acd
             }
         }
 
+        m_fileContent = parser.GetFileContent(path); // Initialize the file content to an empty string
         m_loaded = true;
         return true;
     }

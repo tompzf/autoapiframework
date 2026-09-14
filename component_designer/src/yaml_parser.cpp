@@ -443,4 +443,16 @@ namespace acd
         return ParseText(buffer.str(), error);
     }
 
+    std::string YamlParser::GetFileContent(const std::string& path) 
+    {
+        std::ifstream file(path);
+        if (!file) 
+        {
+            return "";
+        }
+        std::ostringstream buffer;
+        buffer << file.rdbuf();
+        return buffer.str();
+    }    
+
 } // namespace acd

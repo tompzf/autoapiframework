@@ -58,6 +58,7 @@ namespace acd
         const std::string& GetName() const { return m_name; }
         const std::string& GetVersion() const { return m_version; }
         const std::string& GetSourcePath() const { return m_sourcePath; }
+        const std::string& GetFileContent() const { return m_fileContent; }
 
         const MetaInterfaceType* FindInterfaceType(const std::string& name) const;
         /// Allowed values of the enumeration @p name, empty if unknown.
@@ -70,6 +71,7 @@ namespace acd
 
     private:
         bool m_loaded = false;
+        std::string m_fileContent;        
         std::string m_name;
         std::string m_version;
         std::string m_sourcePath;

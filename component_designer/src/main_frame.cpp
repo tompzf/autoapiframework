@@ -130,6 +130,7 @@ namespace acd
         EVT_BUTTON(MainFrame::ID_SaveSpecification, MainFrame::OnSaveSpecification)
         EVT_BUTTON(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_BUTTON(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
+        EVT_BUTTON(MainFrame::ID_ShowMetaModel, MainFrame::OnShowMetaModel)
         EVT_BUTTON(MainFrame::ID_AddViaVss, MainFrame::OnAddViaVss)
         EVT_BUTTON(MainFrame::ID_Add, MainFrame::OnAdd)
         EVT_BUTTON(MainFrame::ID_Delete, MainFrame::OnDelete)
@@ -196,6 +197,7 @@ namespace acd
         m_saveAsButton = new wxButton(panel, ID_SaveSpecificationAs, "Write .acs file as...");
         m_saveAsButton->Enable(false);
         m_metaButton = new wxButton(panel, ID_OpenMetaModel, "Load meta model...");
+        m_showMetaModelButton = new wxButton(panel, ID_ShowMetaModel, "Show meta model");
         m_metaModelLabel = new wxStaticText(panel, wxID_ANY, "Meta model: <not loaded>");
 
         buttonSizer->Add(m_newButton, 0, wxALL, 5);
@@ -203,6 +205,7 @@ namespace acd
         buttonSizer->Add(m_saveButton, 0, wxALL, 5);
         buttonSizer->Add(m_saveAsButton, 0, wxALL, 5);
         buttonSizer->Add(m_metaButton, 0, wxALL, 5);
+        buttonSizer->Add(m_showMetaModelButton, 0, wxALL, 5);
         buttonSizer->AddStretchSpacer();
         buttonSizer->Add(m_metaModelLabel, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
         wxImage logoImage(FindRuntimeFile(kLogoFileName), wxBITMAP_TYPE_PNG);
@@ -456,6 +459,26 @@ namespace acd
 
         UpdateMetaModelButtonStates();
         RefreshAll();
+    }
+
+    void MainFrame::OnShowMetaModel(wxCommandEvent&)
+    {
+        if (!m_metaModel.IsLoaded())
+        {
+            return;
+        }
+
+        wxDialog dialog(this, wxID_ANY, "Meta model", wxDefaultPosition,
+                        wxSize(900, 650), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+        wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+        sizer->Add(new wxTextCtrl(&dialog, wxID_ANY, ToWx(m_metaModel.GetFileContent()),
+                                 wxDefaultPosition, wxDefaultSize,
+                                 wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP),
+                   1, wxEXPAND | wxALL, 8);
+        sizer->Add(dialog.CreateSeparatedButtonSizer(wxOK), 0, wxEXPAND | wxALL, 8);
+        dialog.SetSizer(sizer);
+        dialog.CentreOnParent();
+        dialog.ShowModal();
     }
 
     void MainFrame::OnAddViaVss(wxCommandEvent&)
@@ -748,6 +771,7 @@ namespace acd
         m_newButton->Enable(metaModelLoaded && !specificationLoaded);
         m_readButton->Enable(metaModelLoaded);
         m_metaButton->Enable(!metaModelLoaded);
+        m_showMetaModelButton->Enable(metaModelLoaded);
     }
 
     void MainFrame::UpdateTitleAndStatus() 
