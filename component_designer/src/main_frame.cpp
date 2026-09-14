@@ -128,6 +128,8 @@ namespace acd
         EVT_BUTTON(MainFrame::ID_OpenSpecification, MainFrame::OnOpenSpecification)
         EVT_BUTTON(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_BUTTON(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
+        EVT_BUTTON(MainFrame::ID_Add, MainFrame::OnAdd)
+        EVT_BUTTON(MainFrame::ID_Edit, MainFrame::OnEdit)
         EVT_MENU(MainFrame::ID_OpenSpecification, MainFrame::OnOpenSpecification)
         EVT_MENU(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_MENU(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
@@ -199,6 +201,15 @@ namespace acd
         }
         mainSizer->Add(buttonSizer, 0, wxEXPAND);
 
+        wxBoxSizer* editButtonSizer = new wxBoxSizer(wxHORIZONTAL);
+        m_addButton = new wxButton(panel, ID_Add, "Add");
+        m_addButton->Enable(false);
+        m_editButton = new wxButton(panel, ID_Edit, "Edit");
+        m_editButton->Enable(false);
+        editButtonSizer->Add(m_addButton, 0, wxALL, 5);
+        editButtonSizer->Add(m_editButton, 0, wxALL, 5);
+        mainSizer->Add(editButtonSizer, 0, wxEXPAND);
+
         m_notebook = new wxNotebook(panel, wxID_ANY);
 
         wxPanel* attributePage = new wxPanel(m_notebook);
@@ -248,11 +259,30 @@ namespace acd
         wxPanel* signalPage = makeListPage(&m_signalList);
         wxPanel* parameterPage = makeListPage(&m_parameterList);
         wxPanel* schedulingPage = makeListPage(&m_schedulingList);
+        auto bindEditButtonState = [this](wxListCtrl* list)
+        {
+            list->Bind(wxEVT_LIST_ITEM_SELECTED, [this](wxListEvent&)
+            {
+                UpdateCollectionButtonStates();
+            });
+            list->Bind(wxEVT_LIST_ITEM_DESELECTED, [this](wxListEvent&)
+            {
+                UpdateCollectionButtonStates();
+            });
+        };
+        bindEditButtonState(m_signalList);
+        bindEditButtonState(m_parameterList);
+        bindEditButtonState(m_schedulingList);
 
         m_notebook->AddPage(attributePage, "Attributes", true);
         m_notebook->AddPage(signalPage, "Signal collection");
         m_notebook->AddPage(parameterPage, "Parameter collection");
         m_notebook->AddPage(schedulingPage, "Scheduling collection");
+        m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, [this](wxBookCtrlEvent& event)
+        {
+            UpdateCollectionButtonStates();
+            event.Skip();
+        });
 
         mainSizer->Add(m_notebook, 1, wxEXPAND | wxALL, 5);
         panel->SetSizer(mainSizer);
@@ -340,7 +370,7 @@ namespace acd
         std::string error;
         if (!m_specification.Save(ToStd(dialog.GetPath()), error)) 
         {
-            wxMessageBox("Could not write file:\n" + ToWx(error), "AutoAPI Component Designer",
+            wxMessageBox("Could not write file:\n\n" + ToWx(error), "AutoAPI Component Designer",
                         wxOK | wxICON_ERROR, this);
             return;
         }
@@ -358,6 +388,66 @@ namespace acd
         }
         LoadMetaModel(dialog.GetPath(), true);
         RefreshAll();
+    }
+
+    void MainFrame::OnAdd(wxCommandEvent&)
+    {
+        const int selectedTab = m_notebook->GetSelection();
+
+        std::string tabName = "";
+        switch (selectedTab)
+        {
+        case 1:
+            tabName = "Signals";
+            break;
+        case 2:
+            tabName = "Parameters";
+            break;
+        case 3:
+            tabName = "Scheduling";
+            break;
+        default:
+            tabName = "Attributes";
+            break;
+        }
+
+        wxMessageBox("Add item to the selected tab:\n\nTab: " + tabName,
+                        "AutoAPI Component Designer",
+                        wxOK | wxICON_ERROR, this);            
+
+        wxUnusedVar(selectedTab);   
+    }
+
+    void MainFrame::OnEdit(wxCommandEvent&) 
+    {
+        const int selectedTab = m_notebook->GetSelection();
+        wxListCtrl* selectedList = GetSelectedCollectionList();
+        const long selectedRow = selectedList
+            ? selectedList->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)
+            : -1;
+
+        std::string tabName = "";
+        switch (selectedTab)
+        {
+        case 1:
+            tabName = "Signals";
+            break;
+        case 2:
+            tabName = "Parameters";
+            break;
+        case 3:
+            tabName = "Scheduling";
+            break;
+        default:
+            tabName = "Attributes";
+            break;
+        }
+        wxMessageBox("Edit the selected item:\n\nTab: " + tabName + "\nRow: " + std::to_string(selectedRow),
+                        "AutoAPI Component Designer",
+                        wxOK | wxICON_ERROR, this);            
+
+        wxUnusedVar(selectedTab);
+        wxUnusedVar(selectedRow);
     }
 
     void MainFrame::OnAbout(wxCommandEvent&) 
@@ -406,6 +496,7 @@ namespace acd
 
     void MainFrame::RefreshAll() 
     {
+        m_editButton->Enable(false);
         FillAttributes();
         FillCollection(m_signalList, FunctionSpecification::kDataInterfacesKey, "Data");
         FillCollection(m_parameterList, FunctionSpecification::kParametersKey, "Parameter");
@@ -466,6 +557,28 @@ namespace acd
             ++row;
         }
         AutoSizeColumns(list);
+    }
+
+    wxListCtrl* MainFrame::GetSelectedCollectionList() const
+    {
+        switch (m_notebook->GetSelection())
+        {
+        case 1:
+            return m_signalList;
+        case 2:
+            return m_parameterList;
+        case 3:
+            return m_schedulingList;
+        default:
+            return nullptr;
+        }
+    }
+
+    void MainFrame::UpdateCollectionButtonStates()
+    {
+        wxListCtrl* selectedList = GetSelectedCollectionList();
+        m_addButton->Enable(selectedList != nullptr);
+        m_editButton->Enable(selectedList && selectedList->GetSelectedItemCount() > 0);
     }
 
     void MainFrame::UpdateTitleAndStatus() 

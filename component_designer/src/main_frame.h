@@ -40,7 +40,9 @@ namespace acd
         {
             ID_OpenSpecification = wxID_HIGHEST + 1,
             ID_SaveSpecificationAs,
-            ID_OpenMetaModel
+            ID_OpenMetaModel,
+            ID_Add,
+            ID_Edit
         };
 
         void BuildUi();
@@ -49,6 +51,8 @@ namespace acd
         void OnOpenSpecification(wxCommandEvent& event);
         void OnSaveSpecificationAs(wxCommandEvent& event);
         void OnOpenMetaModel(wxCommandEvent& event);
+        void OnAdd(wxCommandEvent& event);
+        void OnEdit(wxCommandEvent& event);
         void OnAbout(wxCommandEvent& event);
         void OnExit(wxCommandEvent& event);
 
@@ -59,6 +63,8 @@ namespace acd
         void FillAttributes();
         void FillCollection(wxListCtrl* list, const std::string& collectionKey,
                             const std::string& interfaceTypeName);
+        wxListCtrl* GetSelectedCollectionList() const;
+        void UpdateCollectionButtonStates();
         void UpdateTitleAndStatus();
 
         FunctionSpecification m_specification;
@@ -75,6 +81,8 @@ namespace acd
         wxTextCtrl* m_descriptionText = nullptr;
         wxStaticText* m_metaModelLabel = nullptr;
         wxButton* m_saveButton = nullptr;
+        wxButton* m_addButton = nullptr;
+        wxButton* m_editButton = nullptr;
 
         wxDECLARE_EVENT_TABLE();
     };
