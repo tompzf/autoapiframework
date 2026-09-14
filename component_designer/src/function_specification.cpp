@@ -79,6 +79,11 @@ namespace acd
         return writer.WriteFile(path, m_root, error);
     }
 
+    std::string FunctionSpecification::ToText() const
+    {
+        return m_root ? YamlWriter().WriteText(m_root) : std::string();
+    }
+
     std::string FunctionSpecification::GetName() const 
     {
         return m_spec ? m_spec->ScalarOf("name") : std::string();

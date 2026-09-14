@@ -39,6 +39,7 @@ namespace acd
 
         bool Load(const std::string& expectedVersion, const std::string& path, std::string& error);
         bool Save(const std::string& path, std::string& error) const;
+        std::string ToText() const;
         bool CheckMetaModelVersion(const YamlNodePtr ref, const std::string& expectedVersion, 
             const std::string& path, std::string& error);
 

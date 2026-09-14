@@ -132,6 +132,7 @@ namespace acd
         EVT_BUTTON(MainFrame::ID_Add, MainFrame::OnAdd)
         EVT_BUTTON(MainFrame::ID_Edit, MainFrame::OnEdit)
         EVT_BUTTON(MainFrame::ID_Validation, MainFrame::OnValidation)
+        EVT_BUTTON(MainFrame::ID_Show, MainFrame::OnShow)
         EVT_MENU(MainFrame::ID_OpenSpecification, MainFrame::OnOpenSpecification)
         EVT_MENU(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_MENU(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
@@ -214,9 +215,12 @@ namespace acd
         m_editButton->Enable(false);
         m_validationButton = new wxButton(panel, ID_Validation, "Validation");
         m_validationButton->Enable(false);
+        m_showButton = new wxButton(panel, ID_Show, "Show");
+        m_showButton->Enable(false);
         editButtonSizer->Add(m_addButton, 0, wxALL, 5);
         editButtonSizer->Add(m_editButton, 0, wxALL, 5);
         editButtonSizer->Add(m_validationButton, 0, wxALL, 5);
+        editButtonSizer->Add(m_showButton, 0, wxALL, 5);
         mainSizer->Add(editButtonSizer, 0, wxEXPAND);
 
         m_notebook = new wxNotebook(panel, wxID_ANY);
@@ -481,6 +485,26 @@ namespace acd
     {
     }
 
+    void MainFrame::OnShow(wxCommandEvent&)
+    {
+        if (!m_specification.IsLoaded())
+        {
+            return;
+        }
+
+        wxDialog dialog(this, wxID_ANY, "Function specification", wxDefaultPosition,
+                        wxSize(900, 650), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+        wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+        sizer->Add(new wxTextCtrl(&dialog, wxID_ANY, ToWx(m_specification.ToText()),
+                                wxDefaultPosition, wxDefaultSize,
+                                wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP),
+                   1, wxEXPAND | wxALL, 8);
+        sizer->Add(dialog.CreateSeparatedButtonSizer(wxOK), 0, wxEXPAND | wxALL, 8);
+        dialog.SetSizer(sizer);
+        dialog.CentreOnParent();
+        dialog.ShowModal();
+    }
+
     void MainFrame::OnAbout(wxCommandEvent&) 
     {
         wxMessageBox("AutoAPI Component Designer\n\n"
@@ -504,6 +528,7 @@ namespace acd
         m_specification = std::move(specification);
         m_saveButton->Enable(true);
         m_saveAsButton->Enable(true);
+        m_showButton->Enable(true);
         RefreshAll();
         UpdateTitleAndStatus();
     }
