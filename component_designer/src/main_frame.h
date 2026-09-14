@@ -49,7 +49,7 @@ namespace acd
             ID_Edit,
             ID_Validation,
             ID_Show,
-            ID_CreateApi
+            ID_CreateAPI
         };
 
         void BuildUi();
@@ -67,7 +67,7 @@ namespace acd
         void OnEdit(wxCommandEvent& event);
         void OnValidation(wxCommandEvent& event);
         void OnShow(wxCommandEvent& event);
-        void OnCreateApi(wxCommandEvent& event);
+        void OnCreateAPI(wxCommandEvent& event);
         void OnAbout(wxCommandEvent& event);
         void OnExit(wxCommandEvent& event);
 
@@ -107,7 +107,7 @@ namespace acd
         wxButton* m_editButton = nullptr;
         wxButton* m_validationButton = nullptr;
         wxButton* m_showButton = nullptr;
-        wxButton* m_createApiButton = nullptr;
+        wxButton* m_createAPIButton = nullptr;
 
         wxDECLARE_EVENT_TABLE();
     };

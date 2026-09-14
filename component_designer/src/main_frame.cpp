@@ -136,7 +136,7 @@ namespace acd
         EVT_BUTTON(MainFrame::ID_Edit, MainFrame::OnEdit)
         EVT_BUTTON(MainFrame::ID_Validation, MainFrame::OnValidation)
         EVT_BUTTON(MainFrame::ID_Show, MainFrame::OnShow)
-        EVT_BUTTON(MainFrame::ID_CreateApi, MainFrame::OnCreateApi)
+        EVT_BUTTON(MainFrame::ID_CreateAPI, MainFrame::OnCreateAPI)
         EVT_MENU(MainFrame::ID_NewSpecification, MainFrame::OnNewSpecification)
         EVT_MENU(MainFrame::ID_OpenSpecification, MainFrame::OnOpenSpecification)
         EVT_MENU(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
@@ -225,19 +225,19 @@ namespace acd
         m_deleteButton->Enable(false);
         m_editButton = new wxButton(panel, ID_Edit, "Edit");
         m_editButton->Enable(false);
-        m_validationButton = new wxButton(panel, ID_Validation, "Validation");
+        m_validationButton = new wxButton(panel, ID_Validation, "Syntax check");
         m_validationButton->Enable(false);
         m_showButton = new wxButton(panel, ID_Show, "Show");
         m_showButton->Enable(false);
-        m_createApiButton = new wxButton(panel, ID_CreateApi, "Create API");
-        m_createApiButton->Enable(false);
+        m_createAPIButton = new wxButton(panel, ID_CreateAPI, "Create API");
+        m_createAPIButton->Enable(false);
         editButtonSizer->Add(m_addViaVssButton, 0, wxALL, 5);
         editButtonSizer->Add(m_addButton, 0, wxALL, 5);
         editButtonSizer->Add(m_deleteButton, 0, wxALL, 5);
         editButtonSizer->Add(m_editButton, 0, wxALL, 5);
         editButtonSizer->Add(m_validationButton, 0, wxALL, 5);
         editButtonSizer->Add(m_showButton, 0, wxALL, 5);
-        editButtonSizer->Add(m_createApiButton, 0, wxALL, 5);
+        editButtonSizer->Add(m_createAPIButton, 0, wxALL, 5);
         mainSizer->Add(editButtonSizer, 0, wxEXPAND);
 
         m_notebook = new wxNotebook(panel, wxID_ANY);
@@ -361,7 +361,8 @@ namespace acd
         m_newButton->Enable(false);
         m_saveAsButton->Enable(true);
         m_showButton->Enable(true);
-		m_createApiButton->Enable(true);
+        m_validationButton->Enable(true);        
+		m_createAPIButton->Enable(true);
         RefreshAll();
         UpdateTitleAndStatus();
     }
@@ -567,13 +568,19 @@ namespace acd
                                 wxDefaultPosition, wxDefaultSize,
                                 wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP),
                    1, wxEXPAND | wxALL, 8);
-        sizer->Add(dialog.CreateSeparatedButtonSizer(wxOK), 0, wxEXPAND | wxALL, 8);
+        wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+        wxButton* syntaxCheckButton = new wxButton(&dialog, wxID_ANY, "Syntax check");
+        syntaxCheckButton->Bind(wxEVT_BUTTON, &MainFrame::OnValidation, this);
+        buttonSizer->Add(syntaxCheckButton);
+        buttonSizer->AddStretchSpacer();
+        buttonSizer->Add(dialog.CreateButtonSizer(wxOK));
+        sizer->Add(buttonSizer, 0, wxEXPAND | wxALL, 8);
         dialog.SetSizer(sizer);
         dialog.CentreOnParent();
         dialog.ShowModal();
     }
 
-    void MainFrame::OnCreateApi(wxCommandEvent&)
+    void MainFrame::OnCreateAPI(wxCommandEvent&)
     {
         wxMessageBox("Create API:\n\n NOT IMPLEMENTED ",
                         "AutoAPI Component Designer",
@@ -605,7 +612,8 @@ namespace acd
         m_saveButton->Enable(true);
         m_saveAsButton->Enable(true);
         m_showButton->Enable(true);
-		m_createApiButton->Enable(true);
+        m_validationButton->Enable(true);        
+		m_createAPIButton->Enable(true);
         RefreshAll();
         UpdateTitleAndStatus();
     }
