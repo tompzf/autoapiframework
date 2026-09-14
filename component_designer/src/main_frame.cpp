@@ -183,6 +183,7 @@ namespace acd
         m_saveButton = new wxButton(panel, ID_SaveSpecificationAs, "Write .acs file as...");
         m_saveButton->Enable(false);
         wxButton* metaButton = new wxButton(panel, ID_OpenMetaModel, "Load meta model...");
+        metaButton->Enable(false);
         m_metaModelLabel = new wxStaticText(panel, wxID_ANY, "Meta model: <not loaded>");
 
         buttonSizer->Add(readButton, 0, wxALL, 5);

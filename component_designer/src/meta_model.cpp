@@ -55,13 +55,9 @@ namespace acd
             error = "'metamodel' root key not found in " + path;
             return false;
         }
-
-        m_name = model->ScalarOf("name");
-        m_version = model->ScalarOf("version");
-        if (m_name.compare("Eclipse-autoapiframework-Metamodel") != 0 ||
-            m_version.compare("") == 0)
+        
+        if (!FindRequiredAttributesAndInterfaces(model, path, error))
         {
-            error = "Incompatible metamodel file " + path;
             return false;
         }
 
@@ -122,6 +118,47 @@ namespace acd
         m_loaded = true;
         return true;
     }
+
+    bool MetaModel::FindRequiredAttributesAndInterfaces(const YamlNodePtr model, 
+                    const std::string& path,std::string& error)
+    {
+        m_name = model->ScalarOf("name");
+        m_version = model->ScalarOf("version");
+        if (m_name.compare("Eclipse-autoapiframework-Metamodel") != 0 ||
+            m_version.compare("") == 0)
+        {
+            error = "Incompatible metamodel file " + path;
+            return false;
+        }
+
+        bool interfacesNotFound = true;        
+        const YamlNodePtr interfaceTypes = model->Find("interfaceTypes");
+        if (interfaceTypes && interfaceTypes->IsMap()) 
+        {
+            const YamlNodePtr dataInterfaces = interfaceTypes->Find("Data");
+            const YamlNodePtr parameters = interfaceTypes->Find("Parameter");
+            const YamlNodePtr scheduling = interfaceTypes->Find("Scheduling");       
+            if (dataInterfaces && parameters && scheduling &&
+                dataInterfaces->IsMap() && parameters->IsMap() && scheduling->IsMap())
+            {
+                const YamlNodePtr dataProperties = dataInterfaces->Find("properties");
+                const YamlNodePtr parametersProperties = parameters->Find("properties");
+                const YamlNodePtr schedulingParameters = scheduling->Find("properties");  
+                if (dataProperties && parameters && schedulingParameters  &&
+                    dataProperties->IsMap() && parametersProperties->IsMap() && schedulingParameters->IsMap())
+                {
+                    interfacesNotFound = false;                
+                }
+            }
+        }
+
+        if (interfacesNotFound)
+        {
+            error = "The required interface types are missing in the metamodel file " + path;
+            return false;
+        }
+        return true;
+    }    
 
     const MetaInterfaceType* MetaModel::FindInterfaceType(const std::string& name) const 
     {

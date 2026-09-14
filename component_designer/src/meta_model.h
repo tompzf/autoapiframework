@@ -52,6 +52,8 @@ namespace acd
         /// Loads the meta model from @p path. Returns false and fills @p error on failure.
         bool Load(const std::string& path, std::string& error);
         bool IsLoaded() const { return m_loaded; }
+        bool FindRequiredAttributesAndInterfaces(const YamlNodePtr model, 
+                                                 const std::string& path, std::string& error);
 
         const std::string& GetName() const { return m_name; }
         const std::string& GetVersion() const { return m_version; }
