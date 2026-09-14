@@ -126,6 +126,7 @@ namespace acd
 
     wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
         EVT_BUTTON(MainFrame::ID_OpenSpecification, MainFrame::OnOpenSpecification)
+        EVT_BUTTON(MainFrame::ID_SaveSpecification, MainFrame::OnSaveSpecification)
         EVT_BUTTON(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_BUTTON(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
         EVT_BUTTON(MainFrame::ID_Add, MainFrame::OnAdd)
@@ -180,14 +181,17 @@ namespace acd
 
         wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
         wxButton* readButton = new wxButton(panel, ID_OpenSpecification, "Read .acs file");
-        m_saveButton = new wxButton(panel, ID_SaveSpecificationAs, "Write .acs file as...");
+        m_saveButton = new wxButton(panel, ID_SaveSpecification, "Save");
         m_saveButton->Enable(false);
+        m_saveAsButton = new wxButton(panel, ID_SaveSpecificationAs, "Write .acs file as...");
+        m_saveAsButton->Enable(false);
         wxButton* metaButton = new wxButton(panel, ID_OpenMetaModel, "Load meta model...");
         metaButton->Enable(false);
         m_metaModelLabel = new wxStaticText(panel, wxID_ANY, "Meta model: <not loaded>");
 
         buttonSizer->Add(readButton, 0, wxALL, 5);
         buttonSizer->Add(m_saveButton, 0, wxALL, 5);
+    buttonSizer->Add(m_saveAsButton, 0, wxALL, 5);
         buttonSizer->Add(metaButton, 0, wxALL, 5);
         buttonSizer->AddStretchSpacer();
         buttonSizer->Add(m_metaModelLabel, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
@@ -335,6 +339,24 @@ namespace acd
         LoadSpecification(dialog.GetPath());
     }
 
+    void MainFrame::OnSaveSpecification(wxCommandEvent&)
+    {
+        if (!m_specification.IsLoaded())
+        {
+            return;
+        }
+
+        const wxString path = ToWx(m_specification.GetSourcePath());
+        std::string error;
+        if (!m_specification.Save(ToStd(path), error))
+        {
+            wxMessageBox("Could not write file:\n\n" + ToWx(error), "AutoAPI Component Designer",
+                        wxOK | wxICON_ERROR, this);
+            return;
+        }
+        SetStatusText("Written: " + path, 0);
+    }
+
     void MainFrame::OnSaveSpecificationAs(wxCommandEvent&) 
     {
         if (!m_specification.IsLoaded()) 
@@ -473,6 +495,7 @@ namespace acd
         }
         m_specification = std::move(specification);
         m_saveButton->Enable(true);
+        m_saveAsButton->Enable(true);
         RefreshAll();
         UpdateTitleAndStatus();
     }
