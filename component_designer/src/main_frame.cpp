@@ -129,6 +129,7 @@ namespace acd
         EVT_BUTTON(MainFrame::ID_SaveSpecification, MainFrame::OnSaveSpecification)
         EVT_BUTTON(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_BUTTON(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
+        EVT_BUTTON(MainFrame::ID_AddVisVss, MainFrame::OnAddVisVss)
         EVT_BUTTON(MainFrame::ID_Add, MainFrame::OnAdd)
         EVT_BUTTON(MainFrame::ID_Delete, MainFrame::OnDelete)
         EVT_BUTTON(MainFrame::ID_Edit, MainFrame::OnEdit)
@@ -211,6 +212,8 @@ namespace acd
         mainSizer->Add(buttonSizer, 0, wxEXPAND);
 
         wxBoxSizer* editButtonSizer = new wxBoxSizer(wxHORIZONTAL);
+    m_addVisVssButton = new wxButton(panel, ID_AddVisVss, "Add via vss");
+    m_addVisVssButton->Enable(false);
         m_addButton = new wxButton(panel, ID_Add, "Add");
         m_addButton->Enable(false);
         m_deleteButton = new wxButton(panel, ID_Delete, "Delete");
@@ -223,6 +226,7 @@ namespace acd
         m_showButton->Enable(false);
         m_createApiButton = new wxButton(panel, ID_CreateApi, "Create API");
         m_createApiButton->Enable(false);
+        editButtonSizer->Add(m_addVisVssButton, 0, wxALL, 5);
         editButtonSizer->Add(m_addButton, 0, wxALL, 5);
         editButtonSizer->Add(m_deleteButton, 0, wxALL, 5);
         editButtonSizer->Add(m_editButton, 0, wxALL, 5);
@@ -427,6 +431,13 @@ namespace acd
         }
         LoadMetaModel(dialog.GetPath(), true);
         RefreshAll();
+    }
+
+    void MainFrame::OnAddVisVss(wxCommandEvent&)
+    {
+        wxMessageBox("Add signal via vss:\n\nnot implemented",
+                "AutoAPI Component Designer",
+                wxOK | wxICON_ERROR, this);   
     }
 
     void MainFrame::OnAdd(wxCommandEvent&)
@@ -686,6 +697,7 @@ namespace acd
     {
         wxListCtrl* selectedList = GetSelectedCollectionList();
         const bool hasSelectedItem = selectedList && selectedList->GetSelectedItemCount() > 0;
+        m_addVisVssButton->Enable(m_notebook->GetSelection() == 1);
         m_addButton->Enable(selectedList != nullptr);
         m_deleteButton->Enable(hasSelectedItem);
         m_editButton->Enable(hasSelectedItem);
