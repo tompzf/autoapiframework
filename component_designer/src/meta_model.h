@@ -25,25 +25,17 @@
 
 namespace acd 
 {
-    /// One property of an interface type as declared by the meta model.
-    struct MetaProperty 
-    {
-        std::string name;
-        std::string dataType;
-        std::string enumRef;
-        std::string description;
-        bool mandatory = false;
-    };
+    static constexpr const char* kExpectedName = "Eclipse-autoapiframework-Metamodel";
+    static constexpr const char* kMetaModelKey = "metamodel";
+    static constexpr const char* kNameKey = "name";
+    static constexpr const char* kVersionKey = "version";    
+    static constexpr const char* kEnumsKey = "enums";
+    static constexpr const char* kInterfaceTypesKey = "interfaceTypes";
 
-    /// One interface type (Data, Parameter, Scheduling, ...) of the meta model.
-    struct MetaInterfaceType 
-    {
-        std::string name;
-        std::string description;
-        std::vector<MetaProperty> properties;
-
-        const MetaProperty* FindProperty(const std::string& name) const;
-    };
+    static constexpr const char* kDataInterfaceTypeKey = "Data";
+    static constexpr const char* kParameterInterfaceTypeKey = "Parameter";
+    static constexpr const char* kSchedulingInterfaceTypeKey = "Scheduling";
+    static constexpr const char* kPropertiesKey = "properties";
 
     /// In-memory representation of autoapiframework_meta_model.yaml.
     class MetaModel 
@@ -60,23 +52,20 @@ namespace acd
         const std::string& GetSourcePath() const { return m_sourcePath; }
         const std::string& GetFileContent() const { return m_fileContent; }
 
-        const MetaInterfaceType* FindInterfaceType(const std::string& name) const;
-        /// Allowed values of the enumeration @p name, empty if unknown.
-        const std::vector<std::string>& EnumValues(const std::string& name) const;
+        const YamlNodePtr* FindInterfaceType(const std::string& name) const;
 
         /// Column order for a section: meta model properties first, followed by
         /// any additional keys that occur in @p entries but are not in the model.
         std::vector<std::string> ColumnsFor(const std::string& interfaceTypeName,
                                             const std::vector<YamlNodePtr>& entries) const;
-
+                                      
     private:
         bool m_loaded = false;
         std::string m_fileContent;        
         std::string m_name;
         std::string m_version;
         std::string m_sourcePath;
-        std::vector<MetaInterfaceType> m_interfaceTypes;
-        std::map<std::string, std::vector<std::string>> m_enums;
+        std::vector<YamlNodePtr> m_interfaceTypes;
     };
 
 } // namespace acd

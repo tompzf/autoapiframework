@@ -35,7 +35,7 @@ namespace acd
             error = "'" + std::string(kRootKey) + "' root key not found in " + path;
             return false;
         }
-        const YamlNodePtr ref = spec->Find("metaModelRef");
+        const YamlNodePtr ref = spec->Find(kMetaModelRefKey);
         if (!CheckMetaModelVersion(ref, expectedVersion,path, error))
         {
             return false;
@@ -50,14 +50,14 @@ namespace acd
     void FunctionSpecification::New(const std::string& metaModelName, const std::string& metaModelVersion)
     {
         YamlNodePtr metaModelRef = YamlNode::MakeMap();
-        metaModelRef->Set("name", YamlNode::MakeScalar(metaModelName));
-        metaModelRef->Set("version", YamlNode::MakeScalar(metaModelVersion));
+        metaModelRef->Set(kNameKey , YamlNode::MakeScalar(metaModelName));
+        metaModelRef->Set(kVersionKey, YamlNode::MakeScalar(metaModelVersion));
 
         YamlNodePtr spec = YamlNode::MakeMap();
-        spec->Set("metaModelRef", metaModelRef);
-        spec->Set("name", YamlNode::MakeScalar("NewExample"));
-        spec->Set("version", YamlNode::MakeScalar("0.0.0"));
-        spec->Set("description", YamlNode::MakeScalar(""));
+        spec->Set(kMetaModelRefKey, metaModelRef);
+        spec->Set(kNameKey , YamlNode::MakeScalar("NewExample"));
+        spec->Set(kVersionKey, YamlNode::MakeScalar("0.0.0"));
+        spec->Set(kDescriptionKey, YamlNode::MakeScalar(""));
         spec->Set(kDataInterfacesKey, YamlNode::MakeSequence());
         spec->Set(kParametersKey, YamlNode::MakeSequence());
         spec->Set(kSchedulingKey, YamlNode::MakeSequence());

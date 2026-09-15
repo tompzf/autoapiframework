@@ -24,7 +24,7 @@ namespace acd
     public:
         bool OnInit() override 
         {
-            SetAppName("AutoAPI Component Designer");
+            SetAppName(acd::kApplicationName);
             wxInitAllImageHandlers();
             MainFrame* frame = new MainFrame();
             frame->Show(true);

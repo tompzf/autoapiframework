@@ -147,7 +147,7 @@ namespace acd
     wxEND_EVENT_TABLE()
 
     MainFrame::MainFrame()
-        : wxFrame(nullptr, wxID_ANY, "AutoAPI Component Designer", wxDefaultPosition, wxSize(1200, 750)) 
+        : wxFrame(nullptr, wxID_ANY, kApplicationName, wxDefaultPosition, wxSize(1200, 750)) 
     {
 #ifdef __WXMSW__
         SetIcon(wxIcon("IDI_APP_ICON", wxBITMAP_TYPE_ICO_RESOURCE));
@@ -220,8 +220,8 @@ namespace acd
         mainSizer->Add(buttonSizer, 0, wxEXPAND);
 
         wxBoxSizer* editButtonSizer = new wxBoxSizer(wxHORIZONTAL);
-    m_addViaVssButton = new wxButton(panel, ID_AddViaVss, "Add via vss");
-    m_addViaVssButton->Enable(false);
+        m_addViaVssButton = new wxButton(panel, ID_AddViaVss, "Add via vss");
+        m_addViaVssButton->Enable(false);
         m_addButton = new wxButton(panel, ID_Add, "Add");
         m_addButton->Enable(false);
         m_deleteButton = new wxButton(panel, ID_Delete, "Delete");
@@ -395,7 +395,7 @@ namespace acd
         std::string error;
         if (!m_specification.Save(ToStd(path), error))
         {
-            wxMessageBox("Could not write file:\n\n" + ToWx(error), "AutoAPI Component Designer",
+            wxMessageBox("Could not write file:\n\n" + ToWx(error), kApplicationName,
                         wxOK | wxICON_ERROR, this);
             return;
         }
@@ -406,7 +406,7 @@ namespace acd
     {
         if (!m_specification.IsLoaded()) 
         {
-            wxMessageBox("Read a function specification first.", "AutoAPI Component Designer",
+            wxMessageBox("Read a function specification first.", kApplicationName,
                         wxOK | wxICON_INFORMATION, this);
             return;
         }
@@ -438,7 +438,7 @@ namespace acd
         std::string error;
         if (!m_specification.Save(ToStd(dialog.GetPath()), error)) 
         {
-            wxMessageBox("Could not write file:\n\n" + ToWx(error), "AutoAPI Component Designer",
+            wxMessageBox("Could not write file:\n\n" + ToWx(error), kApplicationName,
                         wxOK | wxICON_ERROR, this);
             return;
         }
@@ -468,6 +468,12 @@ namespace acd
             return;
         }
 
+        // wxMessageBox("Could not write file:\n\nGetIinterfaceTypesCount. " + std::to_string(m_metaModel.GetIinterfaceTypesCount())
+        // + "GetEnumCount: ", kApplicationName,
+        //                 wxOK | wxICON_ERROR, this);
+
+
+
         wxDialog dialog(this, wxID_ANY, "Meta model", wxDefaultPosition,
                         wxSize(900, 650), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
@@ -484,7 +490,7 @@ namespace acd
     void MainFrame::OnAddViaVss(wxCommandEvent&)
     {
         wxMessageBox("Add signal via vss:\n\n NOT IMPLEMENTED ",
-                "AutoAPI Component Designer",
+                kApplicationName,
                 wxOK | wxICON_ERROR, this);   
     }
 
@@ -510,7 +516,7 @@ namespace acd
         }
 
         wxMessageBox("Add item to the selected tab:\n\nTab: " + tabName + "\n\n NOT IMPLEMENTED ",
-                        "AutoAPI Component Designer",
+                        kApplicationName,
                         wxOK | wxICON_ERROR, this);            
 
         wxUnusedVar(selectedTab);   
@@ -563,7 +569,7 @@ namespace acd
             break;
         }
         wxMessageBox("Edit the selected item:\n\nTab: " + tabName + "\nRow: " + std::to_string(selectedRow) + "\n\n NOT IMPLEMENTED ",
-                        "AutoAPI Component Designer",
+                        kApplicationName,
                         wxOK | wxICON_ERROR, this);            
 
         wxUnusedVar(selectedTab);
@@ -573,7 +579,7 @@ namespace acd
     void MainFrame::OnValidation(wxCommandEvent&)
     {
         wxMessageBox("Validation:\n\n NOT IMPLEMENTED ",
-                        "AutoAPI Component Designer",
+                        kApplicationName,
                         wxOK | wxICON_ERROR, this);          
     }
 
@@ -606,16 +612,16 @@ namespace acd
     void MainFrame::OnCreateAPI(wxCommandEvent&)
     {
         wxMessageBox("Create API:\n\n NOT IMPLEMENTED ",
-                        "AutoAPI Component Designer",
+                        kApplicationName,
                         wxOK | wxICON_ERROR, this);               
     }
 
     void MainFrame::OnAbout(wxCommandEvent&) 
     {
-        wxMessageBox("AutoAPI Component Designer\n\n"
+        wxMessageBox(wxString(kApplicationName) + "\n\n"
                     "Reads, displays and writes Eclipse autoapiframework function\n"
                     "specifications (*.acs, YAML content) based on the framework meta model.",
-                    "About AutoAPI Component Designer", wxOK | wxICON_INFORMATION, this);
+                    "About " + wxString(kApplicationName), wxOK | wxICON_INFORMATION, this);                   
     }
 
     void MainFrame::OnExit(wxCommandEvent&) { Close(true); }
@@ -627,7 +633,7 @@ namespace acd
         if (!specification.Load(m_metaModelVersion, ToStd(path), error)) 
         {
             wxMessageBox("Could not read function specification:\n\n" + ToWx(error),
-                        "AutoAPI Component Designer", wxOK | wxICON_ERROR, this);
+                        kApplicationName, wxOK | wxICON_ERROR, this);
             return;
         }
         m_specification = std::move(specification);
@@ -648,7 +654,7 @@ namespace acd
         {
             if (reportErrors) 
             {
-                wxMessageBox("Could not read meta model:\n\n" + ToWx(error), "AutoAPI Component Designer",
+                wxMessageBox("Could not read meta model:\n\n" + ToWx(error), kApplicationName,
                             wxOK | wxICON_ERROR, this);
             }
             return "";
@@ -778,12 +784,12 @@ namespace acd
     {
         if (!m_specification.IsLoaded()) 
         {
-            SetTitle("AutoAPI Component Designer");
+            SetTitle(kApplicationName);
             SetStatusText("No function specification loaded", 0);
             SetStatusText(m_metaModel.IsLoaded() ? "Meta model loaded" : "No meta model", 1);
             return;
         }
-        SetTitle("AutoAPI Component Designer - " + ToWx(m_specification.GetName()) + " [" +
+        SetTitle(wxString(kApplicationName) + " - " + ToWx(m_specification.GetName()) + " [" +
                 wxFileName(ToWx(m_specification.GetSourcePath())).GetFullName() + "]");
         SetStatusText("Read: " + ToWx(m_specification.GetSourcePath()), 0);
         SetStatusText("Meta model reference: " + ToWx(m_specification.GetMetaModelName()) + " " +

@@ -22,25 +22,6 @@
 
 namespace acd 
 {
-    namespace 
-    {
-        const std::vector<std::string>& EmptyStrings() 
-        {
-            static const std::vector<std::string> empty;
-            return empty;
-        }
-
-        bool ToBool(const std::string& text) { return text == "true" || text == "True" || text == "yes"; }
-
-    } // namespace
-
-    const MetaProperty* MetaInterfaceType::FindProperty(const std::string& propertyName) const 
-    {
-        const auto it = std::find_if(properties.begin(), properties.end(),
-                                    [&propertyName](const MetaProperty& p) { return p.name == propertyName; });
-        return it == properties.end() ? nullptr : &(*it);
-    }
-
     bool MetaModel::Load(const std::string& path, std::string& error) 
     {
         YamlParser parser;
@@ -49,71 +30,21 @@ namespace acd
         {
             return false;
         }
-        const YamlNodePtr model = root->Find("metamodel");
+        const YamlNodePtr model = root->Find(kMetaModelKey);
         if (!model || !model->IsMap()) 
         {
-            error = "'metamodel' root key not found in " + path;
+            error = std::string("'") + std::string(kMetaModelKey) + "' root key not found in " + path;
             return false;
         }
         
+        m_interfaceTypes.clear();        
         if (!FindRequiredAttributesAndInterfaces(model, path, error))
         {
+            m_interfaceTypes.clear();            
             return false;
         }
 
-        m_interfaceTypes.clear();
-        m_enums.clear();
-
         m_sourcePath = path;
-
-        if (const YamlNodePtr enums = model->Find("enums")) 
-        {
-            for (const auto& entry : enums->GetMap()) 
-            {
-                std::vector<std::string> values;
-                if (entry.second && entry.second->IsSequence()) 
-                {
-                    for (const YamlNodePtr& value : entry.second->GetSequence()) 
-                    {
-                        if (value && value->IsScalar()) 
-                        {
-                            values.push_back(value->GetScalar());
-                        }
-                    }
-                }
-                m_enums.emplace(entry.first, std::move(values));
-            }
-        }
-
-        if (const YamlNodePtr types = model->Find("interfaceTypes")) 
-        {
-            for (const auto& entry : types->GetMap()) 
-            {
-                MetaInterfaceType type;
-                type.name = entry.first;
-                if (entry.second && entry.second->IsMap()) 
-                {
-                    type.description = entry.second->ScalarOf("description");
-                    if (const YamlNodePtr properties = entry.second->Find("properties")) 
-                    {
-                        for (const auto& property : properties->GetMap()) 
-                        {
-                            MetaProperty meta;
-                            meta.name = property.first;
-                            if (property.second && property.second->IsMap()) 
-                            {
-                                meta.dataType = property.second->ScalarOf("dataType");
-                                meta.enumRef = property.second->ScalarOf("enumRef");
-                                meta.description = property.second->ScalarOf("description");
-                                meta.mandatory = ToBool(property.second->ScalarOf("mandatory"));
-                            }
-                            type.properties.push_back(std::move(meta));
-                        }
-                    }
-                }
-                m_interfaceTypes.push_back(std::move(type));
-            }
-        }
 
         m_fileContent = parser.GetFileContent(path); // Initialize the file content to an empty string
         m_loaded = true;
@@ -123,9 +54,9 @@ namespace acd
     bool MetaModel::FindRequiredAttributesAndInterfaces(const YamlNodePtr model, 
                     const std::string& path,std::string& error)
     {
-        m_name = model->ScalarOf("name");
-        m_version = model->ScalarOf("version");
-        if (m_name.compare("Eclipse-autoapiframework-Metamodel") != 0 ||
+        m_name = model->ScalarOf(kNameKey);
+        m_version = model->ScalarOf(kVersionKey);
+        if (m_name.compare(kExpectedName) != 0 ||
             m_version.compare("") == 0)
         {
             error = "Incompatible metamodel file " + path;
@@ -133,24 +64,27 @@ namespace acd
         }
 
         bool interfacesNotFound = true;        
-        const YamlNodePtr interfaceTypes = model->Find("interfaceTypes");
+        const YamlNodePtr interfaceTypes = model->Find(kInterfaceTypesKey);
         if (interfaceTypes && interfaceTypes->IsMap()) 
         {
-            const YamlNodePtr dataInterfaces = interfaceTypes->Find("Data");
-            const YamlNodePtr parameters = interfaceTypes->Find("Parameter");
-            const YamlNodePtr scheduling = interfaceTypes->Find("Scheduling");       
+            const YamlNodePtr dataInterfaces = interfaceTypes->Find(kDataInterfaceTypeKey);
+            const YamlNodePtr parameters = interfaceTypes->Find(kParameterInterfaceTypeKey);
+            const YamlNodePtr scheduling = interfaceTypes->Find(kSchedulingInterfaceTypeKey);
             if (dataInterfaces && parameters && scheduling &&
                 dataInterfaces->IsMap() && parameters->IsMap() && scheduling->IsMap())
             {
-                const YamlNodePtr dataProperties = dataInterfaces->Find("properties");
-                const YamlNodePtr parametersProperties = parameters->Find("properties");
-                const YamlNodePtr schedulingParameters = scheduling->Find("properties");  
+                const YamlNodePtr dataProperties = dataInterfaces->Find(kPropertiesKey);
+                const YamlNodePtr parametersProperties = parameters->Find(kPropertiesKey);
+                const YamlNodePtr schedulingParameters = scheduling->Find(kPropertiesKey);  
                 if (dataProperties && parameters && schedulingParameters  &&
                     dataProperties->IsMap() && parametersProperties->IsMap() && schedulingParameters->IsMap())
                 {
                     interfacesNotFound = false;                
                 }
             }
+            m_interfaceTypes.push_back(std::move(dataInterfaces));
+            m_interfaceTypes.push_back(std::move(parameters));
+            m_interfaceTypes.push_back(std::move(scheduling));            
         }
 
         if (interfacesNotFound)
@@ -161,28 +95,39 @@ namespace acd
         return true;
     }    
 
-    const MetaInterfaceType* MetaModel::FindInterfaceType(const std::string& name) const 
+    const YamlNodePtr* MetaModel::FindInterfaceType(const std::string& name) const 
     {
-        const auto it = std::find_if(m_interfaceTypes.begin(), m_interfaceTypes.end(),
-                                    [&name](const MetaInterfaceType& t) { return t.name == name; });
-        return it == m_interfaceTypes.end() ? nullptr : &(*it);
-    }
+        static constexpr const char* interfaceTypeNames[] = {
+            kDataInterfaceTypeKey,
+            kParameterInterfaceTypeKey,
+            kSchedulingInterfaceTypeKey
+        };
 
-    const std::vector<std::string>& MetaModel::EnumValues(const std::string& name) const
-    {
-        const auto it = m_enums.find(name);
-        return it == m_enums.end() ? EmptyStrings() : it->second;
+        for (std::size_t index = 0; index < m_interfaceTypes.size() &&
+             index < std::size(interfaceTypeNames); ++index)
+        {
+            if (name == interfaceTypeNames[index])
+            {
+                return &m_interfaceTypes[index];
+            }
+        }
+
+        return nullptr;
     }
 
     std::vector<std::string> MetaModel::ColumnsFor(const std::string& interfaceTypeName,
                                                 const std::vector<YamlNodePtr>& entries) const 
     {
         std::vector<std::string> columns;
-        if (const MetaInterfaceType* type = FindInterfaceType(interfaceTypeName)) 
+        if (const YamlNodePtr* type = FindInterfaceType(interfaceTypeName)) 
         {
-            for (const MetaProperty& property : type->properties) 
+            const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
+            if (properties && properties->IsMap())
             {
-                columns.push_back(property.name);
+                for (const auto& property : properties->GetMap())
+                {
+                    columns.push_back(property.first);
+                }
             }
         }
         for (const YamlNodePtr& entry : entries) 

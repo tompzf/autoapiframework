@@ -34,6 +34,10 @@ namespace acd
     {
     public:
         static constexpr const char* kRootKey = "functionSpecification";
+        static constexpr const char* kNameKey = "name";
+        static constexpr const char* kVersionKey = "version";
+        static constexpr const char* kDescriptionKey = "description";        
+        static constexpr const char* kMetaModelRefKey = "metaModelRef";
         static constexpr const char* kDataInterfacesKey = "dataInterfaces";
         static constexpr const char* kParametersKey = "parameters";
         static constexpr const char* kSchedulingKey = "scheduling";
