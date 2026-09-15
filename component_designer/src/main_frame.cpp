@@ -546,34 +546,85 @@ namespace acd
 
     void MainFrame::OnEdit(wxCommandEvent&) 
     {
-        const int selectedTab = m_notebook->GetSelection();
         wxListCtrl* selectedList = GetSelectedCollectionList();
+        const char* collectionKey = GetSelectedCollectionKey();
         const long selectedRow = selectedList
             ? selectedList->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)
             : -1;
-
-        std::string tabName = "";
-        switch (selectedTab)
+        if (!collectionKey || selectedRow < 0)
         {
-        case 1:
-            tabName = "Signals";
-            break;
-        case 2:
-            tabName = "Parameters";
-            break;
-        case 3:
-            tabName = "Scheduling";
-            break;
-        default:
-            tabName = "Attributes";
-            break;
+            return;
         }
-        wxMessageBox("Edit the selected item:\n\nTab: " + tabName + "\nRow: " + std::to_string(selectedRow) + "\n\n NOT IMPLEMENTED ",
-                        kApplicationName,
-                        wxOK | wxICON_ERROR, this);            
 
-        wxUnusedVar(selectedTab);
-        wxUnusedVar(selectedRow);
+        const std::vector<YamlNodePtr> entries = m_specification.GetCollection(collectionKey);
+        if (static_cast<std::size_t>(selectedRow) >= entries.size() || !entries[selectedRow] ||
+            !entries[selectedRow]->IsMap())
+        {
+            return;
+        }
+
+        struct EditableValue
+        {
+            YamlNodePtr node;
+            wxTextCtrl* control;
+        };
+
+        wxDialog dialog(this, wxID_ANY, "Edit item", wxDefaultPosition, wxDefaultSize,
+                        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+        wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+        wxFlexGridSizer* fields = new wxFlexGridSizer(2, 6, 8);
+        fields->AddGrowableCol(1, 1);
+        std::vector<EditableValue> editableValues;
+
+        const auto addField = [&fields, &editableValues, &dialog](const wxString& name,
+                                                                    const YamlNodePtr& node)
+        {
+            if (!node || !node->IsScalar())
+            {
+                return;
+            }
+            fields->Add(new wxStaticText(&dialog, wxID_ANY, name), 0, wxALIGN_CENTER_VERTICAL);
+            wxTextCtrl* control = new wxTextCtrl(&dialog, wxID_ANY, ToWx(node->GetScalar()));
+            fields->Add(control, 1, wxEXPAND);
+            editableValues.push_back({node, control});
+        };
+
+        for (const auto& entry : entries[selectedRow]->GetMap())
+        {
+            if (entry.second && entry.second->IsMap())
+            {
+                for (const auto& nested : entry.second->GetMap())
+                {
+                    addField(ToWx(entry.first + "." + nested.first), nested.second);
+                }
+            }
+            else
+            {
+                addField(ToWx(entry.first), entry.second);
+            }
+        }
+
+        if (editableValues.empty())
+        {
+            return;
+        }
+
+        sizer->Add(fields, 1, wxEXPAND | wxALL, 12);
+        sizer->Add(dialog.CreateSeparatedButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 8);
+        dialog.SetSizerAndFit(sizer);
+        dialog.SetMinSize(wxSize(450, -1));
+        dialog.CentreOnParent();
+        if (dialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+
+        for (const EditableValue& value : editableValues)
+        {
+            value.node->SetScalar(ToStd(value.control->GetValue()));
+        }
+        RefreshAll();
+        SetStatusText(wxString::Format("Edited item %ld", selectedRow + 1), 0);
     }
 
     void MainFrame::OnValidation(wxCommandEvent&)
