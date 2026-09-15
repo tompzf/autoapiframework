@@ -44,6 +44,14 @@ Meta Model:
    doc/meta_model/meta_model
    doc/meta_model/meta_model_component_adapter
 
+Discussion about naming conventions:
+------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   doc/naming_conventions
+
 Component Specification File:
 -----------------------------
 
