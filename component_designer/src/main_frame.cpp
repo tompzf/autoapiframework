@@ -15,6 +15,7 @@
  ********************************************************************************/
  
 #include "main_frame.h"
+#include "validate_function.h"
 
 #include <wx/filename.h>
 #include <wx/icon.h>
@@ -398,6 +399,10 @@ namespace acd
         {
             return;
         }
+        if (!SyntaxCheckIsOK(true, "Not saved! "))
+        {
+            return;
+        }
 
         const wxString path = ToWx(m_specification.GetSourcePath());
         std::string error;
@@ -416,6 +421,10 @@ namespace acd
         {
             wxMessageBox("Read a function specification first.", kApplicationName,
                         wxOK | wxICON_INFORMATION, this);
+            return;
+        }
+        if (!SyntaxCheckIsOK(true))
+        {
             return;
         }
 
@@ -662,10 +671,38 @@ namespace acd
     }
 
     void MainFrame::OnValidation(wxCommandEvent&)
+    {                        
+        SyntaxCheckIsOK(false); 
+    }
+
+    bool MainFrame::SyntaxCheckIsOK(bool doNotShowOnSuccess, const std::string& contextMessage)
     {
-        wxMessageBox("Validation:\n\n NOT IMPLEMENTED ",
+        if (!m_specification.IsLoaded())
+        {
+            return false;
+        }
+
+        std::string content = m_specification.ToText();
+        std::string error;
+
+        ValidateFunction validateFunction;
+        if (validateFunction.SyntaxCheckIsOK(content, error))
+        {
+            if (!doNotShowOnSuccess)
+            {
+                wxMessageBox(contextMessage + "Minimal syntax check, no syntax errors found.",
+                            kApplicationName,
+                            wxOK | wxICON_INFORMATION, this);
+            }
+            return true;
+        }
+        else
+        {
+            wxMessageBox(contextMessage + "Syntax error found:\n\n" + ToWx(error),
                         kApplicationName,
-                        wxOK | wxICON_ERROR, this);          
+                        wxOK | wxICON_ERROR, this);
+        }  
+        return false;
     }
 
     void MainFrame::OnShow(wxCommandEvent&)

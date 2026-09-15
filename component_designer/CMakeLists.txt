@@ -74,6 +74,7 @@ add_executable(AutoAPIComponentDesigner WIN32
     src/yaml_parser.cpp
     src/yaml_writer.cpp
     src/meta_model.cpp
+    src/validate_function.cpp    
     src/function_specification.cpp
     ${ACD_WINDOWS_RESOURCES}
 )

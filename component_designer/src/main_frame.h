@@ -78,6 +78,8 @@ namespace acd
         void LoadSpecification(const wxString& path);
         std::string LoadMetaModel(const wxString& path, bool reportErrors);
 
+        bool SyntaxCheckIsOK(bool doNotShowOnSuccess, const std::string& contextMessage = "");
+
         void RefreshAll();
         void FillAttributes();
         void FillCollection(wxListCtrl* list, const std::string& collectionKey,
