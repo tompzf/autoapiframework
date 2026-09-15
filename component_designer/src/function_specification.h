@@ -67,6 +67,7 @@ namespace acd
 
         /// Entries of the signal, parameter or scheduling collection.
         std::vector<YamlNodePtr> GetCollection(const std::string& key) const;
+        bool AddCollectionItem(const std::string& key, YamlNodePtr item);
         bool RemoveCollectionItem(const std::string& key, std::size_t index);
 
     private:

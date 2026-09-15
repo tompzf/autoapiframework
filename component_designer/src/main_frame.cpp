@@ -33,6 +33,7 @@ namespace acd
         constexpr const char* kMetaModelFileName = "autoapiframework_meta_model.yaml";
         constexpr const char* kLogoFileName = "autoapiframework_logo.png";
         constexpr const char* kIconFileName = "autoapiframework_icon.png";
+        constexpr int kFirstColumnWidth = 25;
         constexpr int kMinColumnWidth = 90;
         constexpr int kMaxColumnWidth = 320;
 
@@ -117,7 +118,14 @@ namespace acd
                 const int contentWidth = list->GetColumnWidth(column);
                 list->SetColumnWidth(column, wxLIST_AUTOSIZE_USEHEADER);
                 int width = std::max(contentWidth, list->GetColumnWidth(column));
-                width = std::max(kMinColumnWidth, std::min(width, kMaxColumnWidth));
+                if(column == 0)
+                {
+                    width = std::max(kFirstColumnWidth, std::min(width, kMaxColumnWidth));
+                }
+                else
+                {
+                    width = std::max(kMinColumnWidth, std::min(width, kMaxColumnWidth));
+                }
                 list->SetColumnWidth(column, width);
             }
         }
@@ -496,30 +504,56 @@ namespace acd
 
     void MainFrame::OnAdd(wxCommandEvent&)
     {
-        const int selectedTab = m_notebook->GetSelection();
-
-        std::string tabName = "";
-        switch (selectedTab)
+        const char* collectionKey = GetSelectedCollectionKey();
+        if (!collectionKey)
         {
-        case 1:
-            tabName = "Signals";
-            break;
-        case 2:
-            tabName = "Parameters";
-            break;
-        case 3:
-            tabName = "Scheduling";
-            break;
-        default:
-            tabName = "Attributes";
-            break;
+            return;
         }
 
-        wxMessageBox("Add item to the selected tab:\n\nTab: " + tabName + "\n\n NOT IMPLEMENTED ",
-                        kApplicationName,
-                        wxOK | wxICON_ERROR, this);            
+        const int selectedTab = m_notebook->GetSelection();
+        const std::string interfaceType = selectedTab == 1 ? "Data" :
+                                          selectedTab == 2 ? "Parameter" : "Scheduling";
+        const std::vector<std::string> fields = m_metaModel.ColumnsFor(interfaceType, {});
+        if (fields.empty())
+        {
+            return;
+        }
 
-        wxUnusedVar(selectedTab);   
+        wxDialog dialog(this, wxID_ANY, "Add item", wxDefaultPosition, wxDefaultSize,
+                        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+        wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+        wxFlexGridSizer* fieldSizer = new wxFlexGridSizer(2, 6, 8);
+        fieldSizer->AddGrowableCol(1, 1);
+        std::vector<std::pair<std::string, wxTextCtrl*>> controls;
+        for (const std::string& field : fields)
+        {
+            fieldSizer->Add(new wxStaticText(&dialog, wxID_ANY, ToWx(field)), 0,
+                            wxALIGN_CENTER_VERTICAL);
+            wxTextCtrl* control = new wxTextCtrl(&dialog, wxID_ANY);
+            fieldSizer->Add(control, 1, wxEXPAND);
+            controls.emplace_back(field, control);
+        }
+
+        sizer->Add(fieldSizer, 1, wxEXPAND | wxALL, 12);
+        sizer->Add(dialog.CreateSeparatedButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 8);
+        dialog.SetSizerAndFit(sizer);
+        dialog.SetMinSize(wxSize(450, -1));
+        dialog.CentreOnParent();
+        if (dialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+
+        YamlNodePtr item = YamlNode::MakeMap();
+        for (const auto& control : controls)
+        {
+            item->Set(control.first, YamlNode::MakeScalar(ToStd(control.second->GetValue())));
+        }
+        if (m_specification.AddCollectionItem(collectionKey, std::move(item)))
+        {
+            RefreshAll();
+            SetStatusText("Added item", 0);
+        }
     }
 
     void MainFrame::OnDelete(wxCommandEvent&)
@@ -719,9 +753,9 @@ namespace acd
     void MainFrame::RefreshAll() 
     {
         FillAttributes();
-        FillCollection(m_signalList, FunctionSpecification::kDataInterfacesKey, "Data");
-        FillCollection(m_parameterList, FunctionSpecification::kParametersKey, "Parameter");
-        FillCollection(m_schedulingList, FunctionSpecification::kSchedulingKey, "Scheduling");
+        FillCollection(m_signalList, FunctionSpecification::kDataInterfacesKey, kDataInterfaceTypeKey);
+        FillCollection(m_parameterList, FunctionSpecification::kParametersKey, kParameterInterfaceTypeKey);
+        FillCollection(m_schedulingList, FunctionSpecification::kSchedulingKey, kSchedulingInterfaceTypeKey);
 
         m_notebook->SetPageText(1, wxString::Format(
             "Signal collection (%d)",
@@ -762,7 +796,7 @@ namespace acd
         const std::vector<std::string> columns = m_metaModel.ColumnsFor(interfaceTypeName, entries);
 
         list->ClearAll();
-        list->AppendColumn("#", wxLIST_FORMAT_RIGHT, 40);
+        list->AppendColumn("#", wxLIST_FORMAT_RIGHT, kFirstColumnWidth);
         for (const std::string& column : columns) 
         {
             list->AppendColumn(ToWx(column), wxLIST_FORMAT_LEFT, kMinColumnWidth);

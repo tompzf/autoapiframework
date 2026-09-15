@@ -224,6 +224,21 @@ namespace acd
         return node->GetSequence();
     }
 
+    bool FunctionSpecification::AddCollectionItem(const std::string& key, YamlNodePtr item)
+    {
+        if (!m_spec || !item)
+        {
+            return false;
+        }
+        const YamlNodePtr collection = m_spec->Find(key);
+        if (!collection || !collection->IsSequence())
+        {
+            return false;
+        }
+        collection->Append(std::move(item));
+        return true;
+    }
+
     bool FunctionSpecification::RemoveCollectionItem(const std::string& key, std::size_t index)
     {
         if (!m_spec)
