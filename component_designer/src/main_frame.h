@@ -29,7 +29,7 @@ class wxNotebook;
 
 namespace acd 
 {
-    static constexpr const char* kApplicationName = "AutoAPI Component Designer";
+    static constexpr const char* kApplicationName = "AutoAPI Component Designer - Preview 0.1";
 
     /// Main window of the AutoAPI Component Designer application.
     class MainFrame : public wxFrame 

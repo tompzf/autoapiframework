@@ -103,7 +103,7 @@ endif()
 # The meta model and the sample specification are picked up next to the executable.
 add_custom_command(TARGET AutoAPIComponentDesigner POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/examples/autoapiframework_meta_model.yaml"
+            "${CMAKE_CURRENT_SOURCE_DIR}/examples/autoapiframework_metadata_V03.yaml"
             "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/autoapiframework_meta_model.yaml"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/examples/speed_hazard_detection.acs"

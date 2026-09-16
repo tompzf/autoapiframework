@@ -85,8 +85,11 @@ after each build.
 
 ## Sample
 
-`../examples/speed_hazard_detection.acs` is a ready to use function
-specification for trying out read, display and write.
+`../examples/vehicle_speed_fusion_multirate` and
+`../examples/speed_hazard_detection.acs` are ready to use function
+specifications for trying out read, display and write.
+
+`../examples/autoapiframework_metadata_V03.yaml` is the current meta model specification file.
 
 ## Sources
 
@@ -97,5 +100,11 @@ specification for trying out read, display and write.
 | `src/yaml_node.*` | Order preserving YAML document tree |
 | `src/yaml_parser.*` | Block style YAML subset parser |
 | `src/yaml_writer.*` | Emitter reproducing the `.acs` layout |
+| `src/validate_function.*` | Methods for syntax checks |
 | `src/meta_model.*` | `autoapiframework_meta_model.yaml` (enums, interface types) |
 | `src/function_specification.*` | Function specification access and load/save |
+
+## vspec files
+
+To get the official vspec files execute:
+`git clone https://github.com/COVESA/vehicle_signal_specification.git` 
