@@ -502,6 +502,7 @@ namespace acd
 
     void MainFrame::OnOpenMetaModel(wxCommandEvent&) 
     {
+        auto isLoaded = m_metaModel.IsLoaded();
         wxString configuredMetaModelFile;
         wxConfigBase::Get()->Read(kMetaModelFileConfigKey, &configuredMetaModelFile);
         wxFileName configuredFile(configuredMetaModelFile);
@@ -519,6 +520,11 @@ namespace acd
         {
             wxConfigBase::Get()->Write(kMetaModelFileConfigKey, dialog.GetPath());
             wxConfigBase::Get()->Flush();
+            if (isLoaded)
+            {
+                wxMessageBox("Meta model reloaded successfully,\nto activate changes restart application.", kApplicationName,
+                             wxOK | wxICON_INFORMATION, this);
+            }
         }
         SetStatusText(m_metaModel.IsLoaded() ? "Meta model loaded" : "No meta model", 1);
 
@@ -593,6 +599,10 @@ namespace acd
         config->Write(kCovesaToolsDirectoryConfigKey, covesaToolsControl->GetValue());
         config->Flush();
         SetStatusText("Global settings updated", 0);
+        if (metaModelFile.CompareTo(metaModelControl->GetValue()) != 0)
+        {
+            m_metaButton->Enable(true);
+        }
     }
 
     void MainFrame::OnShowMetaModel(wxCommandEvent&)
@@ -601,12 +611,6 @@ namespace acd
         {
             return;
         }
-
-        // wxMessageBox("Could not write file:\n\nGetIinterfaceTypesCount. " + std::to_string(m_metaModel.GetIinterfaceTypesCount())
-        // + "GetEnumCount: ", kApplicationName,
-        //                 wxOK | wxICON_ERROR, this);
-
-
 
         wxDialog dialog(this, wxID_ANY, "Meta model", wxDefaultPosition,
                         wxSize(900, 650), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
@@ -850,9 +854,16 @@ namespace acd
 
     void MainFrame::OnCreateAPI(wxCommandEvent&)
     {
-        wxMessageBox("Create API:\n\n NOT IMPLEMENTED ",
-                        kApplicationName,
-                        wxOK | wxICON_ERROR, this);               
+        const wxArrayString languages = {"C", "C++", "Rust"};
+        wxSingleChoiceDialog dialog(this, "Select target language", "Create API", languages);
+        if (dialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+
+        wxMessageBox("Create API for " + dialog.GetStringSelection() + ":\n\nNOT IMPLEMENTED",
+                     kApplicationName,
+                     wxOK | wxICON_INFORMATION, this);
     }
 
     void MainFrame::OnAbout(wxCommandEvent&) 
