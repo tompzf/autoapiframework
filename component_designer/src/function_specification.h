@@ -41,6 +41,9 @@ namespace acd
         static constexpr const char* kDataInterfacesKey = "dataInterfaces";
         static constexpr const char* kParametersKey = "parameters";
         static constexpr const char* kSchedulingKey = "scheduling";
+        static constexpr const char* kPropertiesKey = "properties";   
+        static constexpr const char* kNamePathKey = "namePath";
+        static constexpr const char* kFunctionNameKey = "functionName";
 
         bool Load(const std::string& expectedVersion, const std::string& path, std::string& error);
         /// Creates a fresh, empty function specification referencing the given meta model.

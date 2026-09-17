@@ -29,8 +29,12 @@ namespace acd
     {
     public:
         bool SyntaxCheckIsOK(std::string& content, std::string& error);
+    
+    private:
+        bool HeaderSyntaxCheck(const YamlNodePtr& root, std::string& error);
+        bool InterfaceTypesSyntaxCheck(const YamlNodePtr& root, std::string& error);
+        bool SyntaxCheckForSequence(const YamlNodePtr& node, const std::string& key, std::string& error, const std::string& displayName);
     };
-
 } // namespace acd
 
 #endif // ACD_VALIDATE_FUNCTION_H
