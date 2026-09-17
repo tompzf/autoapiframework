@@ -890,10 +890,25 @@ namespace acd
 
     void MainFrame::OnAbout(wxCommandEvent&) 
     {
-        wxMessageBox(wxString(kApplicationName) + "\n\n"
+        wxDialog dialog(this, wxID_ANY, "About " + wxString(kApplicationName), wxDefaultPosition,
+                        wxDefaultSize, wxDEFAULT_DIALOG_STYLE);
+        wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+        wxImage logoImage(FindRuntimeFile(kLogoFileName), wxBITMAP_TYPE_PNG);
+        if (logoImage.IsOk())
+        {
+            sizer->Add(new wxStaticBitmap(&dialog, wxID_ANY, wxBitmap(logoImage)), 0,
+                       wxALIGN_CENTER_HORIZONTAL | wxALL, 12);
+        }
+        sizer->Add(new wxStaticText(&dialog, wxID_ANY, wxString(kApplicationName) + "\n\n"
                     "Reads, displays and writes Eclipse autoapiframework function\n"
                     "specifications (*.acs, YAML content) based on the framework meta model.",
-                    "About " + wxString(kApplicationName), wxOK | wxICON_INFORMATION, this);                   
+                    wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL),
+                   0, wxALIGN_CENTER_HORIZONTAL | wxLEFT | wxRIGHT | wxBOTTOM, 12);
+        sizer->Add(dialog.CreateSeparatedButtonSizer(wxOK), 0, wxEXPAND | wxALL, 8);
+        dialog.SetSizerAndFit(sizer);
+        dialog.CentreOnParent();
+        dialog.ShowModal();
     }
 
     void MainFrame::OnHelp(wxCommandEvent&) { wxLaunchDefaultBrowser(kHelpUrl); }
