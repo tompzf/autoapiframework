@@ -161,6 +161,7 @@ namespace acd
         EVT_MENU(MainFrame::ID_OpenSpecification, MainFrame::OnOpenSpecification)
         EVT_MENU(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_MENU(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
+        EVT_MENU(MainFrame::ID_ShowMetaModel, MainFrame::OnShowMetaModel)
         EVT_MENU(MainFrame::ID_Settings, MainFrame::OnSettings)
         EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
         EVT_MENU(wxID_HELP, MainFrame::OnHelp)
@@ -192,8 +193,10 @@ namespace acd
         fileMenu->Append(ID_NewSpecification, "&New function specification\tCtrl-N");
         fileMenu->Append(ID_OpenSpecification, "&Read function specification...\tCtrl-O");
         fileMenu->Append(ID_SaveSpecificationAs, "&Write function specification as...\tCtrl-S");
+        fileMenu->Enable(ID_SaveSpecificationAs, false);
         fileMenu->AppendSeparator();
         fileMenu->Append(ID_OpenMetaModel, "Load &meta model...");
+        fileMenu->Append(ID_ShowMetaModel, "Show meta model");
         fileMenu->Append(ID_Settings, "&Settings...");
         fileMenu->AppendSeparator();
         fileMenu->Append(wxID_EXIT);
@@ -413,8 +416,11 @@ namespace acd
 
         m_specification.New(m_metaModel.GetName(), m_metaModel.GetVersion());
         m_newButton->Enable(false);
+        GetMenuBar()->Enable(ID_NewSpecification, false);
         m_saveAsButton->Enable(true);
+        GetMenuBar()->Enable(ID_SaveSpecificationAs, true);		
         m_showButton->Enable(true);
+        GetMenuBar()->Enable(ID_ShowMetaModel, true);			
         m_validationButton->Enable(true);        
 		m_createAPIButton->Enable(true);
         RefreshAll();
@@ -906,9 +912,12 @@ namespace acd
         }
         m_specification = std::move(specification);
         m_newButton->Enable(false);
+        GetMenuBar()->Enable(ID_NewSpecification, false);
         m_saveButton->Enable(true);
         m_saveAsButton->Enable(true);
+        GetMenuBar()->Enable(ID_SaveSpecificationAs, true);				
         m_showButton->Enable(true);
+        GetMenuBar()->Enable(ID_ShowMetaModel, true);				
         m_validationButton->Enable(true);        
 		m_createAPIButton->Enable(true);
         RefreshAll();
@@ -1043,9 +1052,13 @@ namespace acd
         const bool metaModelLoaded = m_metaModel.IsLoaded();
         const bool specificationLoaded = m_specification.IsLoaded();
         m_newButton->Enable(metaModelLoaded && !specificationLoaded);
+        GetMenuBar()->Enable(ID_NewSpecification, metaModelLoaded && !specificationLoaded);		
         m_readButton->Enable(metaModelLoaded);
+        GetMenuBar()->Enable(ID_OpenSpecification, metaModelLoaded);				
         m_metaButton->Enable(!metaModelLoaded);
         m_showMetaModelButton->Enable(metaModelLoaded);
+        GetMenuBar()->Enable(ID_ShowMetaModel, metaModelLoaded);
+
     }
 
     void MainFrame::UpdateTitleAndStatus() 
