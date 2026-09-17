@@ -39,8 +39,10 @@ namespace acd
         constexpr const char* kMetaModelDirectoryConfigKey = "/Paths/MetaModelDirectory";
         constexpr const char* kVspecDirectoryConfigKey = "/Paths/VSpecDirectory";
         constexpr const char* kCovesaToolsDirectoryConfigKey = "/Paths/CovesaToolsDirectory";
+        constexpr const char* kCreateApiLanguageConfigKey = "/CreateAPI/Language";
         constexpr const char* kLogoFileName = "autoapiframework_logo.png";
         constexpr const char* kIconFileName = "autoapiframework_icon.png";
+        constexpr const char* kHelpUrl = "https://eclipse-autoapiframework.github.io/autoapiframework/main/";
         constexpr int kFirstColumnWidth = 25;
         constexpr int kMinColumnWidth = 90;
         constexpr int kMaxColumnWidth = 320;
@@ -161,6 +163,7 @@ namespace acd
         EVT_MENU(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
         EVT_MENU(MainFrame::ID_Settings, MainFrame::OnSettings)
         EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
+        EVT_MENU(wxID_HELP, MainFrame::OnHelp)
         EVT_MENU(wxID_EXIT, MainFrame::OnExit)
     wxEND_EVENT_TABLE()
 
@@ -197,6 +200,7 @@ namespace acd
 
         wxMenu* helpMenu = new wxMenu();
         helpMenu->Append(wxID_ABOUT);
+        helpMenu->Append(wxID_HELP, "&Help...");
 
         wxMenuBar* menuBar = new wxMenuBar();
         menuBar->Append(fileMenu, "&File");
@@ -213,7 +217,7 @@ namespace acd
         m_readButton = new wxButton(panel, ID_OpenSpecification, "Read .acs file");
         m_saveButton = new wxButton(panel, ID_SaveSpecification, "Save");
         m_saveButton->Enable(false);
-        m_saveAsButton = new wxButton(panel, ID_SaveSpecificationAs, "Write .acs file as...");
+        m_saveAsButton = new wxButton(panel, ID_SaveSpecificationAs, "Save as...");
         m_saveAsButton->Enable(false);
         m_metaButton = new wxButton(panel, ID_OpenMetaModel, "Load meta model...");
         m_showMetaModelButton = new wxButton(panel, ID_ShowMetaModel, "Show meta model");
@@ -856,10 +860,22 @@ namespace acd
     {
         const wxArrayString languages = {"C", "C++", "Rust"};
         wxSingleChoiceDialog dialog(this, "Select target language", "Create API", languages);
+
+        wxString lastLanguage;
+        wxConfigBase::Get()->Read(kCreateApiLanguageConfigKey, &lastLanguage);
+        const int lastIndex = languages.Index(lastLanguage);
+        if (lastIndex != wxNOT_FOUND)
+        {
+            dialog.SetSelection(lastIndex);
+        }
+
         if (dialog.ShowModal() != wxID_OK)
         {
             return;
         }
+
+        wxConfigBase::Get()->Write(kCreateApiLanguageConfigKey, dialog.GetStringSelection());
+        wxConfigBase::Get()->Flush();
 
         wxMessageBox("Create API for " + dialog.GetStringSelection() + ":\n\nNOT IMPLEMENTED",
                      kApplicationName,
@@ -873,6 +889,8 @@ namespace acd
                     "specifications (*.acs, YAML content) based on the framework meta model.",
                     "About " + wxString(kApplicationName), wxOK | wxICON_INFORMATION, this);                   
     }
+
+    void MainFrame::OnHelp(wxCommandEvent&) { wxLaunchDefaultBrowser(kHelpUrl); }
 
     void MainFrame::OnExit(wxCommandEvent&) { Close(true); }
 

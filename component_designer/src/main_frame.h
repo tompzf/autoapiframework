@@ -75,6 +75,7 @@ namespace acd
         void OnShow(wxCommandEvent& event);
         void OnCreateAPI(wxCommandEvent& event);
         void OnAbout(wxCommandEvent& event);
+        void OnHelp(wxCommandEvent& event);
         void OnExit(wxCommandEvent& event);
 
         void LoadSpecification(const wxString& path);
