@@ -17,6 +17,9 @@
 #include "main_frame.h"
 #include "validate_function.h"
 
+#include <wx/config.h>
+#include <wx/dirdlg.h>
+#include <wx/filedlg.h>
 #include <wx/filename.h>
 #include <wx/icon.h>
 #include <wx/image.h>
@@ -32,6 +35,10 @@ namespace acd
     namespace 
     {
         constexpr const char* kMetaModelFileName = "autoapiframework_meta_model.yaml";
+        constexpr const char* kMetaModelFileConfigKey = "/Paths/MetaModelFile";
+        constexpr const char* kMetaModelDirectoryConfigKey = "/Paths/MetaModelDirectory";
+        constexpr const char* kVspecDirectoryConfigKey = "/Paths/VSpecDirectory";
+        constexpr const char* kCovesaToolsDirectoryConfigKey = "/Paths/CovesaToolsDirectory";
         constexpr const char* kLogoFileName = "autoapiframework_logo.png";
         constexpr const char* kIconFileName = "autoapiframework_icon.png";
         constexpr int kFirstColumnWidth = 25;
@@ -140,6 +147,7 @@ namespace acd
         EVT_BUTTON(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_BUTTON(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
         EVT_BUTTON(MainFrame::ID_ShowMetaModel, MainFrame::OnShowMetaModel)
+        EVT_BUTTON(MainFrame::ID_Settings, MainFrame::OnSettings)
         EVT_BUTTON(MainFrame::ID_AddViaVss, MainFrame::OnAddViaVss)
         EVT_BUTTON(MainFrame::ID_Add, MainFrame::OnAdd)
         EVT_BUTTON(MainFrame::ID_Delete, MainFrame::OnDelete)
@@ -151,6 +159,7 @@ namespace acd
         EVT_MENU(MainFrame::ID_OpenSpecification, MainFrame::OnOpenSpecification)
         EVT_MENU(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_MENU(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
+        EVT_MENU(MainFrame::ID_Settings, MainFrame::OnSettings)
         EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
         EVT_MENU(wxID_EXIT, MainFrame::OnExit)
     wxEND_EVENT_TABLE()
@@ -182,6 +191,7 @@ namespace acd
         fileMenu->Append(ID_SaveSpecificationAs, "&Write function specification as...\tCtrl-S");
         fileMenu->AppendSeparator();
         fileMenu->Append(ID_OpenMetaModel, "Load &meta model...");
+        fileMenu->Append(ID_Settings, "&Settings...");
         fileMenu->AppendSeparator();
         fileMenu->Append(wxID_EXIT);
 
@@ -207,6 +217,7 @@ namespace acd
         m_saveAsButton->Enable(false);
         m_metaButton = new wxButton(panel, ID_OpenMetaModel, "Load meta model...");
         m_showMetaModelButton = new wxButton(panel, ID_ShowMetaModel, "Show meta model");
+        m_settingsButton = new wxButton(panel, ID_Settings, "Settings...");
         m_metaModelLabel = new wxStaticText(panel, wxID_ANY, "Meta model: <not loaded>");
 
         buttonSizer->Add(m_newButton, 0, wxALL, 5);
@@ -215,6 +226,7 @@ namespace acd
         buttonSizer->Add(m_saveAsButton, 0, wxALL, 5);
         buttonSizer->Add(m_metaButton, 0, wxALL, 5);
         buttonSizer->Add(m_showMetaModelButton, 0, wxALL, 5);
+        buttonSizer->Add(m_settingsButton, 0, wxALL, 5);
         buttonSizer->AddStretchSpacer();
         buttonSizer->Add(m_metaModelLabel, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
         wxImage logoImage(FindRuntimeFile(kLogoFileName), wxBITMAP_TYPE_PNG);
@@ -337,6 +349,32 @@ namespace acd
     {
         wxFileName executable(wxStandardPaths::Get().GetExecutablePath());
         const wxString exeDir = executable.GetPath();
+
+        wxString configuredMetaModelFile;
+        wxConfigBase::Get()->Read(kMetaModelFileConfigKey, &configuredMetaModelFile);
+        if (!configuredMetaModelFile.empty() && wxFileName::FileExists(configuredMetaModelFile))
+        {
+            m_metaModelVersion = LoadMetaModel(configuredMetaModelFile, true);
+            if (m_metaModel.IsLoaded())
+            {
+                return;
+            }
+        }
+
+        wxString configuredDirectory;
+        wxConfigBase::Get()->Read(kMetaModelDirectoryConfigKey, &configuredDirectory);
+        if (!configuredDirectory.empty())
+        {
+            const wxString configuredPath = wxFileName(configuredDirectory, kMetaModelFileName).GetFullPath();
+            if (wxFileName::FileExists(configuredPath))
+            {
+                m_metaModelVersion = LoadMetaModel(configuredPath, true);
+                if (m_metaModel.IsLoaded())
+                {
+                    return;
+                }
+            }
+        }
 
         const wxString candidates[] = 
         {
@@ -464,7 +502,12 @@ namespace acd
 
     void MainFrame::OnOpenMetaModel(wxCommandEvent&) 
     {
-        wxFileDialog dialog(this, "Load meta model", wxEmptyString, kMetaModelFileName,
+        wxString configuredMetaModelFile;
+        wxConfigBase::Get()->Read(kMetaModelFileConfigKey, &configuredMetaModelFile);
+        wxFileName configuredFile(configuredMetaModelFile);
+        const wxString initialDirectory = configuredFile.IsOk() ? configuredFile.GetPath() : wxString();
+        const wxString initialFileName = configuredFile.IsOk() ? configuredFile.GetFullName() : wxString(kMetaModelFileName);
+        wxFileDialog dialog(this, "Load meta model", initialDirectory, initialFileName,
                             "YAML files (*.yaml;*.yml)|*.yaml;*.yml|All files (*.*)|*.*",
                             wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dialog.ShowModal() == wxID_CANCEL) 
@@ -472,10 +515,84 @@ namespace acd
             return;
         }
         m_metaModelVersion = LoadMetaModel(dialog.GetPath(), true);
+        if (m_metaModel.IsLoaded())
+        {
+            wxConfigBase::Get()->Write(kMetaModelFileConfigKey, dialog.GetPath());
+            wxConfigBase::Get()->Flush();
+        }
         SetStatusText(m_metaModel.IsLoaded() ? "Meta model loaded" : "No meta model", 1);
 
         UpdateMetaModelButtonStates();
         RefreshAll();
+    }
+
+    void MainFrame::OnSettings(wxCommandEvent&)
+    {
+        wxConfigBase* config = wxConfigBase::Get();
+        wxString metaModelFile = kMetaModelFileName;
+        wxString vspecDirectory;
+        wxString covesaToolsDirectory;
+        config->Read(kMetaModelFileConfigKey, &metaModelFile);
+        config->Read(kVspecDirectoryConfigKey, &vspecDirectory);
+        config->Read(kCovesaToolsDirectoryConfigKey, &covesaToolsDirectory);
+
+        wxDialog dialog(this, wxID_ANY, "Settings", wxDefaultPosition, wxDefaultSize,
+                        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+        wxBoxSizer* dialogSizer = new wxBoxSizer(wxVERTICAL);
+        wxFlexGridSizer* fields = new wxFlexGridSizer(3, 8, 8);
+        fields->AddGrowableCol(1, 1);
+
+        wxTextCtrl* metaModelControl = new wxTextCtrl(&dialog, wxID_ANY, metaModelFile);
+        wxTextCtrl* vspecControl = new wxTextCtrl(&dialog, wxID_ANY, vspecDirectory);
+        wxTextCtrl* covesaToolsControl = new wxTextCtrl(&dialog, wxID_ANY, covesaToolsDirectory);
+        const auto addField = [&dialog, fields](const wxString& label, wxTextCtrl* control, bool isFile)
+        {
+            fields->Add(new wxStaticText(&dialog, wxID_ANY, label), 0, wxALIGN_CENTER_VERTICAL);
+            fields->Add(control, 1, wxEXPAND);
+            wxButton* browseButton = new wxButton(&dialog, wxID_ANY, "Browse...");
+            browseButton->Bind(wxEVT_BUTTON, [&dialog, control, isFile](wxCommandEvent&)
+            {
+                if (isFile)
+                {
+                    wxFileName current(control->GetValue());
+                    wxFileDialog picker(&dialog, "Select meta model", current.GetPath(), current.GetFullName(),
+                                        "YAML files (*.yaml;*.yml)|*.yaml;*.yml|All files (*.*)|*.*",
+                                        wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+                    if (picker.ShowModal() == wxID_OK)
+                    {
+                        control->SetValue(picker.GetPath());
+                    }
+                    return;
+                }
+
+                wxDirDialog picker(&dialog, "Select folder", control->GetValue(),
+                                   wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+                if (picker.ShowModal() == wxID_OK)
+                {
+                    control->SetValue(picker.GetPath());
+                }
+            });
+            fields->Add(browseButton);
+        };
+
+        addField("Meta model file", metaModelControl, true);
+        addField("COVESA VSpec folder", vspecControl, false);
+        addField("COVESA tools folder", covesaToolsControl, false);
+        dialogSizer->Add(fields, 1, wxEXPAND | wxALL, 12);
+        dialogSizer->Add(dialog.CreateSeparatedButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 8);
+        dialog.SetSizerAndFit(dialogSizer);
+        dialog.SetMinSize(wxSize(700, -1));
+        dialog.CentreOnParent();
+        if (dialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+
+        config->Write(kMetaModelFileConfigKey, metaModelControl->GetValue());
+        config->Write(kVspecDirectoryConfigKey, vspecControl->GetValue());
+        config->Write(kCovesaToolsDirectoryConfigKey, covesaToolsControl->GetValue());
+        config->Flush();
+        SetStatusText("Global settings updated", 0);
     }
 
     void MainFrame::OnShowMetaModel(wxCommandEvent&)
