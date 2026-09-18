@@ -1,5 +1,5 @@
 {
-    "version": 2,
+    "version": 3,
     "cmakeMinimumRequired": {
         "major": 3,
         "minor": 20,
@@ -44,6 +44,11 @@
             "description": "MS Visual C++ Compiler - Ninja Generator - Debug Build",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/msvc_x64_x64_debug",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
             "architecture": {
                 "value": "x64",
                 "strategy": "external"
@@ -60,6 +65,11 @@
             "description": "MS Visual C++ Compiler - Ninja Generator - Release Build",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/msvc_x64_x64_release",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
             "architecture": {
                 "value": "x64",
                 "strategy": "external"
