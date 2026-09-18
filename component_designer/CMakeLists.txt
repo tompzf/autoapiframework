@@ -114,6 +114,9 @@ add_custom_command(TARGET AutoAPIComponentDesigner POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_logo.png"
             "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/autoapiframework_logo.png"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_logo_large.png"
+            "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/autoapiframework_logo_large.png"
     ${ACD_LINUX_ICON_COMMAND}
     VERBATIM)
 

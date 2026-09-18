@@ -41,6 +41,7 @@ namespace acd
         constexpr const char* kCovesaToolsDirectoryConfigKey = "/Paths/CovesaToolsDirectory";
         constexpr const char* kCreateApiLanguageConfigKey = "/CreateAPI/Language";
         constexpr const char* kLogoFileName = "autoapiframework_logo.png";
+        constexpr const char* kLogoFileNameLarge = "autoapiframework_logo_large.png";		
         constexpr const char* kIconFileName = "autoapiframework_icon.png";
         constexpr const char* kHelpUrl = "https://eclipse-autoapiframework.github.io/autoapiframework/main/";
         constexpr int kFirstColumnWidth = 25;
@@ -894,7 +895,7 @@ namespace acd
                         wxDefaultSize, wxDEFAULT_DIALOG_STYLE);
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-        wxImage logoImage(FindRuntimeFile(kLogoFileName), wxBITMAP_TYPE_PNG);
+        wxImage logoImage(FindRuntimeFile(kLogoFileNameLarge), wxBITMAP_TYPE_PNG);
         if (logoImage.IsOk())
         {
             sizer->Add(new wxStaticBitmap(&dialog, wxID_ANY, wxBitmap(logoImage)), 0,
