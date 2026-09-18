@@ -12,11 +12,6 @@
             "description": "Uses the GCC toolchain available on PATH and builds wxWidgets from source when it is not installed",
             "generator": "MinGW Makefiles",
             "binaryDir": "${sourceDir}/build/windows-gcc-debug",
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            },
             "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "g++",
                 "CMAKE_BUILD_TYPE": "Debug"
@@ -28,11 +23,6 @@
             "description": "Uses the GCC toolchain available on PATH and builds wxWidgets from source when it is not installed",
             "generator": "MinGW Makefiles",
             "binaryDir": "${sourceDir}/build/windows-gcc-release",
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            },
             "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "g++",
                 "CMAKE_BUILD_TYPE": "Release"
@@ -44,11 +34,6 @@
             "description": "MS Visual C++ Compiler - Ninja Generator - Debug Build",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/msvc_x64_x64_debug",
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            },
             "architecture": {
                 "value": "x64",
                 "strategy": "external"
@@ -65,11 +50,6 @@
             "description": "MS Visual C++ Compiler - Ninja Generator - Release Build",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/msvc_x64_x64_release",
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            },
             "architecture": {
                 "value": "x64",
                 "strategy": "external"
@@ -85,11 +65,6 @@
             "displayName": "Linux (Ninja, Debug)",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/linux-debug",
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Linux"
-            },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
             }
@@ -99,11 +74,6 @@
             "displayName": "Linux (Ninja, Release)",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/linux-release",
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Linux"
-            },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }

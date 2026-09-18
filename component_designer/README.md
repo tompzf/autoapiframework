@@ -52,19 +52,36 @@ wxWidgets.
 
 `cmake.sourceDirectory` in `.vscode/settings.json` already points to this
 folder, so *CMake: Select Configure Preset* -> *Configure* -> *Build* -> *Run*
-works from the repository window. Available presets: `windows-gcc` and
-`linux-debug`.
+works from the repository window. Available configure presets are
+`windows-gcc-debug`, `windows-gcc-release`, `msvc_x64_x64_ninja_debug`,
+`msvc_x64_x64_ninja_release`, `linux-debug` and `linux-release`.
 
 ### Windows
+
+#### GCC
 
 Install CMake, MSYS2 UCRT64 GCC and `mingw32-make`. Ensure
 `C:\msys64\ucrt64\bin` is on `PATH`, then configure and build with GCC:
 
 ```powershell
-cmake --preset windows-gcc
+cmake --preset windows-gcc-debug
 cmake --build --preset windows-gcc-debug
-.\build\windows-gcc\bin\AutoAPIComponentDesigner.exe
+.\build\windows-gcc-debug\bin\AutoAPIComponentDesigner.exe
 ```
+
+#### MSVC
+
+Install Visual Studio with the C++ desktop workload and Ninja. Run the
+commands from an x64 Native Tools Command Prompt or a Developer PowerShell:
+
+```powershell
+cmake --preset msvc_x64_x64_ninja_debug
+cmake --build --preset "msvc_x64_x64 (Ninja - Debug)"
+.\build\msvc_x64_x64_debug\bin\AutoAPIComponentDesigner.exe
+```
+
+Use `msvc_x64_x64_ninja_release` and
+`"msvc_x64_x64 (Ninja - Release)"` for a release build.
 
 If wxWidgets is not already installed, CMake downloads and builds wxWidgets
 3.2.6 automatically. This is slow only on the first configure and is cached
