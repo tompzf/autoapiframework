@@ -88,6 +88,10 @@ namespace acd
         // {
         //     return false;
         // }
+        // if (!ValidateEnums(dataInterfaces, acd::kDataInterfaceTypeKey, metaModel, error))
+        // {
+        //     return false;
+        // }        
 
         if (!SyntaxCheckForSequence(parameters, FunctionSpecification::kNamePathKey, error, FunctionSpecification::kParametersKey)) 
         {
@@ -97,7 +101,11 @@ namespace acd
         // {
         //     return false;
         // }
-        
+        // if (!ValidateEnums(parameters, acd::kParameterInterfaceTypeKey, metaModel, error))
+        // {
+        //     return false;
+        // }          
+
         if (!SyntaxCheckForSequence(scheduling, FunctionSpecification::kFunctionNameKey, error, FunctionSpecification::kSchedulingKey)) 
         {
             return false;
@@ -126,7 +134,6 @@ namespace acd
                                             const MetaModel& metaModel, std::string& error)
     {
         std::vector<std::string> validPropertyNamesFromMetaModel;
-        std::string collect = "now function:   ";
         if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
         {
             const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
@@ -140,7 +147,7 @@ namespace acd
         }
 
         bool syntaxError = false;
-        std::string text = " ";
+        std::string text = "";
         for (const YamlNodePtr& item : dataInterfaces->GetSequence())
         {
             if (!item || !item->IsMap())
@@ -162,10 +169,51 @@ namespace acd
 
         if (syntaxError)
         {
-            error = "Invalid properties found:" + text;
+            error = "Invalid properties found: " + text;
             return false;
         }
         return true;
+    }
+
+    bool ValidateFunction::ValidateEnums(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
+                                         const MetaModel& metaModel, std::string& error)
+    {
+        std::map<std::string, std::string> propertiesWithEnumRef;
+        if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
+        {
+            const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
+            if (properties && properties->IsMap())
+            {
+                for (const auto& property : properties->GetMap())                
+                {
+                    const YamlNodePtr enumRef = property.second->Find("enumRef");
+                    if (enumRef && enumRef->IsScalar())
+                    {
+                        propertiesWithEnumRef.insert(std::make_pair(property.first, enumRef->GetScalar()));
+                    }
+                }
+            }
+        }
+
+        for (const YamlNodePtr& item : dataInterfaces->GetSequence())
+        {
+            if (!item || !item->IsMap())
+            {
+                error = "Each collection item must be a mapping.";
+                return false;
+            }
+            for (const auto& property : item->GetMap())
+            {
+                if (propertiesWithEnumRef.find(property.first.c_str()) != propertiesWithEnumRef.end())
+                {
+                    if (!metaModel.ValidateEnumValue(item->GetScalar(), property.first, property.second->GetScalar(), error))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }        
+        return false;
     }
 
 } // namespace acd

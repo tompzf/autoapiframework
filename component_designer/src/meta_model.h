@@ -59,7 +59,8 @@ namespace acd
         std::vector<std::string> ColumnsFor(const std::string& interfaceTypeName,
                                             const std::vector<YamlNodePtr>& entries) const;
 
-        bool ValidateEnumValue(const std::string& enumName,const std::string& entry, std::string& error) const;
+        bool ValidateEnumValue(const std::string& propertyName, const std::string& enumName, 
+                               const std::string& entry, std::string& error) const;
 
     private:                                            
         void CollectEnums(const YamlNodePtr& model);                                    

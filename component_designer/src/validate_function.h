@@ -36,6 +36,7 @@ namespace acd
         bool InterfaceTypesSyntaxCheck(const YamlNodePtr& root, const MetaModel& metaModel, std::string& error);
         bool SyntaxCheckForSequence(const YamlNodePtr& node, const std::string& key, std::string& error, const std::string& displayName);
         bool ValidateProperties(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);
+        bool ValidateEnums(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);        
     };
 } // namespace acd
 

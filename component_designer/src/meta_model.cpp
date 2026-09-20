@@ -175,19 +175,30 @@ namespace acd
         }
     }
 
-    bool MetaModel::ValidateEnumValue( const std::string& enumName, 
+    bool MetaModel::ValidateEnumValue( const std::string& propertyName, const std::string& enumName, 
                     const std::string& entry, std::string& error) const
     {
         auto it = m_enums.find(enumName);
         if (it == m_enums.end())
         {
-            error = "Enum '" + enumName + "' not found.";
+            error = "(" + propertyName + ") Enum '" + enumName + "' not found.";
+            error += "\n\nValid would be:\n";
+            for (const auto& value : m_enums)
+            {
+                error += "  - " + value.first + "\n";
+            }            
             return false;
         }
         const auto& values = it->second;
         if (std::find(values.begin(), values.end(), entry) == values.end())
         {
-            error = "Enum '" + enumName +"' does not contain '" + entry + "'.";
+            error = "Invalid enum value '" + entry +"' for property '" + enumName + "' in item '" + propertyName + "'.";
+
+            error += "\n\nValid would be:\n";
+            for (const auto& value : values)
+            {
+                error += "  - " + value + "\n";
+            }
             return false;
         }
 

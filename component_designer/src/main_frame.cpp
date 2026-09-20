@@ -453,10 +453,10 @@ namespace acd
         {
             return;
         }
-        if (!SyntaxCheckIsOK(true, "Not saved! "))
-        {
-            return;
-        }
+        // if (!SyntaxCheckIsOK(true, "Not saved! "))
+        // {
+        //     return;
+        // }
 
         const wxString path = ToWx(m_specification.GetSourcePath());
         std::string error;
@@ -477,10 +477,10 @@ namespace acd
                         wxOK | wxICON_INFORMATION, this);
             return;
         }
-        if (!SyntaxCheckIsOK(true))
-        {
-            return;
-        }
+        // if (!SyntaxCheckIsOK(true))
+        // {
+        //     return;
+        // }
 
         wxFileName source(ToWx(m_specification.GetSourcePath()));
         wxString suggested = source.GetFullName();
