@@ -204,16 +204,17 @@ namespace acd
             }
             for (const auto& property : item->GetMap())
             {
-                if (propertiesWithEnumRef.find(property.first.c_str()) != propertiesWithEnumRef.end())
+                auto it = propertiesWithEnumRef.find(property.first.c_str());
+                if (it != propertiesWithEnumRef.end())
                 {
-                    if (!metaModel.ValidateEnumValue(item->GetScalar(), property.first, property.second->GetScalar(), error))
+                    if (!metaModel.ValidateEnumValue(property.first, it->second, property.second->GetScalar(), error))
                     {
                         return false;
-                    }
+                    }  
                 }
             }
         }        
-        return false;
+        return true;
     }
 
 } // namespace acd
