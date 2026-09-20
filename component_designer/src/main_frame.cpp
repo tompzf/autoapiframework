@@ -675,7 +675,23 @@ namespace acd
         {
             fieldSizer->Add(new wxStaticText(&dialog, wxID_ANY, ToWx(field)), 0,
                             wxALIGN_CENTER_VERTICAL);
-            wxTextCtrl* control = new wxTextCtrl(&dialog, wxID_ANY);
+
+            wxTextCtrl* control = nullptr;
+            if (field == "description")
+            {
+                control = new wxTextCtrl(
+                    &dialog,
+                    wxID_ANY,
+                    "",
+                    wxDefaultPosition,
+                    wxSize(-1, 100),          // height of 100 px
+                    wxTE_MULTILINE);
+            }
+            else
+            {
+                control = new wxTextCtrl(&dialog, wxID_ANY);
+            }
+
             fieldSizer->Add(control, 1, wxEXPAND);
             controls.emplace_back(field, control);
         }
@@ -756,15 +772,33 @@ namespace acd
         fields->AddGrowableCol(1, 1);
         std::vector<EditableValue> editableValues;
 
-        const auto addField = [&fields, &editableValues, &dialog](const wxString& name,
-                                                                    const YamlNodePtr& node)
+        const auto addField =
+            [&fields, &editableValues, &dialog]
+            (const wxString& name, const YamlNodePtr& node)
         {
             if (!node || !node->IsScalar())
             {
                 return;
             }
+
             fields->Add(new wxStaticText(&dialog, wxID_ANY, name), 0, wxALIGN_CENTER_VERTICAL);
-            wxTextCtrl* control = new wxTextCtrl(&dialog, wxID_ANY, ToWx(node->GetScalar()));
+
+            wxTextCtrl* control = nullptr;
+            if (name.CmpNoCase("description") == 0)
+            {
+                control = new wxTextCtrl(
+                    &dialog,
+                    wxID_ANY,
+                    ToWx(node->GetScalar()),
+                    wxDefaultPosition,
+                    wxSize(-1, 100),
+                    wxTE_MULTILINE);
+            }
+            else
+            {
+                control = new wxTextCtrl(&dialog, wxID_ANY, ToWx(node->GetScalar()));
+            }
+
             fields->Add(control, 1, wxEXPAND);
             editableValues.push_back({node, control});
         };
