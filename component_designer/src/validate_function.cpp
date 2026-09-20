@@ -46,16 +46,10 @@ namespace acd
             return false;
         }
 
-        if (!InterfaceTypesSyntaxCheck(functionSpecification, error))
+        if (!InterfaceTypesSyntaxCheck(functionSpecification, metaModel, error))
         {
             return false;
         }
-
-        // ToDo
-        // if (!metaModel.ValidateEnumValue("ASIL", "ASIL D", error))
-        // {
-        //     return false;
-        // }
 
         return true;
     }
@@ -74,7 +68,7 @@ namespace acd
         return true;
     }
 
-    bool ValidateFunction::InterfaceTypesSyntaxCheck(const YamlNodePtr& root, std::string& error)
+    bool ValidateFunction::InterfaceTypesSyntaxCheck(const YamlNodePtr& root, const MetaModel& metaModel, std::string& error)
     {
         const YamlNodePtr dataInterfaces = root->Find(FunctionSpecification::kDataInterfacesKey);
         const YamlNodePtr parameters = root->Find(FunctionSpecification::kParametersKey);
@@ -90,10 +84,20 @@ namespace acd
         {
             return false;
         }
+        // if (!ValidateProperties(dataInterfaces, acd::kDataInterfaceTypeKey, metaModel, error))
+        // {
+        //     return false;
+        // }
+
         if (!SyntaxCheckForSequence(parameters, FunctionSpecification::kNamePathKey, error, FunctionSpecification::kParametersKey)) 
         {
             return false;
         }
+        // if (!ValidateProperties(parameters, acd::kParameterInterfaceTypeKey, metaModel, error))
+        // {
+        //     return false;
+        // }
+        
         if (!SyntaxCheckForSequence(scheduling, FunctionSpecification::kFunctionNameKey, error, FunctionSpecification::kSchedulingKey)) 
         {
             return false;
@@ -117,5 +121,51 @@ namespace acd
         }        
         return true;
     }    
+
+    bool ValidateFunction::ValidateProperties(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
+                                            const MetaModel& metaModel, std::string& error)
+    {
+        std::vector<std::string> validPropertyNamesFromMetaModel;
+        std::string collect = "now function:   ";
+        if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
+        {
+            const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
+            if (properties && properties->IsMap())
+            {
+                for (const auto& property : properties->GetMap())
+                {
+                    validPropertyNamesFromMetaModel.push_back(property.first);
+                }
+            }
+        }
+
+        bool syntaxError = false;
+        std::string text = " ";
+        for (const YamlNodePtr& item : dataInterfaces->GetSequence())
+        {
+            if (!item || !item->IsMap())
+            {
+                error = "Each collection item must be a mapping.";
+                return false;
+            }
+            for (const auto& property : item->GetMap())
+            {
+                auto it = std::find(validPropertyNamesFromMetaModel.begin(), 
+                                    validPropertyNamesFromMetaModel.end(), property.first);
+                if (it == validPropertyNamesFromMetaModel.end())
+                {
+                    syntaxError = true;
+                    text += " " + property.first;
+                }
+            }
+        }
+
+        if (syntaxError)
+        {
+            error = "Invalid properties found:" + text;
+            return false;
+        }
+        return true;
+    }
 
 } // namespace acd
