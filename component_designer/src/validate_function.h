@@ -21,6 +21,7 @@
 #include <string>
 #include <vector>
 
+#include "meta_model.h"
 #include "yaml_node.h"
 
 namespace acd 
@@ -28,7 +29,7 @@ namespace acd
     class ValidateFunction
     {
     public:
-        bool SyntaxCheckIsOK(std::string& content, std::string& error);
+        bool SyntaxCheckIsOK(const MetaModel& metaModel, const std::string& content, std::string& error);
     
     private:
         bool HeaderSyntaxCheck(const YamlNodePtr& root, std::string& error);

@@ -37,10 +37,12 @@ namespace acd
             return false;
         }
         
-        m_interfaceTypes.clear();        
+        m_interfaceTypes.clear();  
+        m_enums.clear(); 
         if (!FindRequiredAttributesAndInterfaces(model, path, error))
         {
-            m_interfaceTypes.clear();            
+            m_interfaceTypes.clear();     
+            m_enums.clear(); 
             return false;
         }
 
@@ -92,6 +94,8 @@ namespace acd
             error = "The required interface types are missing in the metamodel file " + path;
             return false;
         }
+        CollectEnums(model);    
+
         return true;
     }    
 
@@ -144,7 +148,50 @@ namespace acd
                 }
             }
         }
+
         return columns;
     }
+
+   void MetaModel::CollectEnums(const YamlNodePtr& model) 
+    {
+        if (const YamlNodePtr enums = model->Find("enums")) 
+        {
+            m_enums.clear(); 
+            for (const auto& entry : enums->GetMap()) 
+            {
+                std::vector<std::string> values;
+                if (entry.second && entry.second->IsSequence()) 
+                {
+                    for (const YamlNodePtr& value : entry.second->GetSequence()) 
+                    {
+                        if (value && value->IsScalar()) 
+                        {
+                            values.push_back(value->GetScalar());
+                        }
+                    }
+                }
+                m_enums.emplace(entry.first, std::move(values));
+            }
+        }
+    }
+
+    bool MetaModel::ValidateEnumValue( const std::string& enumName, 
+                    const std::string& entry, std::string& error) const
+    {
+        auto it = m_enums.find(enumName);
+        if (it == m_enums.end())
+        {
+            error = "Enum '" + enumName + "' not found.";
+            return false;
+        }
+        const auto& values = it->second;
+        if (std::find(values.begin(), values.end(), entry) == values.end())
+        {
+            error = "Enum '" + enumName +"' does not contain '" + entry + "'.";
+            return false;
+        }
+
+        return true;
+    }    
 
 } // namespace acd

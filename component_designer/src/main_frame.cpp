@@ -823,7 +823,7 @@ namespace acd
         std::string error;
 
         ValidateFunction validateFunction;
-        if (validateFunction.SyntaxCheckIsOK(content, error))
+        if (validateFunction.SyntaxCheckIsOK(m_metaModel, content, error))
         {
             if (!doNotShowOnSuccess)
             {

@@ -26,16 +26,16 @@
 
 namespace acd 
 {
-    bool ValidateFunction::SyntaxCheckIsOK(std::string& content, std::string& error) 
+    bool ValidateFunction::SyntaxCheckIsOK(const MetaModel& metaModel, const std::string& content, std::string& error)
     {
         YamlParser parser;
         const YamlNodePtr root = parser.ParseText(content, error);
-        if (!root) 
+        if (!root)
         {
             return false;
         }
         const YamlNodePtr functionSpecification = root->Find(FunctionSpecification::kRootKey);
-        if (!functionSpecification || !functionSpecification->IsMap()) 
+        if (!functionSpecification || !functionSpecification->IsMap())
         {
             error = std::string("'") + std::string(FunctionSpecification::kRootKey) + "' root key not found.";
             return false;
@@ -45,11 +45,17 @@ namespace acd
         {
             return false;
         }
-        
+
         if (!InterfaceTypesSyntaxCheck(functionSpecification, error))
         {
             return false;
-        }        
+        }
+
+        // ToDo
+        // if (!metaModel.ValidateEnumValue("ASIL", "ASIL D", error))
+        // {
+        //     return false;
+        // }
 
         return true;
     }

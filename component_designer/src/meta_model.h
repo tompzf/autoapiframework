@@ -58,14 +58,19 @@ namespace acd
         /// any additional keys that occur in @p entries but are not in the model.
         std::vector<std::string> ColumnsFor(const std::string& interfaceTypeName,
                                             const std::vector<YamlNodePtr>& entries) const;
-                                      
-    private:
+
+        bool ValidateEnumValue(const std::string& enumName,const std::string& entry, std::string& error) const;
+
+    private:                                            
+        void CollectEnums(const YamlNodePtr& model);                                    
+
         bool m_loaded = false;
         std::string m_fileContent;        
         std::string m_name;
         std::string m_version;
         std::string m_sourcePath;
         std::vector<YamlNodePtr> m_interfaceTypes;
+        std::map<std::string, std::vector<std::string>> m_enums;              
     };
 
 } // namespace acd
