@@ -193,14 +193,18 @@ namespace acd
         wxMenu* fileMenu = new wxMenu();
         fileMenu->Append(ID_NewSpecification, "&New function specification\tCtrl-N");
         fileMenu->Append(ID_OpenSpecification, "&Read function specification...\tCtrl-O");
-        fileMenu->Append(ID_SaveSpecificationAs, "&Write function specification as...\tCtrl-S");
+        fileMenu->Append(ID_SaveSpecification, "&Save function specification\tCtrl-S");
+        fileMenu->Enable(ID_SaveSpecification, false);        
+        fileMenu->Append(ID_SaveSpecificationAs, "&Write function specification as...\tCtrl-W");
         fileMenu->Enable(ID_SaveSpecificationAs, false);
         fileMenu->AppendSeparator();
         fileMenu->Append(ID_OpenMetaModel, "Load &meta model...");
         fileMenu->Append(ID_ShowMetaModel, "Show meta model");
-        fileMenu->Append(ID_Settings, "&Settings...");
         fileMenu->AppendSeparator();
         fileMenu->Append(wxID_EXIT);
+
+        wxMenu* settingsMenu = new wxMenu();        
+        settingsMenu->Append(ID_Settings, "&Settings...");
 
         wxMenu* helpMenu = new wxMenu();
         helpMenu->Append(wxID_ABOUT);
@@ -208,6 +212,7 @@ namespace acd
 
         wxMenuBar* menuBar = new wxMenuBar();
         menuBar->Append(fileMenu, "&File");
+        menuBar->Append(settingsMenu, "&Settings...");
         menuBar->Append(helpMenu, "&Help");
         SetMenuBar(menuBar);
 
@@ -418,7 +423,7 @@ namespace acd
         m_specification.New(m_metaModel.GetName(), m_metaModel.GetVersion());
         m_newButton->Enable(false);
         GetMenuBar()->Enable(ID_NewSpecification, false);
-        m_saveAsButton->Enable(true);
+        m_saveAsButton->Enable(true);		        
         GetMenuBar()->Enable(ID_SaveSpecificationAs, true);		
         m_showButton->Enable(true);
         GetMenuBar()->Enable(ID_ShowMetaModel, true);			
@@ -931,6 +936,7 @@ namespace acd
         GetMenuBar()->Enable(ID_NewSpecification, false);
         m_saveButton->Enable(true);
         m_saveAsButton->Enable(true);
+        GetMenuBar()->Enable(ID_SaveSpecification, true);	        
         GetMenuBar()->Enable(ID_SaveSpecificationAs, true);				
         m_showButton->Enable(true);
         GetMenuBar()->Enable(ID_ShowMetaModel, true);				
