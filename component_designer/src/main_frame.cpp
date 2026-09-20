@@ -140,7 +140,6 @@ namespace acd
                 list->SetColumnWidth(column, width);
             }
         }
-
     } // namespace
 
     wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
@@ -217,6 +216,8 @@ namespace acd
         SetMenuBar(menuBar);
 
         CreateStatusBar(2);
+        int widths[] = { -2, -1 }; // first field gets 2/3, second gets 1/3
+        GetStatusBar()->SetStatusWidths(2, widths);
 
         wxPanel* panel = new wxPanel(this);
         wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
