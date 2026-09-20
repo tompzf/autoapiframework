@@ -88,10 +88,10 @@ namespace acd
         // {
         //     return false;
         // }
-        // if (!ValidateEnums(dataInterfaces, acd::kDataInterfaceTypeKey, metaModel, error))
-        // {
-        //     return false;
-        // }        
+        if (!ValidateEnums(dataInterfaces, acd::kDataInterfaceTypeKey, metaModel, error))
+        {
+            return false;
+        }        
 
         if (!SyntaxCheckForSequence(parameters, FunctionSpecification::kNamePathKey, error, FunctionSpecification::kParametersKey)) 
         {
@@ -101,10 +101,10 @@ namespace acd
         // {
         //     return false;
         // }
-        // if (!ValidateEnums(parameters, acd::kParameterInterfaceTypeKey, metaModel, error))
-        // {
-        //     return false;
-        // }          
+        if (!ValidateEnums(parameters, acd::kParameterInterfaceTypeKey, metaModel, error))
+        {
+            return false;
+        }          
 
         if (!SyntaxCheckForSequence(scheduling, FunctionSpecification::kFunctionNameKey, error, FunctionSpecification::kSchedulingKey)) 
         {
@@ -186,7 +186,7 @@ namespace acd
             {
                 for (const auto& property : properties->GetMap())                
                 {
-                    const YamlNodePtr enumRef = property.second->Find("enumRef");
+                    const YamlNodePtr enumRef = property.second->Find(kEnumRefKey);
                     if (enumRef && enumRef->IsScalar())
                     {
                         propertiesWithEnumRef.insert(std::make_pair(property.first, enumRef->GetScalar()));

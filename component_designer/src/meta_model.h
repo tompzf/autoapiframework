@@ -30,6 +30,7 @@ namespace acd
     static constexpr const char* kNameKey = "name";
     static constexpr const char* kVersionKey = "version";    
     static constexpr const char* kEnumsKey = "enums";
+    static constexpr const char* kEnumRefKey = "enumRef";
     static constexpr const char* kInterfaceTypesKey = "interfaceTypes";
 
     static constexpr const char* kDataInterfaceTypeKey = "Data";
