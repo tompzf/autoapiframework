@@ -120,6 +120,10 @@ namespace acd
         wxButton* m_showButton = nullptr;
         wxButton* m_createAPIButton = nullptr;
 
+        wxString GetGitVersion(const wxString& repoDir);
+        wxString GetGitTag(const wxString& repoDir);
+        std::string GetGitTagAndVersion(const wxString& repoDir);
+
         wxDECLARE_EVENT_TABLE();
     };
 

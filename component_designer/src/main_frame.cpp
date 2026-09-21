@@ -562,15 +562,23 @@ namespace acd
         wxDialog dialog(this, wxID_ANY, "Settings", wxDefaultPosition, wxDefaultSize,
                         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
         wxBoxSizer* dialogSizer = new wxBoxSizer(wxVERTICAL);
-        wxFlexGridSizer* fields = new wxFlexGridSizer(3, 8, 8);
+        wxFlexGridSizer* fields = new wxFlexGridSizer(4, 8, 8);
         fields->AddGrowableCol(1, 1);
 
         wxTextCtrl* metaModelControl = new wxTextCtrl(&dialog, wxID_ANY, metaModelFile);
         wxTextCtrl* vspecControl = new wxTextCtrl(&dialog, wxID_ANY, vspecDirectory);
         wxTextCtrl* covesaToolsControl = new wxTextCtrl(&dialog, wxID_ANY, covesaToolsDirectory);
-        const auto addField = [&dialog, fields](const wxString& label, wxTextCtrl* control, bool isFile)
+        wxStaticText* metaModelVersionLabel = new wxStaticText(&dialog, wxID_ANY, m_metaModelVersion);    
+        
+        wxString vspecVersion = GetGitTagAndVersion(vspecDirectory).c_str();
+        wxString covesaToolsVersion = GetGitTagAndVersion(covesaToolsDirectory).c_str();
+        wxStaticText* vspecVersionLabel = new wxStaticText(&dialog, wxID_ANY, vspecVersion.IsEmpty() ? "Version: unknown" : vspecVersion);
+        wxStaticText* toolsVersionLabel = new wxStaticText(&dialog, wxID_ANY, covesaToolsVersion.IsEmpty() ? "Version: unknown" : covesaToolsVersion);
+
+        const auto addField = [&dialog, fields](const wxString& label, wxTextCtrl* control, bool isFile, wxStaticText* versionLabel = nullptr)
         {
-            fields->Add(new wxStaticText(&dialog, wxID_ANY, label), 0, wxALIGN_CENTER_VERTICAL);
+            fields->Add(new wxStaticText(&dialog, wxID_ANY, label),
+                        0, wxALIGN_CENTER_VERTICAL);    
             fields->Add(control, 1, wxEXPAND);
             wxButton* browseButton = new wxButton(&dialog, wxID_ANY, "Browse...");
             browseButton->Bind(wxEVT_BUTTON, [&dialog, control, isFile](wxCommandEvent&)
@@ -596,11 +604,20 @@ namespace acd
                 }
             });
             fields->Add(browseButton);
+            fields->AddSpacer(1);
+            if (versionLabel)
+            {
+                fields->AddSpacer(1);
+                fields->Add(versionLabel, 0, wxALIGN_LEFT | wxBOTTOM, 4);
+                fields->AddSpacer(1);
+                fields->AddSpacer(1);
+            }
         };
 
-        addField("Meta model file", metaModelControl, true);
-        addField("COVESA VSpec folder", vspecControl, false);
-        addField("COVESA tools folder", covesaToolsControl, false);
+        addField("Meta model file", metaModelControl, true, metaModelVersionLabel);
+        addField("COVESA VSpec folder", vspecControl, false, vspecVersionLabel);
+        addField("COVESA tools folder", covesaToolsControl, false, toolsVersionLabel);
+
         dialogSizer->Add(fields, 1, wxEXPAND | wxALL, 12);
         dialogSizer->Add(dialog.CreateSeparatedButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 8);
         dialog.SetSizerAndFit(dialogSizer);
@@ -618,7 +635,7 @@ namespace acd
         SetStatusText("Global settings updated", 0);
         if (metaModelFile.CompareTo(metaModelControl->GetValue()) != 0)
         {
-            m_metaButton->Enable(true);
+            m_metaButton->Enable(true); 
         }
     }
 
@@ -646,7 +663,7 @@ namespace acd
     {
         wxMessageBox("Add signal via vss:\n\n NOT IMPLEMENTED ",
                 kApplicationName,
-                wxOK | wxICON_ERROR, this);   
+                wxOK | wxICON_ERROR, this);                
     }
 
     void MainFrame::OnAdd(wxCommandEvent&)
@@ -1135,4 +1152,47 @@ namespace acd
                     1);
     }
 
+    std::string MainFrame::GetGitTagAndVersion(const wxString& repoDir)
+    {
+        std::string version = "";
+        wxString gitVersion = GetGitVersion(repoDir);
+        wxString gitTag = GetGitTag(repoDir);
+        if(!gitTag.empty() && !gitVersion.empty() && gitTag != "Unknown" && gitVersion != "Unknown")
+        {
+            version = "VSS Version: " + gitTag + " (Commit " + gitVersion + ")";
+        }
+        return version;
+    }
+
+    wxString MainFrame::GetGitVersion(const wxString& repoDir)
+    {
+        wxArrayString output, errors;
+
+        wxString cmd =
+            wxString::Format("git -C \"%s\" describe --tags", repoDir);
+
+        long rc = wxExecute(cmd, output, errors, wxEXEC_SYNC);
+
+        if (rc != 0 || output.IsEmpty())
+            return "Unknown";
+
+        return output[0];
+    }
+
+    wxString MainFrame::GetGitTag(const wxString& repoDir)
+    {
+        wxArrayString output, errors;
+
+        wxString cmd =
+            wxString::Format(
+                "git -C \"%s\" describe --tags --abbrev=0",
+                repoDir);
+
+        long rc = wxExecute(cmd, output, errors, wxEXEC_SYNC);
+
+        if (rc != 0 || output.IsEmpty())
+            return "Unknown";
+
+        return output[0];
+    }
 } // namespace acd
