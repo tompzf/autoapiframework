@@ -570,8 +570,8 @@ namespace acd
         wxTextCtrl* covesaToolsControl = new wxTextCtrl(&dialog, wxID_ANY, covesaToolsDirectory);
         wxStaticText* metaModelVersionLabel = new wxStaticText(&dialog, wxID_ANY, m_metaModelVersion);    
         
-        wxString vspecVersion = GetGitTagAndVersion(vspecDirectory).c_str();
-        wxString covesaToolsVersion = GetGitTagAndVersion(covesaToolsDirectory).c_str();
+        wxString vspecVersion = GetGitTagAndVersion("VSpec version: ",vspecDirectory).c_str();
+        wxString covesaToolsVersion = GetGitTagAndVersion("Covesa tools version: ",covesaToolsDirectory).c_str();
         wxStaticText* vspecVersionLabel = new wxStaticText(&dialog, wxID_ANY, vspecVersion.IsEmpty() ? "Version: unknown" : vspecVersion);
         wxStaticText* toolsVersionLabel = new wxStaticText(&dialog, wxID_ANY, covesaToolsVersion.IsEmpty() ? "Version: unknown" : covesaToolsVersion);
 
@@ -1152,14 +1152,14 @@ namespace acd
                     1);
     }
 
-    std::string MainFrame::GetGitTagAndVersion(const wxString& repoDir)
+    std::string MainFrame::GetGitTagAndVersion(const std::string& prefix, const wxString& repoDir)
     {
         std::string version = "";
         wxString gitVersion = GetGitVersion(repoDir);
         wxString gitTag = GetGitTag(repoDir);
         if(!gitTag.empty() && !gitVersion.empty() && gitTag != "Unknown" && gitVersion != "Unknown")
         {
-            version = "VSS Version: " + gitTag + " (Commit " + gitVersion + ")";
+            version = prefix + gitTag + " (Commit " + gitVersion + ")";
         }
         return version;
     }

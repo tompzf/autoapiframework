@@ -122,7 +122,7 @@ namespace acd
 
         wxString GetGitVersion(const wxString& repoDir);
         wxString GetGitTag(const wxString& repoDir);
-        std::string GetGitTagAndVersion(const wxString& repoDir);
+        std::string GetGitTagAndVersion(const std::string& prefix, const wxString& repoDir);
 
         wxDECLARE_EVENT_TABLE();
     };
