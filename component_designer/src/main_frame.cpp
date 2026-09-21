@@ -559,6 +559,14 @@ namespace acd
         config->Read(kVspecDirectoryConfigKey, &vspecDirectory);
         config->Read(kCovesaToolsDirectoryConfigKey, &covesaToolsDirectory);
 
+        MetaModel metaModel;
+        std::string metaModelVersion = "unknown";
+        std::string error;
+        if (metaModel.Load(ToStd(metaModelFile), error)) 
+        {
+            metaModelVersion = metaModel.GetVersion();
+        }
+
         wxDialog dialog(this, wxID_ANY, "Settings", wxDefaultPosition, wxDefaultSize,
                         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
         wxBoxSizer* dialogSizer = new wxBoxSizer(wxVERTICAL);
@@ -568,9 +576,9 @@ namespace acd
         wxTextCtrl* metaModelControl = new wxTextCtrl(&dialog, wxID_ANY, metaModelFile);
         wxTextCtrl* vspecControl = new wxTextCtrl(&dialog, wxID_ANY, vspecDirectory);
         wxTextCtrl* covesaToolsControl = new wxTextCtrl(&dialog, wxID_ANY, covesaToolsDirectory);
-        wxStaticText* metaModelVersionLabel = new wxStaticText(&dialog, wxID_ANY, m_metaModelVersion);    
+        wxStaticText* metaModelVersionLabel = new wxStaticText(&dialog, wxID_ANY, metaModelVersion);    
         
-        wxString vspecVersion = GetGitTagAndVersion("VSpec version: ",vspecDirectory).c_str();
+        wxString vspecVersion = GetGitTagAndVersion("VSpec version: ", vspecDirectory).c_str();
         wxString covesaToolsVersion = GetGitTagAndVersion("Covesa tools version: ",covesaToolsDirectory).c_str();
         wxStaticText* vspecVersionLabel = new wxStaticText(&dialog, wxID_ANY, vspecVersion.IsEmpty() ? "Version: unknown" : vspecVersion);
         wxStaticText* toolsVersionLabel = new wxStaticText(&dialog, wxID_ANY, covesaToolsVersion.IsEmpty() ? "Version: unknown" : covesaToolsVersion);
