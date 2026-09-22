@@ -67,7 +67,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Summary" href="summary.html" />
-    <link rel="prev" title="VehicleSpeedFusion Multi-Rate Example" href="../component_specification/examples/vehicle_speed_fusion_multirate_example.html" />
+    <link rel="prev" title="VehicleSpeedFusion Multi-Rate Example" href="../function_specification/examples/vehicle_speed_fusion_multirate_example.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -175,8 +175,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../meta_model/meta_model_component_adapter.html">
-    Component Adapter
+  <a class="nav-link nav-internal" href="../meta_model/meta_model_function_adapter.html">
+    Function Adapter
   </a>
 </li>
 
@@ -189,21 +189,14 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../naming_conventions.html">
-    Discussion about naming conventions
+  <a class="nav-link dropdown-item nav-internal" href="../function_specification/function_specification_file.html">
+    Function Specification File
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../component_specification/component_specification_file.html">
-    Component Specification File
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../component_specification/component_specification_examples.html">
+  <a class="nav-link dropdown-item nav-internal" href="../function_specification/function_specification_examples.html">
     Examples
   </a>
 </li>
@@ -341,28 +334,21 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../meta_model/meta_model_component_adapter.html">
-    Component Adapter
+  <a class="nav-link nav-internal" href="../meta_model/meta_model_function_adapter.html">
+    Function Adapter
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../naming_conventions.html">
-    Discussion about naming conventions
+  <a class="nav-link nav-internal" href="../function_specification/function_specification_file.html">
+    Function Specification File
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../component_specification/component_specification_file.html">
-    Component Specification File
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../component_specification/component_specification_examples.html">
+  <a class="nav-link nav-internal" href="../function_specification/function_specification_examples.html">
     Examples
   </a>
 </li>
@@ -486,34 +472,34 @@
 <h1>Software Architecture<a class="headerlink" href="#software-architecture" title="Link to this heading">#</a></h1>
 <section id="runtime-specification-file">
 <h2>Runtime Specification File<a class="headerlink" href="#runtime-specification-file" title="Link to this heading">#</a></h2>
-<p>A <a class="reference internal" href="../component_specification/component_specification_file.html"><span class="doc">Component Specification File</span></a> fully describes exactly <strong>one</strong> function in
+<p>A <a class="reference internal" href="../function_specification/function_specification_file.html"><span class="doc">Function Specification File</span></a> fully describes exactly <strong>one</strong> function in
 isolation: its signals, its parameters, and the scheduling of its own runnables. It intentionally does not know anything about the other
 functions running on the same system.</p>
 <p>A real system, however, is composed of several such functions that need to be instantiated and executed together, in a defined order, and
-connected to the same middleware. The <strong>Runtime Specification File</strong> captures this system-level composition on top of one or more Component
+connected to the same middleware. The <strong>Runtime Specification File</strong> captures this system-level composition on top of one or more Function
 Specification Files:</p>
 <ul class="simple">
-<li><p><strong>Component reference</strong> - which Component Specification Files (i.e. which functions) are part of this runtime/system.</p></li>
-<li><p><strong>Sequencing</strong> - the execution order across those functions, i.e. how the <code class="docutils literal notranslate"><span class="pre">previousRunnableRef</span></code> chains of the individual components are
+<li><p><strong>Function reference</strong> - which Function Specification Files (i.e. which functions) are part of this runtime/system.</p></li>
+<li><p><strong>Sequencing</strong> - the execution order across those functions, i.e. how the <code class="docutils literal notranslate"><span class="pre">previousRunnableRef</span></code> chains of the individual functions are
 stitched together into one overall schedule.</p></li>
 </ul>
 <figure class="align-default">
 <img alt="One Specification - many artefacts" src="../../_images/runtime_specification_architecture.png" />
 </figure>
-<p>As shown above, each <code class="docutils literal notranslate"><span class="pre">Software</span> <span class="pre">Component</span></code> (the function’s business logic) is executed through its own <code class="docutils literal notranslate"><span class="pre">Component</span> <span class="pre">Adapter</span></code>, which wraps it
+<p>As shown above, each <code class="docutils literal notranslate"><span class="pre">Software</span> <span class="pre">Function</span></code> (the function’s business logic) is executed through its own <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code>, which wraps it
 behind the stable, middleware-independent contract defined by the meta model. The <code class="docutils literal notranslate"><span class="pre">Runtime</span> <span class="pre">Scheduler</span></code> is generated from the Runtime
-Specification File and is responsible for triggering the OS-level <code class="docutils literal notranslate"><span class="pre">Init</span></code>/<code class="docutils literal notranslate"><span class="pre">Compute</span></code>/<code class="docutils literal notranslate"><span class="pre">Terminate</span></code> calls of every component, in the order
+Specification File and is responsible for triggering the OS-level <code class="docutils literal notranslate"><span class="pre">Init</span></code>/<code class="docutils literal notranslate"><span class="pre">Compute</span></code>/<code class="docutils literal notranslate"><span class="pre">Terminate</span></code> calls of every function, in the order
 described by the Runtime Specification File, through the <code class="docutils literal notranslate"><span class="pre">Middleware</span> <span class="pre">Abstraction</span> <span class="pre">Layer</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The Runtime Specification File is not yet formally defined in the meta model (unlike the Component Specification File, which is defined by
+<p>The Runtime Specification File is not yet formally defined in the meta model (unlike the Function Specification File, which is defined by
 <code class="docutils literal notranslate"><span class="pre">Eclipse-autoapiframework-Metamodel</span></code> version 0.3.0). The concepts above describe the intended scope; a versioned schema, file extension,
 and worked examples are still to be added.</p>
 </div>
 <p>Open topics still to be worked out for the Runtime Specification File:</p>
 <ul class="simple">
-<li><p>Mapping of an output signal of one component to the input signal of another (data flow / connections).</p></li>
-<li><p>Explicit dependency declarations between components, beyond the ordering implied by <code class="docutils literal notranslate"><span class="pre">previousRunnableRef</span></code>.</p></li>
+<li><p>Mapping of an output signal of one function to the input signal of another (data flow / connections).</p></li>
+<li><p>Explicit dependency declarations between functions, beyond the ordering implied by <code class="docutils literal notranslate"><span class="pre">previousRunnableRef</span></code>.</p></li>
 <li><p>Initialization / system setup information.</p></li>
 <li><p>Deployment information.</p></li>
 </ul>
@@ -531,7 +517,7 @@ and worked examples are still to be added.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../component_specification/examples/vehicle_speed_fusion_multirate_example.html"
+       href="../function_specification/examples/vehicle_speed_fusion_multirate_example.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">

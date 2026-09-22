@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Summary &#8212; Eclipse Automotive API Framework  documentation</title>
+    <title>Function Adapter &#8212; Eclipse Automotive API Framework  documentation</title>
   
   
   
@@ -63,11 +63,11 @@
     <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'doc/runtime_specification/summary';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'doc/meta_model/meta_model_function_adapter';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Blueprint project (IFEX + VAF)" href="../examples/bp-ifex-vaf/bp-ifex-vaf.html" />
-    <link rel="prev" title="Software Architecture" href="runtime_specification_file.html" />
+    <link rel="next" title="Function Specification File" href="../function_specification/function_specification_file.html" />
+    <link rel="prev" title="Meta Model" href="meta_model.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -161,21 +161,21 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../meta_model/meta_model_purpose.html">
+  <a class="nav-link nav-internal" href="meta_model_purpose.html">
     Purpose of the Meta Model
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../meta_model/meta_model.html">
+  <a class="nav-link nav-internal" href="meta_model.html">
     Meta Model
   </a>
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../meta_model/meta_model_function_adapter.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
     Function Adapter
   </a>
 </li>
@@ -203,14 +203,14 @@
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="runtime_specification_file.html">
+  <a class="nav-link dropdown-item nav-internal" href="../runtime_specification/runtime_specification_file.html">
     Software Architecture
   </a>
 </li>
 
 
-<li class=" current active">
-  <a class="nav-link dropdown-item nav-internal" href="#">
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../runtime_specification/summary.html">
     Summary
   </a>
 </li>
@@ -320,21 +320,21 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../meta_model/meta_model_purpose.html">
+  <a class="nav-link nav-internal" href="meta_model_purpose.html">
     Purpose of the Meta Model
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../meta_model/meta_model.html">
+  <a class="nav-link nav-internal" href="meta_model.html">
     Meta Model
   </a>
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../meta_model/meta_model_function_adapter.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
     Function Adapter
   </a>
 </li>
@@ -355,14 +355,14 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="runtime_specification_file.html">
+  <a class="nav-link nav-internal" href="../runtime_specification/runtime_specification_file.html">
     Software Architecture
   </a>
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../runtime_specification/summary.html">
     Summary
   </a>
 </li>
@@ -447,7 +447,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Summary</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Function Adapter</span></li>
   </ul>
 </nav>
 </div>
@@ -464,70 +464,84 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="summary">
-<h1>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h1>
-<p>What we have so far:</p>
-<section id="meta-model">
-<h2>1. Meta Model<a class="headerlink" href="#meta-model" title="Link to this heading">#</a></h2>
+  <section id="function-adapter">
+<h1>Function Adapter<a class="headerlink" href="#function-adapter" title="Link to this heading">#</a></h1>
+<section id="overview-and-purpose">
+<h2>Overview and Purpose<a class="headerlink" href="#overview-and-purpose" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code> is a critical abstraction layer that bridges vehicle functions with underlying middleware platforms.
+It serves as a standardized wrapper that enables vehicle functions to be integrated and executed on any middleware without modification.</p>
+<p>Key Purposes of the <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code>:</p>
+<ol class="arabic simple">
+<li><p><strong>Middleware Abstraction</strong>: The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code> decouples the vehicle function implementation from the specific middleware platform,
+allowing the same function logic to run on different runtimes and integration targets.</p></li>
+<li><p><strong>Static API Contract</strong>: It implements the stable, agreed-upon static API contract derived from the meta model.
+This contract ensures consistent interface definitions, data types, scheduling behavior, and safety semantics across different implementations.</p></li>
+<li><p><strong>Safety and Integrity</strong>: The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code> manages safety-critical aspects including:</p></li>
+<li><p><strong>Portability</strong>: By using the <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code> pattern, vehicle functions become portable artifacts that can be:</p></li>
+<li><p><strong>Not a Full AUTOSAR Application</strong>: The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code> is not intended to be a complete replacement for an AUTOSAR Application. It focuses on portable function logic and signal access, while platform-specific capabilities such as middleware integration, lifecycle management, diagnostics, persistence, security, and deployment remain the responsibility of the surrounding runtime environment.</p></li>
+</ol>
+<p>The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code> essentially transforms the abstract specifications defined in the meta model and YAML instances into concrete,
+executable implementations that maintain the agreed contract regardless of the underlying middleware platform.</p>
+<figure class="align-default">
+<img alt="signal protection within the stack" src="../../_images/function_adapter.png" />
+</figure>
 </section>
-<section id="function-specification">
-<h2>2. Function Specification<a class="headerlink" href="#function-specification" title="Link to this heading">#</a></h2>
-<p>Contains the definition of a single executable element:</p>
-<ul class="simple">
-<li><p>interface</p></li>
-<li><p>inputs/outputs</p></li>
-<li><p>signals</p></li>
-<li><p>parameters</p></li>
-<li><p>constraints</p></li>
-<li><p>implementation-independent behavior</p></li>
-<li><p>metadata</p></li>
-</ul>
-<p>Conceptually: Function specification file = “Single function definition”</p>
-<blockquote>
-<div><p>Examples:</p>
-<div class="line-block">
-<div class="line">VehicleSpeed</div>
-<div class="line">WheelSpeedFusion</div>
-<div class="line">BatterySOC</div>
-<div class="line">NavigationRoutePlanner</div>
+<section id="thoughts-about-signal-protection">
+<h2>Thoughts About Signal Protection<a class="headerlink" href="#thoughts-about-signal-protection" title="Link to this heading">#</a></h2>
+<p>As shown in the following figure, E2E protection is handled by the middleware layer. Since communication between the application and the middleware is local and
+considered less critical, a lightweight supervision mechanism based on a complementary signal is used instead of full E2E protection in order to reduce performance impact.</p>
+<figure class="align-default">
+<img alt="signal protection within the stack" src="../../_images/signal_protection.png" />
+</figure>
+</section>
+<section id="e2e-protection-layer-explained">
+<h2>E2E Protection Layer Explained<a class="headerlink" href="#e2e-protection-layer-explained" title="Link to this heading">#</a></h2>
+<p>The following figures explain why the full E2E Protection is not part of the API.</p>
+<figure class="align-default">
+<img alt="example of a vehicle network" src="../../_images/vehicle_network.png" />
+</figure>
+<div class="pst-scrollable-table-container"><table class="table" id="id1">
+<caption><span class="caption-number">Table 5 </span><span class="caption-text">Random / Typical Modules shown in the picture above:</span><a class="headerlink" href="#id1" title="Link to this table">#</a></caption>
+<tbody>
+<tr class="row-odd"><td><p>Abbreviation</p></td>
+<td><p>Meaning</p></td>
+<td><p>Function</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>ECM</strong></p></td>
+<td><p>Engine Control Module</p></td>
+<td><p>Controls engine operation, fuel injection, ignition</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>BCM</strong></p></td>
+<td><p>Body Control Module</p></td>
+<td><p>Controls doors, windows, lighting, central locking</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>ESP / ESC</strong></p></td>
+<td><p>Electronic Stability Program / Control</p></td>
+<td><p>Vehicle stability control</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>ECU</strong></p></td>
+<td><p>Electronic Control Unit</p></td>
+<td><p>Generic term for a vehicle controller</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>TCM</strong></p></td>
+<td><p>Transmission Control Module</p></td>
+<td><p>Controls gearbox and gear shifts</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>TCU</strong></p></td>
+<td><p>Telematics Control Unit</p></td>
+<td><p>Connectivity, eCall, OTA updates</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>ABS</strong></p></td>
+<td><p>Anti-lock Braking System</p></td>
+<td><p>Prevents wheel lock during braking</p></td>
+</tr>
+</tbody>
+</table>
 </div>
-</div></blockquote>
-</section>
-<section id="runtime-specification-not-yet-defined">
-<h2>3. Runtime Specification (not yet defined)<a class="headerlink" href="#runtime-specification-not-yet-defined" title="Link to this heading">#</a></h2>
-<p>Contains the system composition:</p>
-<ul class="simple">
-<li><p>instantiated functions</p></li>
-<li><p>dependencies</p></li>
-<li><p>execution sequence</p></li>
-<li><p>data flow</p></li>
-<li><p>event flow</p></li>
-<li><p>deployment hints</p></li>
-</ul>
-<p>Conceptually: Runtime = “How do the functions work together?”</p>
-<blockquote>
-<div><p>Examples:</p>
-<p>runtime includes</p>
-<p>functions:</p>
-<ul class="simple">
-<li><p>VehicleSpeed</p></li>
-<li><p>WheelSpeedFusion</p></li>
-</ul>
-<p>connections:</p>
-<ul class="simple">
-<li><p>from: WheelSpeedFusion.Speed</p></li>
-<li><p>to: VehicleSpeed.SpeedInput</p></li>
-</ul>
-<p>dependencies:</p>
-<ul class="simple">
-<li><p>VehicleSpeed depends_on WheelSpeedFusion</p></li>
-</ul>
-</div></blockquote>
-</section>
-<section id="naming">
-<h2>4. Naming<a class="headerlink" href="#naming" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">*.afs</span></code>    AutoAPI Function Specification files</p>
-<p><code class="docutils literal notranslate"><span class="pre">*.ars</span></code>    AutoAPI Runtime Specification files</p>
+<p>The following figure shows an example of an E2E protection layer and its typical integrity checks.</p>
+<figure class="align-default">
+<img alt="E2E example" src="../../_images/E2E_protection.png" />
+</figure>
 </section>
 </section>
 
@@ -542,20 +556,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="runtime_specification_file.html"
+       href="meta_model.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Software Architecture</p>
+        <p class="prev-next-title">Meta Model</p>
       </div>
     </a>
     <a class="right-next"
-       href="../examples/bp-ifex-vaf/bp-ifex-vaf.html"
+       href="../function_specification/function_specification_file.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Blueprint project (IFEX + VAF)</p>
+        <p class="prev-next-title">Function Specification File</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -578,10 +592,9 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#meta-model">1. Meta Model</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#function-specification">2. Function Specification</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-specification-not-yet-defined">3. Runtime Specification (not yet defined)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#naming">4. Naming</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-and-purpose">Overview and Purpose</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thoughts-about-signal-protection">Thoughts About Signal Protection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#e2e-protection-layer-explained">E2E Protection Layer Explained</a></li>
 </ul>
   </nav></div>
 
@@ -589,7 +602,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/doc/runtime_specification/summary.rst.txt"
+      <li><a href="../../_sources/doc/meta_model/meta_model_function_adapter.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

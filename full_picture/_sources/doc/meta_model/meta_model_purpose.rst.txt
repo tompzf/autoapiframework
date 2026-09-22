@@ -89,7 +89,7 @@ These YAML files capture function-specific content such as:
 
 Because all YAML instances follow one shared structure, they can be exchanged, reviewed, versioned, and validated early before implementation details are introduced.
 
-The file extension of these files will be ``*.acs`` (AutoAPI Component Specification).
+The file extension of these files will be ``*.afs`` (AutoAPI Function Specification).
 
 
 Role of Code Generators
@@ -127,5 +127,5 @@ Currently we have a Meta Model in place with additional parameters and attribute
 .. figure:: figures/specification_sequence.png
    :alt: status of the current project
 
-An ``*.acs`` file does not use the VSPEC format. Instead, it is defined in YAML format.
+An ``*.afs`` file does not use the VSPEC format. Instead, it is defined in YAML format.
 
