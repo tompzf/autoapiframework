@@ -67,12 +67,15 @@ namespace acd
         void CollectEnums(const YamlNodePtr& model);                                    
 
         bool m_loaded = false;
+        std::string m_minimumVersion = "0.3.0";
         std::string m_fileContent;        
         std::string m_name;
         std::string m_version;
         std::string m_sourcePath;
         std::vector<YamlNodePtr> m_interfaceTypes;
-        std::map<std::string, std::vector<std::string>> m_enums;              
+        std::map<std::string, std::vector<std::string>> m_enums;
+        std::vector<uint32_t> SplitVersion(const std::string& version) const;
+        bool IsGreaterOrEqual(const std::string& version1, const std::string& version2) const;
     };
 
 } // namespace acd

@@ -17,6 +17,7 @@
 #include "meta_model.h"
 
 #include <algorithm>
+#include <sstream>
 
 #include "yaml_parser.h"
 
@@ -43,6 +44,14 @@ namespace acd
         {
             m_interfaceTypes.clear();     
             m_enums.clear(); 
+            return false;
+        }
+
+        if (!IsGreaterOrEqual(m_version, m_minimumVersion))
+        {
+            error = "Metamodel version " + m_version + " is lower than the minimum required version " + m_minimumVersion;
+            m_interfaceTypes.clear();     
+            m_enums.clear();             
             return false;
         }
 
@@ -203,6 +212,45 @@ namespace acd
         }
 
         return true;
+    }    
+
+    std::vector<uint32_t> MetaModel::SplitVersion(const std::string& version) const
+    {
+        std::vector<uint32_t> parts;
+        std::stringstream ss(version);
+        std::string item;
+
+        while (std::getline(ss, item, '.'))
+        {
+            parts.push_back(std::stoi(item));
+        }
+
+        return parts;
+    }
+
+    bool MetaModel::IsGreaterOrEqual(const std::string& version1, const std::string& version2) const
+    {
+        auto v1 = SplitVersion(version1);
+        auto v2 = SplitVersion(version2);
+
+        const size_t maxSize = std::max(v1.size(), v2.size());
+
+        v1.resize(maxSize, 0);
+        v2.resize(maxSize, 0);
+
+        for (size_t i = 0; i < maxSize; ++i)
+        {
+            if (v1[i] > v2[i])
+            {
+                return true;
+            }
+            if (v1[i] < v2[i])
+            {
+                return false;
+            }
+        }
+
+        return true; // equal
     }    
 
 } // namespace acd
