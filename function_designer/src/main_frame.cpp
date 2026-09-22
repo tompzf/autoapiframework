@@ -28,6 +28,7 @@
 #include <wx/stdpaths.h>
 
 #include <algorithm>
+#include <functional>
 #include <vector>
 
 namespace acd 
@@ -578,19 +579,22 @@ namespace acd
         wxTextCtrl* covesaToolsControl = new wxTextCtrl(&dialog, wxID_ANY, covesaToolsDirectory);
         wxStaticText* metaModelVersionLabel = new wxStaticText(&dialog, wxID_ANY, metaModelVersion);    
         
-        wxString vspecVersion = GetGitTagAndVersion("VSpec version: ", vspecDirectory).c_str();
-        wxString covesaToolsVersion = GetGitTagAndVersion("Covesa tools version: ",covesaToolsDirectory).c_str();
+        wxString vspecVersion = ToWx(GetGitTagAndVersion("VSpec version: ", vspecDirectory));
+        wxString covesaToolsVersion = ToWx(GetGitTagAndVersion("Covesa tools version: ", covesaToolsDirectory));
         wxStaticText* vspecVersionLabel = new wxStaticText(&dialog, wxID_ANY, vspecVersion.IsEmpty() ? "Version: unknown" : vspecVersion);
         wxStaticText* toolsVersionLabel = new wxStaticText(&dialog, wxID_ANY, covesaToolsVersion.IsEmpty() ? "Version: unknown" : covesaToolsVersion);
 
-        const auto addField = [&dialog, fields](const wxString& label, wxTextCtrl* control, bool isFile, wxStaticText* versionLabel = nullptr)
+        const auto addField = [&dialog, fields](const wxString& label, wxTextCtrl* control, bool isFile,
+                                               wxStaticText* versionLabel,
+                                               const std::function<wxString(const wxString&)>& getVersion)
         {
             fields->Add(new wxStaticText(&dialog, wxID_ANY, label),
                         0, wxALIGN_CENTER_VERTICAL);    
             fields->Add(control, 1, wxEXPAND);
             wxButton* browseButton = new wxButton(&dialog, wxID_ANY, "Browse...");
-            browseButton->Bind(wxEVT_BUTTON, [&dialog, control, isFile](wxCommandEvent&)
+            browseButton->Bind(wxEVT_BUTTON, [&dialog, control, isFile, versionLabel, getVersion](wxCommandEvent&)
             {
+                wxString selectedPath;
                 if (isFile)
                 {
                     wxFileName current(control->GetValue());
@@ -599,16 +603,24 @@ namespace acd
                                         wxFD_OPEN | wxFD_FILE_MUST_EXIST);
                     if (picker.ShowModal() == wxID_OK)
                     {
-                        control->SetValue(picker.GetPath());
+                        selectedPath = picker.GetPath();
                     }
-                    return;
+                }
+                else
+                {
+                    wxDirDialog picker(&dialog, "Select folder", control->GetValue(),
+                                       wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+                    if (picker.ShowModal() == wxID_OK)
+                    {
+                        selectedPath = picker.GetPath();
+                    }
                 }
 
-                wxDirDialog picker(&dialog, "Select folder", control->GetValue(),
-                                   wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
-                if (picker.ShowModal() == wxID_OK)
+                if (!selectedPath.empty())
                 {
-                    control->SetValue(picker.GetPath());
+                    control->SetValue(selectedPath);
+                    versionLabel->SetLabel(getVersion(selectedPath));
+                    dialog.Fit();
                 }
             });
             fields->Add(browseButton);
@@ -622,9 +634,26 @@ namespace acd
             }
         };
 
-        addField("Meta model file", metaModelControl, true, metaModelVersionLabel);
-        addField("COVESA VSpec folder", vspecControl, false, vspecVersionLabel);
-        addField("COVESA tools folder", covesaToolsControl, false, toolsVersionLabel);
+        addField("Meta model file", metaModelControl, true, metaModelVersionLabel,
+                 [](const wxString& path)
+                 {
+                     MetaModel selectedMetaModel;
+                     std::string loadError;
+                     return selectedMetaModel.Load(ToStd(path), loadError)
+                         ? ToWx(selectedMetaModel.GetVersion()) : "unknown";
+                 });
+        addField("COVESA VSpec folder", vspecControl, false, vspecVersionLabel,
+                 [this](const wxString& path)
+                 {
+                     const wxString version = ToWx(GetGitTagAndVersion("VSpec version: ", path));
+                     return version.IsEmpty() ? wxString("Version: unknown") : version;
+                 });
+        addField("COVESA tools folder", covesaToolsControl, false, toolsVersionLabel,
+                 [this](const wxString& path)
+                 {
+                     const wxString version = ToWx(GetGitTagAndVersion("Covesa tools version: ", path));
+                     return version.IsEmpty() ? wxString("Version: unknown") : version;
+                 });
 
         dialogSizer->Add(fields, 1, wxEXPAND | wxALL, 12);
         dialogSizer->Add(dialog.CreateSeparatedButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 8);
