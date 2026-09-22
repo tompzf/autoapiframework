@@ -160,7 +160,7 @@ History
 Examples
 --------
 
-Example component specifications based on this meta model:
+Example function specifications based on this meta model:
 
-- :download:`SpeedHazardDetection (single cyclic runnable) <../component_specification/examples/speed_hazard_detection.acs.yaml>`
-- :download:`VehicleSpeedFusion (multi-rate cyclic runnables at 10 ms and 20 ms) <../component_specification/examples/vehicle_speed_fusion_multirate.acs.yaml>`
+- :download:`SpeedHazardDetection (single cyclic runnable) <../function_specification/examples/speed_hazard_detection.afs.yaml>`
+- :download:`VehicleSpeedFusion (multi-rate cyclic runnables at 10 ms and 20 ms) <../function_specification/examples/vehicle_speed_fusion_multirate.afs.yaml>`

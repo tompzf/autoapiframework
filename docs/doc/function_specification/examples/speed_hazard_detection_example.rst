@@ -18,8 +18,8 @@
 SpeedHazardDetection Example
 ============================
 
-This example shows a single cyclic runnable component specification.
+This example shows a single cyclic runnable function specification.
 
-.. literalinclude:: speed_hazard_detection.acs.yaml
+.. literalinclude:: speed_hazard_detection.afs.yaml
    :language: yaml
    :linenos:

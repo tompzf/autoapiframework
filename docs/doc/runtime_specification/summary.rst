@@ -24,8 +24,8 @@ What we have so far:
 1. Meta Model
 -------------
 
-2. Component Specification
---------------------------
+2. Function Specification
+-------------------------
 
 Contains the definition of a single executable element:
 
@@ -37,7 +37,7 @@ Contains the definition of a single executable element:
 - implementation-independent behavior
 - metadata
 
-Conceptually: Component = "Single function definition"
+Conceptually: Function specification file = "Single function definition"
 
    Examples:
 
@@ -51,20 +51,20 @@ Conceptually: Component = "Single function definition"
 
 Contains the system composition:
 
-- instantiated components
+- instantiated functions
 - dependencies
 - execution sequence
 - data flow
 - event flow
 - deployment hints
 
-Conceptually: Runtime = "How do the components work together?"
+Conceptually: Runtime = "How do the functions work together?"
 
   Examples:
 
   runtime includes
 
-  components:
+  functions:
 
   - VehicleSpeed
   - WheelSpeedFusion
@@ -81,7 +81,7 @@ Conceptually: Runtime = "How do the components work together?"
 4. Naming
 ---------
 
-``*.acs``    AutoAPI Component Specification files
+``*.afs``    AutoAPI Function Specification files
 
 ``*.ars``    AutoAPI Runtime Specification files
 

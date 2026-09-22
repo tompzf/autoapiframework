@@ -21,20 +21,20 @@ Current status of the project:
 .. figure:: ../meta_model/figures/time_line.png
    :alt: time line of the project
    
-Component Specification File
-============================  
+Function Specification File
+===========================  
 
 
-A Component Specification File is characterized by a set of attributes and parameters. Attributes describe the signal itself (e.g., its properties and characteristics), 
+A Function Specification File is characterized by a set of attributes and parameters. Attributes describe the signal itself (e.g., its properties and characteristics), 
 while parameters provide additional configuration and implementation-specific information. Together, they define all information required for API generation and integration.
 
-A Component Specification File always describes exactly **one** function: its ``dataInterfaces``, its ``parameters`` and the scheduling of
+A Function Specification File always describes exactly **one** function: its ``dataInterfaces``, its ``parameters`` and the scheduling of
 its own runnables. It does not describe how this function is combined with other functions, how their signals are connected to each other,
-or in which order several functions execute relative to each other on a system. That system-level composition of multiple Component
+or in which order several functions execute relative to each other on a system. That system-level composition of multiple Function
 Specification Files is described by the :doc:`Runtime Specification File </doc/runtime_specification/runtime_specification_file>`.
 
 
-.. table::  Component: 
+.. table::  Function: 
 
    +----------------+----------+----------------------------------------------------------+-----------------------------------------------------+
    | **Property /   | **Req.** | **Description**                                          | **Example / Notes**                                 |
@@ -75,18 +75,18 @@ Specification Files is described by the :doc:`Runtime Specification File </doc/r
 
 
 
-Component Specification File
+Function Specification File
 ----------------------------
 
 Template Version 0.0.1
 
-.. literalinclude:: autoapiframework_component_specification_template_V01.acs.yaml
+.. literalinclude:: autoapiframework_function_specification_template_V01.afs.yaml
    :language: yaml
    :linenos:
 
 What needs to be added for the SpeedHazardDetection example:
 
-.. literalinclude:: autoapiframework_component_specification_example.acs.yaml
+.. literalinclude:: autoapiframework_function_specification_example.afs.yaml
    :language: yaml
    :linenos:
 

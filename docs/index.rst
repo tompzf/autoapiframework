@@ -42,16 +42,16 @@ Meta Model:
 
    doc/meta_model/meta_model_purpose
    doc/meta_model/meta_model
-   doc/meta_model/meta_model_component_adapter
+   doc/meta_model/meta_model_function_adapter
 
-Component Specification File:
+Function Specification File:
 -----------------------------
 
 .. toctree::
    :maxdepth: 1
 
-   doc/component_specification/component_specification_file
-   doc/component_specification/component_specification_examples
+   doc/function_specification/function_specification_file
+   doc/function_specification/function_specification_examples
    
 Software Architecture:
 ----------------------
