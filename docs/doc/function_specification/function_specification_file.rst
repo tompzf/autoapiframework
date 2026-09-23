@@ -33,6 +33,30 @@ its own runnables. It does not describe how this function is combined with other
 or in which order several functions execute relative to each other on a system. That system-level composition of multiple Function
 Specification Files is described by the :doc:`Runtime Specification File </doc/runtime_specification/runtime_specification_file>`.
 
+About the naming
+----------------
+
+In our documentation, we deliberately use the term Function (for example, Function Specification File and Function Adapter) because other terms, such as Component, 
+Application, or Module, often carry pre-existing meanings in different frameworks and toolchains.
+
+In this context, a Function represents a self-contained piece of functionality, typically implemented as a wrapper or adapter on top of middleware and algorithmic code 
+(for example, MATLAB-generated code). The term is intentionally generic and can be used to describe a wide range of algorithmic purposes, including:
+
+- Vehicle Function
+- Diagnostic Function 
+- Control Function 
+- Analysis Function 
+- Calculation Function 
+- Signal Processing
+- Data Processing 
+- Estimation Function 
+- Monitoring Function 
+- Simulation Function 
+
+Therefore, the term Function should be understood as a generic abstraction for algorithmic functionality rather than as a specific software architectural concept.
+
+Content Of Function Specification File
+--------------------------------------
 
 .. table::  Function: 
 
@@ -75,8 +99,7 @@ Specification Files is described by the :doc:`Runtime Specification File </doc/r
 
 
 
-Function Specification File
-----------------------------
+
 
 Template Version 0.0.1
 
