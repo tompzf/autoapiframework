@@ -39,7 +39,6 @@ namespace acd
         constexpr const char* kMetaModelFileConfigKey = "/Paths/MetaModelFile";
         constexpr const char* kMetaModelDirectoryConfigKey = "/Paths/MetaModelDirectory";
         constexpr const char* kVspecDirectoryConfigKey = "/Paths/VSpecDirectory";
-        constexpr const char* kCovesaToolsDirectoryConfigKey = "/Paths/CovesaToolsDirectory";
         constexpr const char* kCreateApiLanguageConfigKey = "/CreateAPI/Language";
         constexpr const char* kLogoFileName = "autoapiframework_logo.png";
         constexpr const char* kLogoFileNameLarge = "autoapiframework_logo_large.png";		
@@ -555,10 +554,8 @@ namespace acd
         wxConfigBase* config = wxConfigBase::Get();
         wxString metaModelFile = kMetaModelFileName;
         wxString vspecDirectory;
-        wxString covesaToolsDirectory;
         config->Read(kMetaModelFileConfigKey, &metaModelFile);
         config->Read(kVspecDirectoryConfigKey, &vspecDirectory);
-        config->Read(kCovesaToolsDirectoryConfigKey, &covesaToolsDirectory);
 
         MetaModel metaModel;
         std::string metaModelVersion = "unknown";
@@ -576,13 +573,10 @@ namespace acd
 
         wxTextCtrl* metaModelControl = new wxTextCtrl(&dialog, wxID_ANY, metaModelFile);
         wxTextCtrl* vspecControl = new wxTextCtrl(&dialog, wxID_ANY, vspecDirectory);
-        wxTextCtrl* covesaToolsControl = new wxTextCtrl(&dialog, wxID_ANY, covesaToolsDirectory);
         wxStaticText* metaModelVersionLabel = new wxStaticText(&dialog, wxID_ANY, metaModelVersion);    
         
         wxString vspecVersion = ToWx(GetGitTagAndVersion("VSpec version: ", vspecDirectory));
-        wxString covesaToolsVersion = ToWx(GetGitTagAndVersion("Covesa tools version: ", covesaToolsDirectory));
         wxStaticText* vspecVersionLabel = new wxStaticText(&dialog, wxID_ANY, vspecVersion.IsEmpty() ? "Version: unknown" : vspecVersion);
-        wxStaticText* toolsVersionLabel = new wxStaticText(&dialog, wxID_ANY, covesaToolsVersion.IsEmpty() ? "Version: unknown" : covesaToolsVersion);
 
         const auto addField = [&dialog, fields](const wxString& label, wxTextCtrl* control, bool isFile,
                                                wxStaticText* versionLabel,
@@ -648,12 +642,6 @@ namespace acd
                      const wxString version = ToWx(GetGitTagAndVersion("VSpec version: ", path));
                      return version.IsEmpty() ? wxString("Version: unknown") : version;
                  });
-        addField("COVESA tools folder", covesaToolsControl, false, toolsVersionLabel,
-                 [this](const wxString& path)
-                 {
-                     const wxString version = ToWx(GetGitTagAndVersion("Covesa tools version: ", path));
-                     return version.IsEmpty() ? wxString("Version: unknown") : version;
-                 });
 
         dialogSizer->Add(fields, 1, wxEXPAND | wxALL, 12);
         dialogSizer->Add(dialog.CreateSeparatedButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 8);
@@ -667,7 +655,6 @@ namespace acd
 
         config->Write(kMetaModelFileConfigKey, metaModelControl->GetValue());
         config->Write(kVspecDirectoryConfigKey, vspecControl->GetValue());
-        config->Write(kCovesaToolsDirectoryConfigKey, covesaToolsControl->GetValue());
         config->Flush();
         SetStatusText("Global settings updated", 0);
         if (metaModelFile.CompareTo(metaModelControl->GetValue()) != 0)

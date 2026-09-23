@@ -45,8 +45,21 @@ manually via *Load meta model...*.
 
 ## Build
 
-Requires CMake >= 3.16 (>= 3.21 for the presets), a C++17 compiler and
-wxWidgets.
+Requires CMake >= 3.16 (>= 3.21 for the presets), a C++17 compiler,
+wxWidgets, and Python. The build requires `vss-tools` version 6.1.0 because
+the application uses its `vspec` executable to convert VSS files to JSON.
+
+Install the Python package in a virtual environment before configuring CMake:
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+python -m pip install vss-tools==6.1.0
+```
+
+On Linux, activate the environment with `source venv/bin/activate` instead.
+Keep the environment activated while configuring and building so CMake can
+find `vspec`.
 
 ### VS Code (CMake Tools extension)
 
@@ -123,5 +136,19 @@ specifications for trying out read, display and write.
 
 ## vspec files
 
-To get the official vspec files execute:
-`git clone https://github.com/COVESA/vehicle_signal_specification.git` 
+The official VSS repository is recommended when working with `.vspec` files:
+
+```powershell
+git clone https://github.com/COVESA/vehicle_signal_specification.git
+cd vehicle_signal_specification
+```
+
+With the Python virtual environment activated, convert a `.vspec` file to
+JSON with `vss-tools`:
+
+```powershell
+vspec export json --vspec spec/Vehicle/Vehicle.vspec --output VehicleSignalSpecification.json
+```
+
+The application also runs this conversion from *Add via vss* and lets you
+select the input `.vspec` file and output `.json` file.
