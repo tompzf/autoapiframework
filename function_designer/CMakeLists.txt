@@ -29,6 +29,20 @@ if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 endif()
 
+
+find_program(VSPEC_EXECUTABLE
+    NAMES vspec vspec.exe
+    HINTS
+        "$ENV{HOME}/venvs/vss-tools/bin"
+        "$ENV{USERPROFILE}/venvs/vss-tools/Scripts"
+)
+
+if(NOT VSPEC_EXECUTABLE)
+    message(FATAL_ERROR
+        "vss-tools not installed")
+endif()
+
+
 option(ACD_FETCH_WXWIDGETS "Download and build wxWidgets when no installation is found" ON)
 
 # vcpkg and recent wxWidgets installations provide a package config file,
@@ -81,6 +95,8 @@ add_executable(AutoAPIFunctionDesigner WIN32
 
 target_include_directories(AutoAPIFunctionDesigner PRIVATE src)
 target_link_libraries(AutoAPIFunctionDesigner PRIVATE ${ACD_WX_LIBRARIES})
+target_compile_definitions(AutoAPIFunctionDesigner PRIVATE
+    ACD_VSPEC_EXECUTABLE="${VSPEC_EXECUTABLE}")
 
 if(MSVC)
     target_compile_options(AutoAPIFunctionDesigner PRIVATE /W4 /utf-8)

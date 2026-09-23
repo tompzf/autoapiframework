@@ -120,6 +120,7 @@ namespace acd
         wxButton* m_showButton = nullptr;
         wxButton* m_createAPIButton = nullptr;
 
+        wxString RunVspec2Json(const wxString& vspecFile, const wxString& outputFile);
         wxString GetGitVersion(const wxString& repoDir);
         wxString GetGitTag(const wxString& repoDir);
         std::string GetGitTagAndVersion(const std::string& prefix, const wxString& repoDir);

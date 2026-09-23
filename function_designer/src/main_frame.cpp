@@ -698,9 +698,37 @@ namespace acd
 
     void MainFrame::OnAddViaVss(wxCommandEvent&)
     {
-        wxMessageBox("Add signal via vss:\n\n NOT IMPLEMENTED ",
-                kApplicationName,
-                wxOK | wxICON_ERROR, this);                
+        wxString vspecDirectory;
+        wxConfigBase::Get()->Read(kVspecDirectoryConfigKey, &vspecDirectory);
+
+        wxFileDialog sourceDialog(this, "Select VSpec file", vspecDirectory, wxEmptyString,
+                                  "VSpec files (*.vspec)|*.vspec|All files (*.*)|*.*",
+                                  wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        if (sourceDialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+
+        const wxFileName sourceFile(sourceDialog.GetPath());
+        wxFileDialog outputDialog(this, "Write JSON file", sourceFile.GetPath(),
+                                  sourceFile.GetName() + ".json",
+                                  "JSON files (*.json)|*.json|All files (*.*)|*.*",
+                                  wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+        if (outputDialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+
+        const wxString result = RunVspec2Json(sourceDialog.GetPath(), outputDialog.GetPath());
+        const bool failed = result.StartsWith("ERROR:");
+
+        wxMessageBox(failed ? result : "VSpec JSON written to:\n\n" + result,
+                     kApplicationName,
+                     wxOK | (failed ? wxICON_ERROR : wxICON_INFORMATION), this);
+        if (!failed)
+        {
+            SetStatusText("Written: " + result, 0);
+        }
     }
 
     void MainFrame::OnAdd(wxCommandEvent&)
@@ -1204,14 +1232,13 @@ namespace acd
     wxString MainFrame::GetGitVersion(const wxString& repoDir)
     {
         wxArrayString output, errors;
-
-        wxString cmd =
-            wxString::Format("git -C \"%s\" describe --tags", repoDir);
+        wxString cmd = wxString::Format("git -C \"%s\" describe --tags", repoDir);
 
         long rc = wxExecute(cmd, output, errors, wxEXEC_SYNC);
-
         if (rc != 0 || output.IsEmpty())
+        {
             return "Unknown";
+        }
 
         return output[0];
     }
@@ -1219,17 +1246,42 @@ namespace acd
     wxString MainFrame::GetGitTag(const wxString& repoDir)
     {
         wxArrayString output, errors;
-
-        wxString cmd =
-            wxString::Format(
-                "git -C \"%s\" describe --tags --abbrev=0",
-                repoDir);
+        wxString cmd = wxString::Format("git -C \"%s\" describe --tags --abbrev=0", repoDir);
 
         long rc = wxExecute(cmd, output, errors, wxEXEC_SYNC);
-
         if (rc != 0 || output.IsEmpty())
+        {
             return "Unknown";
+        }
 
         return output[0];
+    }
+
+    wxString MainFrame::RunVspec2Json(const wxString& vspecFile, const wxString& outputFile)
+    {
+        wxArrayString output, errors;
+        const wxString executable = wxString::FromUTF8(ACD_VSPEC_EXECUTABLE);
+
+        wxString cmd = wxString::Format(
+            "\"%s\" export json --vspec \"%s\" --output \"%s\"",
+            executable,
+            vspecFile,
+            outputFile);
+
+        long rc = wxExecute(cmd, output, errors, wxEXEC_SYNC);
+        if (rc != 0)
+        {
+            wxString err;
+            for (const auto& e : errors)
+            {
+                err += e + "\n";
+            }
+
+            return err.empty()
+                ? wxString::Format("ERROR: VSpec conversion failed with exit code %ld.", rc)
+                : "ERROR: " + err;
+        }
+
+        return outputFile;
     }
 } // namespace acd
