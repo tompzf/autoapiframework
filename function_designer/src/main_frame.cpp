@@ -19,7 +19,9 @@
 
 #include <wx/config.h>
 #include <wx/dirdlg.h>
+#include <wx/file.h>
 #include <wx/filedlg.h>
+#include <wx/filefn.h>
 #include <wx/filename.h>
 #include <wx/icon.h>
 #include <wx/image.h>
@@ -28,6 +30,8 @@
 #include <wx/stdpaths.h>
 
 #include <algorithm>
+#include <cctype>
+#include <cstdlib>
 #include <functional>
 #include <vector>
 #include <regex>
@@ -141,6 +145,514 @@ namespace acd
                 list->SetColumnWidth(column, width);
             }
         }
+
+        /// Minimal JSON value as produced by the `vspec export json` output.
+        struct JsonValue
+        {
+            enum class Type { Null, Bool, Number, String, Object, Array };
+
+            Type type = Type::Null;
+            bool boolValue = false;
+            double numberValue = 0.0;
+            std::string stringValue;
+            std::vector<std::pair<std::string, JsonValue>> object;
+            std::vector<JsonValue> array;
+
+            const JsonValue* Find(const std::string& key) const
+            {
+                if (type != Type::Object)
+                {
+                    return nullptr;
+                }
+                for (const auto& entry : object)
+                {
+                    if (entry.first == key)
+                    {
+                        return &entry.second;
+                    }
+                }
+                return nullptr;
+            }
+        };
+
+        /// Recursive descent parser for the JSON subset needed to read `vspec export json` output.
+        class JsonParser
+        {
+        public:
+            bool Parse(const std::string& text, JsonValue& out, std::string& error)
+            {
+                m_text = &text;
+                m_pos = 0;
+                if (!ParseValue(out))
+                {
+                    error = m_error.empty() ? "Invalid JSON" : m_error;
+                    return false;
+                }
+                return true;
+            }
+
+        private:
+            char Peek() const { return m_pos < m_text->size() ? (*m_text)[m_pos] : '\0'; }
+            char Get() { return m_pos < m_text->size() ? (*m_text)[m_pos++] : '\0'; }
+
+            void SkipWhitespace()
+            {
+                while (m_pos < m_text->size() && std::isspace(static_cast<unsigned char>((*m_text)[m_pos])))
+                {
+                    ++m_pos;
+                }
+            }
+
+            bool ParseValue(JsonValue& out)
+            {
+                SkipWhitespace();
+                const char c = Peek();
+                if (c == '{') return ParseObject(out);
+                if (c == '[') return ParseArray(out);
+                if (c == '"') return ParseString(out);
+                if (c == 't' || c == 'f') return ParseBool(out);
+                if (c == 'n') return ParseNull(out);
+                return ParseNumber(out);
+            }
+
+            bool ParseObject(JsonValue& out)
+            {
+                out.type = JsonValue::Type::Object;
+                ++m_pos; // '{'
+                SkipWhitespace();
+                if (Peek() == '}')
+                {
+                    ++m_pos;
+                    return true;
+                }
+                while (true)
+                {
+                    SkipWhitespace();
+                    JsonValue key;
+                    if (Peek() != '"' || !ParseString(key))
+                    {
+                        m_error = "Expected string key";
+                        return false;
+                    }
+                    SkipWhitespace();
+                    if (Get() != ':')
+                    {
+                        m_error = "Expected ':'";
+                        return false;
+                    }
+                    JsonValue value;
+                    if (!ParseValue(value))
+                    {
+                        return false;
+                    }
+                    out.object.emplace_back(key.stringValue, std::move(value));
+                    SkipWhitespace();
+                    const char next = Get();
+                    if (next == ',') continue;
+                    if (next == '}') break;
+                    m_error = "Expected ',' or '}'";
+                    return false;
+                }
+                return true;
+            }
+
+            bool ParseArray(JsonValue& out)
+            {
+                out.type = JsonValue::Type::Array;
+                ++m_pos; // '['
+                SkipWhitespace();
+                if (Peek() == ']')
+                {
+                    ++m_pos;
+                    return true;
+                }
+                while (true)
+                {
+                    JsonValue value;
+                    if (!ParseValue(value))
+                    {
+                        return false;
+                    }
+                    out.array.push_back(std::move(value));
+                    SkipWhitespace();
+                    const char next = Get();
+                    if (next == ',') continue;
+                    if (next == ']') break;
+                    m_error = "Expected ',' or ']'";
+                    return false;
+                }
+                return true;
+            }
+
+            bool ParseString(JsonValue& out)
+            {
+                if (Get() != '"')
+                {
+                    m_error = "Expected '\"'";
+                    return false;
+                }
+                out.type = JsonValue::Type::String;
+                std::string value;
+                while (true)
+                {
+                    if (m_pos >= m_text->size())
+                    {
+                        m_error = "Unterminated string";
+                        return false;
+                    }
+                    const char c = Get();
+                    if (c == '"') break;
+                    if (c == '\\')
+                    {
+                        const char escaped = Get();
+                        switch (escaped)
+                        {
+                        case '"': value += '"'; break;
+                        case '\\': value += '\\'; break;
+                        case '/': value += '/'; break;
+                        case 'n': value += '\n'; break;
+                        case 't': value += '\t'; break;
+                        case 'r': value += '\r'; break;
+                        case 'b': value += '\b'; break;
+                        case 'f': value += '\f'; break;
+                        case 'u': m_pos += 4; break; // unicode escapes are not converted
+                        default: value += escaped; break;
+                        }
+                    }
+                    else
+                    {
+                        value += c;
+                    }
+                }
+                out.stringValue = std::move(value);
+                return true;
+            }
+
+            bool ParseNumber(JsonValue& out)
+            {
+                const std::size_t start = m_pos;
+                if (Peek() == '-') ++m_pos;
+                while (std::isdigit(static_cast<unsigned char>(Peek()))) ++m_pos;
+                if (Peek() == '.')
+                {
+                    ++m_pos;
+                    while (std::isdigit(static_cast<unsigned char>(Peek()))) ++m_pos;
+                }
+                if (Peek() == 'e' || Peek() == 'E')
+                {
+                    ++m_pos;
+                    if (Peek() == '+' || Peek() == '-') ++m_pos;
+                    while (std::isdigit(static_cast<unsigned char>(Peek()))) ++m_pos;
+                }
+                if (m_pos == start)
+                {
+                    m_error = "Invalid number";
+                    return false;
+                }
+                out.type = JsonValue::Type::Number;
+                out.numberValue = std::atof(m_text->substr(start, m_pos - start).c_str());
+                return true;
+            }
+
+            bool ParseBool(JsonValue& out)
+            {
+                if (m_text->compare(m_pos, 4, "true") == 0)
+                {
+                    out.type = JsonValue::Type::Bool;
+                    out.boolValue = true;
+                    m_pos += 4;
+                    return true;
+                }
+                if (m_text->compare(m_pos, 5, "false") == 0)
+                {
+                    out.type = JsonValue::Type::Bool;
+                    out.boolValue = false;
+                    m_pos += 5;
+                    return true;
+                }
+                m_error = "Invalid literal";
+                return false;
+            }
+
+            bool ParseNull(JsonValue& out)
+            {
+                if (m_text->compare(m_pos, 4, "null") == 0)
+                {
+                    out.type = JsonValue::Type::Null;
+                    m_pos += 4;
+                    return true;
+                }
+                m_error = "Invalid literal";
+                return false;
+            }
+
+            const std::string* m_text = nullptr;
+            std::size_t m_pos = 0;
+            std::string m_error;
+        };
+
+        /// Flattened leaf entry of a `vspec export json` signal tree.
+        struct VssSignal
+        {
+            std::string path;
+            std::string type;
+            std::string datatype;
+            std::string description;
+            std::string unit;
+        };
+
+        /// Recursively collects leaf signals (non-branch nodes) with their dotted path.
+        void FlattenVssTree(const JsonValue& node, const std::string& prefix, std::vector<VssSignal>& out)
+        {
+            if (node.type != JsonValue::Type::Object)
+            {
+                return;
+            }
+            for (const auto& entry : node.object)
+            {
+                const JsonValue& value = entry.second;
+                if (value.type != JsonValue::Type::Object)
+                {
+                    continue;
+                }
+                const std::string path = prefix.empty() ? entry.first : prefix + "." + entry.first;
+                const JsonValue* typeNode = value.Find("type");
+                const std::string typeStr = typeNode && typeNode->type == JsonValue::Type::String
+                    ? typeNode->stringValue : std::string();
+                const JsonValue* children = value.Find("children");
+
+                if (typeStr == "branch" || (children && children->type == JsonValue::Type::Object))
+                {
+                    if (children)
+                    {
+                        FlattenVssTree(*children, path, out);
+                    }
+                    continue;
+                }
+
+                VssSignal signal;
+                signal.path = path;
+                signal.type = typeStr;
+                if (const JsonValue* datatype = value.Find("datatype"); datatype && datatype->type == JsonValue::Type::String)
+                {
+                    signal.datatype = datatype->stringValue;
+                }
+                if (const JsonValue* description = value.Find("description"); description && description->type == JsonValue::Type::String)
+                {
+                    signal.description = description->stringValue;
+                }
+                if (const JsonValue* unit = value.Find("unit"); unit && unit->type == JsonValue::Type::String)
+                {
+                    signal.unit = unit->stringValue;
+                }
+                out.push_back(std::move(signal));
+            }
+        }
+
+        /// Lets the user filter a flat VSS signal list and move entries into a selected box.
+        class SelectSignalsDialog : public wxDialog
+        {
+        public:
+            SelectSignalsDialog(wxWindow* parent, const std::vector<VssSignal>& signals)
+                : wxDialog(parent, wxID_ANY, "Select signals", wxDefaultPosition, wxSize(1020, 980),
+                           wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+                , m_available(signals)
+            {
+                wxBoxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
+
+                wxBoxSizer* filterSizer = new wxBoxSizer(wxHORIZONTAL);
+                filterSizer->Add(new wxStaticText(this, wxID_ANY, "Filter:"), 0,
+                                  wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
+                m_filterText = new wxTextCtrl(this, wxID_ANY);
+                filterSizer->Add(m_filterText, 1);
+                topSizer->Add(filterSizer, 0, wxEXPAND | wxALL, 8);
+
+                topSizer->Add(new wxStaticText(this, wxID_ANY, "Available signals"), 0, wxLEFT | wxRIGHT | wxTOP, 8);
+                m_availableList = CreateSignalList();
+                m_availableList->SetMinSize(wxSize(-1, kSignalListHeight));
+                topSizer->Add(m_availableList, 1, wxEXPAND | wxALL, 8);
+
+                wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+                wxButton* addButton = new wxButton(this, wxID_ANY, "Add ->");
+                wxButton* addAllButton = new wxButton(this, wxID_ANY, "Add all ->");
+                wxButton* removeButton = new wxButton(this, wxID_ANY, "<- Remove");
+                wxButton* removeAllButton = new wxButton(this, wxID_ANY, "<- Remove all");
+                buttonSizer->AddStretchSpacer();
+                buttonSizer->Add(addButton, 0, wxRIGHT, 4);
+                buttonSizer->Add(addAllButton, 0, wxRIGHT, 16);
+                buttonSizer->Add(removeButton, 0, wxRIGHT, 4);
+                buttonSizer->Add(removeAllButton, 0);
+                buttonSizer->AddStretchSpacer();
+                topSizer->Add(buttonSizer, 0, wxEXPAND | wxALL, 4);
+
+                topSizer->Add(new wxStaticText(this, wxID_ANY, "Selected signals"), 0, wxLEFT | wxRIGHT, 8);
+                m_selectedList = CreateSignalList();
+                m_selectedList->SetMinSize(wxSize(-1, kSignalListHeight));
+                topSizer->Add(m_selectedList, 1, wxEXPAND | wxALL, 8);
+
+                topSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 8);
+                SetSizer(topSizer);
+                CentreOnParent();
+
+                m_filterText->Bind(wxEVT_TEXT, [this](wxCommandEvent&) { RefreshAvailableList(); });
+                addButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent&)
+                {
+                    MoveSelected(m_availableList, m_available, m_selected);
+                    RefreshBothLists();
+                });
+                removeButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent&)
+                {
+                    MoveSelected(m_selectedList, m_selected, m_available);
+                    RefreshBothLists();
+                });
+                addAllButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent&)
+                {
+                    MoveAllVisible();
+                    RefreshBothLists();
+                });
+                removeAllButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent&)
+                {
+                    for (VssSignal& signal : m_selected)
+                    {
+                        m_available.push_back(std::move(signal));
+                    }
+                    m_selected.clear();
+                    RefreshBothLists();
+                });
+                m_availableList->Bind(wxEVT_LIST_ITEM_ACTIVATED, [this](wxListEvent&)
+                {
+                    MoveSelected(m_availableList, m_available, m_selected);
+                    RefreshBothLists();
+                });
+                m_selectedList->Bind(wxEVT_LIST_ITEM_ACTIVATED, [this](wxListEvent&)
+                {
+                    MoveSelected(m_selectedList, m_selected, m_available);
+                    RefreshBothLists();
+                });
+
+                RefreshBothLists();
+            }
+
+            std::vector<VssSignal> GetSelectedSignals() const { return m_selected; }
+
+        private:
+            /// Row height driven size that fits roughly kVisibleSignalRows entries without scrolling.
+            static constexpr int kVisibleSignalRows = 22;
+            static constexpr int kSignalListHeight = kVisibleSignalRows * 18 + 24;
+
+            wxListCtrl* CreateSignalList()
+            {
+                wxListCtrl* list = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                                  wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
+                list->AppendColumn("Signal", wxLIST_FORMAT_LEFT, 420);
+                list->AppendColumn("Type", wxLIST_FORMAT_LEFT, 80);
+                list->AppendColumn("Datatype", wxLIST_FORMAT_LEFT, 80);
+                list->AppendColumn("Unit", wxLIST_FORMAT_LEFT, 80);
+                list->AppendColumn("Description", wxLIST_FORMAT_LEFT, 300);
+                return list;
+            }
+
+            static void FillRow(wxListCtrl* list, long row, const VssSignal& signal)
+            {
+                list->InsertItem(row, ToWx(signal.path));
+                list->SetItem(row, 1, ToWx(signal.type));
+                list->SetItem(row, 2, ToWx(signal.datatype));
+                list->SetItem(row, 3, ToWx(signal.unit));
+                list->SetItem(row, 4, ToWx(signal.description));
+            }
+
+            void RefreshAvailableList()
+            {
+                const wxString filter = m_filterText->GetValue().Lower();
+                m_availableDisplayIndex.clear();
+                m_availableList->DeleteAllItems();
+                long row = 0;
+                for (std::size_t i = 0; i < m_available.size(); ++i)
+                {
+                    if (!filter.empty() && ToWx(m_available[i].path).Lower().Find(filter) == wxNOT_FOUND)
+                    {
+                        continue;
+                    }
+                    FillRow(m_availableList, row, m_available[i]);
+                    m_availableDisplayIndex.push_back(i);
+                    ++row;
+                }
+            }
+
+            void RefreshSelectedList()
+            {
+                m_selectedList->DeleteAllItems();
+                long row = 0;
+                for (const VssSignal& signal : m_selected)
+                {
+                    FillRow(m_selectedList, row, signal);
+                    ++row;
+                }
+            }
+
+            void RefreshBothLists()
+            {
+                RefreshAvailableList();
+                RefreshSelectedList();
+            }
+
+            static std::vector<long> GetSelectedRows(wxListCtrl* list)
+            {
+                std::vector<long> rows;
+                for (long row = list->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED); row != -1;
+                     row = list->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED))
+                {
+                    rows.push_back(row);
+                }
+                return rows;
+            }
+
+            /// Moves the entries currently selected in @p list from @p source to @p destination.
+            void MoveSelected(wxListCtrl* list, std::vector<VssSignal>& source, std::vector<VssSignal>& destination)
+            {
+                const std::vector<long> rows = GetSelectedRows(list);
+                if (rows.empty())
+                {
+                    return;
+                }
+
+                std::vector<std::size_t> sourceIndices;
+                sourceIndices.reserve(rows.size());
+                for (long row : rows)
+                {
+                    const std::size_t sourceIndex = (list == m_availableList)
+                        ? m_availableDisplayIndex[static_cast<std::size_t>(row)]
+                        : static_cast<std::size_t>(row);
+                    sourceIndices.push_back(sourceIndex);
+                }
+                std::sort(sourceIndices.begin(), sourceIndices.end());
+
+                for (auto it = sourceIndices.rbegin(); it != sourceIndices.rend(); ++it)
+                {
+                    destination.push_back(source[*it]);
+                    source.erase(source.begin() + *it);
+                }
+            }
+
+            /// Moves all currently filtered/visible available signals to the selected list.
+            void MoveAllVisible()
+            {
+                std::vector<std::size_t> indices = m_availableDisplayIndex;
+                std::sort(indices.begin(), indices.end());
+                for (auto it = indices.rbegin(); it != indices.rend(); ++it)
+                {
+                    m_selected.push_back(m_available[*it]);
+                    m_available.erase(m_available.begin() + *it);
+                }
+            }
+
+            wxTextCtrl* m_filterText = nullptr;
+            wxListCtrl* m_availableList = nullptr;
+            wxListCtrl* m_selectedList = nullptr;
+            std::vector<VssSignal> m_available;
+            std::vector<VssSignal> m_selected;
+            std::vector<std::size_t> m_availableDisplayIndex;
+        };
     } // namespace
 
     wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
@@ -686,87 +1198,111 @@ namespace acd
 
     void MainFrame::OnAddWithVspecFile(wxCommandEvent&)
     {
-        static bool versionFound = false;
-        if (!versionFound)
+        wxString vspecDirectory;
+        wxConfigBase::Get()->Read(kVspecDirectoryConfigKey, &vspecDirectory);
+
+        wxFileDialog sourceDialog(this, "Select VSpec file", vspecDirectory, wxEmptyString,
+                                  "VSpec files (*.vspec)|*.vspec|All files (*.*)|*.*",
+                                  wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        if (sourceDialog.ShowModal() != wxID_OK)
         {
-            auto version = GetVssToolsVersion();
-            if (version.find("6.1") == std::string::npos) 
+            return;
+        }
+
+        const wxString tempJsonPath = wxFileName::CreateTempFileName("acd_vspec_");
+        if (tempJsonPath.empty())
+        {
+            wxMessageBox("Could not create a temporary file for the VSpec conversion.",
+                         kApplicationName, wxOK | wxICON_ERROR, this);
+            return;
+        }
+
+        const wxString result = RunVspec2Json(sourceDialog.GetPath(), tempJsonPath);
+        if (result.StartsWith("ERROR:"))
+        {
+            wxMessageBox(result, kApplicationName, wxOK | wxICON_ERROR, this);
+            wxRemoveFile(tempJsonPath);
+            return;
+        }
+
+        wxFile jsonFile(tempJsonPath);
+        wxString jsonContent;
+        const bool readOk = jsonFile.IsOpened() && jsonFile.ReadAll(&jsonContent);
+        jsonFile.Close();
+        wxRemoveFile(tempJsonPath);
+        if (!readOk)
+        {
+            wxMessageBox("Could not read the converted VSpec JSON file.", kApplicationName,
+                         wxOK | wxICON_ERROR, this);
+            return;
+        }
+
+        JsonValue root;
+        std::string parseError;
+        if (!JsonParser().Parse(ToStd(jsonContent), root, parseError))
+        {
+            wxMessageBox("Could not parse VSpec JSON:\n\n" + ToWx(parseError), kApplicationName,
+                         wxOK | wxICON_ERROR, this);
+            return;
+        }
+
+        std::vector<VssSignal> signals;
+        FlattenVssTree(root, "", signals);
+        if (signals.empty())
+        {
+            wxMessageBox("No signals found in the converted VSpec JSON.", kApplicationName,
+                         wxOK | wxICON_INFORMATION, this);
+            return;
+        }
+
+        SelectSignalsDialog selectDialog(this, signals);
+        if (selectDialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+
+        const std::vector<VssSignal> selected = selectDialog.GetSelectedSignals();
+        if (selected.empty())
+        {
+            return;
+        }
+
+        const std::vector<std::string> fields = m_metaModel.ColumnsFor(kDataInterfaceTypeKey, {});
+        std::size_t added = 0;
+        for (const VssSignal& signal : selected)
+        {
+            YamlNodePtr item = YamlNode::MakeMap();
+            for (const std::string& field : fields)
             {
-                wxMessageBox("vss-tools 6.1 required, found: " + version,
-                        kApplicationName,
-                        wxOK | wxICON_ERROR, this);     
+                std::string value;
+                if (field == FunctionSpecification::kNamePathKey)
+                {
+                    value = signal.path;
+                }
+                else if (field == "dataType")
+                {
+                    value = signal.datatype;
+                }
+                else if (field == "description")
+                {
+                    value = signal.description;
+                }
+                else if (field == "unit")
+                {
+                    value = signal.unit;
+                }
+                item->Set(field, YamlNode::MakeScalar(value));
             }
-            else
-            {              
-                versionFound = true;
+            if (m_specification.AddCollectionItem(FunctionSpecification::kDataInterfacesKey, std::move(item)))
+            {
+                ++added;
             }
         }
 
-        wxString vspecDirectory;
-        wxConfigBase::Get()->Read(kVspecDirectoryConfigKey, &vspecDirectory);
-
-        wxFileDialog sourceDialog(this, "Select VSpec file", vspecDirectory, wxEmptyString,
-                                  "VSpec files (*.vspec)|*.vspec|All files (*.*)|*.*",
-                                  wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-        if (sourceDialog.ShowModal() != wxID_OK)
+        if (added > 0)
         {
-            return;
-        }
-
-        const wxFileName sourceFile(sourceDialog.GetPath());
-        wxFileDialog outputDialog(this, "Write JSON file", sourceFile.GetPath(),
-                                  sourceFile.GetName() + ".json",
-                                  "JSON files (*.json)|*.json|All files (*.*)|*.*",
-                                  wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-        if (outputDialog.ShowModal() != wxID_OK)
-        {
-            return;
-        }
-
-        const wxString result = RunVspec2Json(sourceDialog.GetPath(), outputDialog.GetPath());
-        const bool failed = result.StartsWith("ERROR:");
-
-        wxMessageBox(failed ? result : "VSpec JSON written to:\n\n" + result,
-                     kApplicationName,
-                     wxOK | (failed ? wxICON_ERROR : wxICON_INFORMATION), this);
-        if (!failed)
-        {
-            SetStatusText("Written: " + result, 0);
-        }
-    }
-
-    void MainFrame::VspecFile2Json(wxCommandEvent&)
-    {
-        wxString vspecDirectory;
-        wxConfigBase::Get()->Read(kVspecDirectoryConfigKey, &vspecDirectory);
-
-        wxFileDialog sourceDialog(this, "Select VSpec file", vspecDirectory, wxEmptyString,
-                                  "VSpec files (*.vspec)|*.vspec|All files (*.*)|*.*",
-                                  wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-        if (sourceDialog.ShowModal() != wxID_OK)
-        {
-            return;
-        }
-
-        const wxFileName sourceFile(sourceDialog.GetPath());
-        wxFileDialog outputDialog(this, "Write JSON file", sourceFile.GetPath(),
-                                  sourceFile.GetName() + ".json",
-                                  "JSON files (*.json)|*.json|All files (*.*)|*.*",
-                                  wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-        if (outputDialog.ShowModal() != wxID_OK)
-        {
-            return;
-        }
-
-        const wxString result = RunVspec2Json(sourceDialog.GetPath(), outputDialog.GetPath());
-        const bool failed = result.StartsWith("ERROR:");
-
-        wxMessageBox(failed ? result : "VSpec JSON written to:\n\n" + result,
-                     kApplicationName,
-                     wxOK | (failed ? wxICON_ERROR : wxICON_INFORMATION), this);
-        if (!failed)
-        {
-            SetStatusText("Written: " + result, 0);
+            RefreshAll();
+            SetStatusText(wxString::Format("Added %zu signal(s)", added), 0);
         }
     }
 
@@ -1359,4 +1895,14 @@ namespace acd
         return "";
     }
 
+    void  MainFrame::ShowVssToolsVersion()
+    {
+        auto version = GetVssToolsVersion();
+        if (version.find("6.1") == std::string::npos) 
+        {
+            wxMessageBox("vss-tools 6.1 required, found: " + version,
+                    kApplicationName,
+                    wxOK | wxICON_ERROR, this);     
+        }
+    }
 } // namespace acd

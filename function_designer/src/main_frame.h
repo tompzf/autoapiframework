@@ -67,8 +67,7 @@ namespace acd
         void OnOpenMetaModel(wxCommandEvent& event);
         void OnShowMetaModel(wxCommandEvent& event);
         void OnSettings(wxCommandEvent& event);
-        void OnAddWithVspecFile(wxCommandEvent& event);
-        void VspecFile2Json(wxCommandEvent& event);        
+        void OnAddWithVspecFile(wxCommandEvent& event);     
         void OnAdd(wxCommandEvent& event);
         void OnDelete(wxCommandEvent& event);
         void OnEdit(wxCommandEvent& event);
@@ -122,6 +121,7 @@ namespace acd
         wxButton* m_createAPIButton = nullptr;
 
         std::string GetVssToolsVersion();
+        void ShowVssToolsVersion();
         wxString RunVspec2Json(const wxString& vspecFile, const wxString& outputFile);
         wxString GetGitVersion(const wxString& repoDir);
         wxString GetGitTag(const wxString& repoDir);
