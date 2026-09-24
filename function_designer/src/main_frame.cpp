@@ -465,6 +465,21 @@ namespace acd
                                   wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
                 m_filterText = new wxTextCtrl(this, wxID_ANY);
                 filterSizer->Add(m_filterText, 1);
+
+                filterSizer->Add(new wxStaticText(this, wxID_ANY, "Type:"), 0,
+                                  wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 6);
+                const wxArrayString typeChoices = {"all", "actuator", "sensor", "attribute", "property", "branch"};
+                m_typeFilter = new wxComboBox(this, wxID_ANY, typeChoices[0], wxDefaultPosition, wxDefaultSize,
+                                              typeChoices, wxCB_READONLY);
+                filterSizer->Add(m_typeFilter, 0);
+
+                filterSizer->Add(new wxStaticText(this, wxID_ANY, "Datatype:"), 0,
+                                  wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 6);
+                const wxArrayString datatypeChoices = {"all", "boolean", "float", "string", "int8", "int16",
+                                                       "int32","int64", "uint8", "uint16", "uint32", "uint64"};
+                m_datatypeFilter = new wxComboBox(this, wxID_ANY, datatypeChoices[0], wxDefaultPosition,
+                                                  wxDefaultSize, datatypeChoices, wxCB_READONLY);
+                filterSizer->Add(m_datatypeFilter, 0);
                 topSizer->Add(filterSizer, 0, wxEXPAND | wxALL, 8);
 
                 topSizer->Add(new wxStaticText(this, wxID_ANY, "Available signals"), 0, wxLEFT | wxRIGHT | wxTOP, 8);
@@ -495,6 +510,8 @@ namespace acd
                 CentreOnParent();
 
                 m_filterText->Bind(wxEVT_TEXT, [this](wxCommandEvent&) { RefreshAvailableList(); });
+                m_typeFilter->Bind(wxEVT_COMBOBOX, [this](wxCommandEvent&) { RefreshAvailableList(); });
+                m_datatypeFilter->Bind(wxEVT_COMBOBOX, [this](wxCommandEvent&) { RefreshAvailableList(); });
                 addButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent&)
                 {
                     MoveSelected(m_availableList, m_available, m_selected);
@@ -564,16 +581,27 @@ namespace acd
             void RefreshAvailableList()
             {
                 const wxString filter = m_filterText->GetValue().Lower();
+                const wxString typeFilter = m_typeFilter->GetValue();
+                const wxString datatypeFilter = m_datatypeFilter->GetValue();
                 m_availableDisplayIndex.clear();
                 m_availableList->DeleteAllItems();
                 long row = 0;
                 for (std::size_t i = 0; i < m_available.size(); ++i)
                 {
-                    if (!filter.empty() && ToWx(m_available[i].path).Lower().Find(filter) == wxNOT_FOUND)
+                    const VssSignal& signal = m_available[i];
+                    if (!filter.empty() && ToWx(signal.path).Lower().Find(filter) == wxNOT_FOUND)
                     {
                         continue;
                     }
-                    FillRow(m_availableList, row, m_available[i]);
+                    if (typeFilter != "all" && !typeFilter.IsSameAs(ToWx(signal.type), false))
+                    {
+                        continue;
+                    }
+                    if (datatypeFilter != "all" && !datatypeFilter.IsSameAs(ToWx(signal.datatype), false))
+                    {
+                        continue;
+                    }
+                    FillRow(m_availableList, row, signal);
                     m_availableDisplayIndex.push_back(i);
                     ++row;
                 }
@@ -647,6 +675,8 @@ namespace acd
             }
 
             wxTextCtrl* m_filterText = nullptr;
+            wxComboBox* m_typeFilter = nullptr;
+            wxComboBox* m_datatypeFilter = nullptr;
             wxListCtrl* m_availableList = nullptr;
             wxListCtrl* m_selectedList = nullptr;
             std::vector<VssSignal> m_available;
