@@ -287,19 +287,50 @@ namespace acd
             VssSignal signal;
             signal.path = path;
             signal.type = typeStr;
-            if (const JsonValue* datatype = value.Find("datatype"); datatype && datatype->type == JsonValue::Type::String)
+            if (const JsonValue* type = value.Find(kCovesaType); type && type->type == JsonValue::Type::String)
             {
-                signal.datatype = datatype->stringValue;
+                signal.type = type->stringValue;
+            }            
+            if (const JsonValue* dataType = value.Find(kCovesaDatatype); dataType && dataType->type == JsonValue::Type::String)
+            {
+                signal.dataType = dataType->stringValue;
             }
-            if (const JsonValue* description = value.Find("description"); description && description->type == JsonValue::Type::String)
+            if (const JsonValue* description = value.Find(kCovesaDescription); description && description->type == JsonValue::Type::String)
             {
                 signal.description = description->stringValue;
             }
-            if (const JsonValue* unit = value.Find("unit"); unit && unit->type == JsonValue::Type::String)
+            if (const JsonValue* unit = value.Find(kCovesaUnit); unit && unit->type == JsonValue::Type::String)
             {
                 signal.unit = unit->stringValue;
             }
-            out.push_back(std::move(signal));
+            if (const JsonValue* comment = value.Find(kCovesaComment); comment && comment->type == JsonValue::Type::String)
+            {
+                signal.comment = comment->stringValue;
+            }
+            if (const JsonValue* min = value.Find(kCovesaMin); min && min->type == JsonValue::Type::String)
+            {
+                signal.min = min->stringValue;
+            }
+            if (const JsonValue* max = value.Find(kCovesaMax); max && max->type == JsonValue::Type::String)
+            {
+                signal.max = max->stringValue;
+            }
+            if (const JsonValue* allowed = value.Find(kCovesaAllowed); allowed && allowed->type == JsonValue::Type::String)
+            {
+                signal.allowed = allowed->stringValue;
+            }
+            if (const JsonValue* defaultValue = value.Find(kCovesaDefault); defaultValue && defaultValue->type == JsonValue::Type::String)
+            {
+                signal.defaultValue = defaultValue->stringValue;
+            }
+            if (const JsonValue* uuid = value.Find(kCovesaUuid); uuid && uuid->type == JsonValue::Type::String)
+            {
+                signal.uuid = uuid->stringValue;
+            }
+            if (const JsonValue* arraySize = value.Find(kCovesaArraySize); arraySize && arraySize->type == JsonValue::Type::String)
+            {
+                signal.arraySize = arraySize->stringValue;
+            }            out.push_back(std::move(signal));
         }
     }
 
@@ -409,6 +440,13 @@ namespace acd
         list->AppendColumn("Datatype", wxLIST_FORMAT_LEFT, 80);
         list->AppendColumn("Unit", wxLIST_FORMAT_LEFT, 80);
         list->AppendColumn("Description", wxLIST_FORMAT_LEFT, 300);
+        list->AppendColumn("Comment", wxLIST_FORMAT_LEFT, 200);
+        list->AppendColumn("Min", wxLIST_FORMAT_LEFT, 80);
+        list->AppendColumn("Max", wxLIST_FORMAT_LEFT, 80);
+        list->AppendColumn("Allowed", wxLIST_FORMAT_LEFT, 80);
+        list->AppendColumn("Default", wxLIST_FORMAT_LEFT, 80);
+        list->AppendColumn("UUID", wxLIST_FORMAT_LEFT, 200);
+        list->AppendColumn("Array Size", wxLIST_FORMAT_LEFT, 80);
         return list;
     }
 
@@ -416,9 +454,16 @@ namespace acd
     {
         list->InsertItem(row, ToWx(signal.path));
         list->SetItem(row, 1, ToWx(signal.type));
-        list->SetItem(row, 2, ToWx(signal.datatype));
+        list->SetItem(row, 2, ToWx(signal.dataType));
         list->SetItem(row, 3, ToWx(signal.unit));
         list->SetItem(row, 4, ToWx(signal.description));
+        list->SetItem(row, 5, ToWx(signal.comment));
+        list->SetItem(row, 6, ToWx(signal.min));
+        list->SetItem(row, 7, ToWx(signal.max));
+        list->SetItem(row, 8, ToWx(signal.allowed));
+        list->SetItem(row, 9, ToWx(signal.defaultValue));
+        list->SetItem(row, 10, ToWx(signal.uuid));
+        list->SetItem(row, 11, ToWx(signal.arraySize));
     }
 
     void SelectSignalsDialog::RefreshAvailableList()
@@ -440,7 +485,7 @@ namespace acd
             {
                 continue;
             }
-            if (datatypeFilter != "all" && !datatypeFilter.IsSameAs(ToWx(signal.datatype), false))
+            if (datatypeFilter != "all" && !datatypeFilter.IsSameAs(ToWx(signal.dataType), false))
             {
                 continue;
             }

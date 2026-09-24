@@ -772,17 +772,49 @@ namespace acd
                 {
                     value = signal.path;
                 }
-                else if (field == "dataType")
+                else if (field == kCovesaType)
                 {
-                    value = signal.datatype;
+                    value = signal.type;
+                }                
+                else if (field == kMetaModelDataType)
+                {
+                    value = signal.dataType;
                 }
-                else if (field == "description")
+                else if (field == kCovesaDescription)
                 {
                     value = signal.description;
                 }
-                else if (field == "unit")
+                else if (field == kCovesaUnit)
                 {
                     value = signal.unit;
+                }
+                else if (field == kCovesaComment)
+                {
+                    value = signal.comment;
+                }
+                else if (field == kCovesaMin)
+                {
+                    value = signal.min;
+                }
+                else if (field == kCovesaMax)
+                {
+                    value = signal.max;
+                }
+                else if (field == kCovesaAllowed)
+                {
+                    value = signal.allowed;
+                }
+                else if (field == kMetaModelDefaultValue)
+                {
+                    value = signal.defaultValue;
+                }
+                else if (field == kCovesaUuid)
+                {
+                    value = signal.uuid;
+                }
+                else if (field == kCovesaArraySize)
+                {
+                    value = signal.arraySize;
                 }
                 item->Set(field, YamlNode::MakeScalar(value));
             }

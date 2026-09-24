@@ -31,6 +31,21 @@ class wxWindow;
 
 namespace acd 
 {
+    static constexpr const char* kCovesaPath = "path";
+    static constexpr const char* kCovesaType = "type";
+    static constexpr const char* kMetaModelDataType = "dataType";
+    static constexpr const char* kCovesaDatatype = "datatype";
+    static constexpr const char* kCovesaDescription = "description";
+    static constexpr const char* kCovesaUnit = "unit";
+    static constexpr const char* kCovesaComment = "comment";
+    static constexpr const char* kCovesaMin = "min";
+    static constexpr const char* kCovesaMax = "max";
+    static constexpr const char* kCovesaAllowed = "allowed";
+    static constexpr const char* kMetaModelDefaultValue = "defaultValue";
+    static constexpr const char* kCovesaDefault = "default";    
+    static constexpr const char* kCovesaUuid = "uuid";
+    static constexpr const char* kCovesaArraySize = "arraysize";
+
     /// Minimal JSON value as produced by the `vspec export json` output.
     struct JsonValue
     {
@@ -74,9 +89,16 @@ namespace acd
     {
         std::string path;
         std::string type;
-        std::string datatype;
+        std::string dataType;
         std::string description;
         std::string unit;
+        std::string comment;
+        std::string min;
+        std::string max;
+        std::string allowed;
+        std::string defaultValue;
+        std::string uuid;
+        std::string arraySize;
     };
 
     /// Recursively collects leaf signals (non-branch nodes) with their dotted path.
