@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <functional>
 #include <vector>
+#include <regex>
 
 namespace acd 
 {
@@ -685,6 +686,22 @@ namespace acd
 
     void MainFrame::OnAddViaVss(wxCommandEvent&)
     {
+        static bool versionFound = false;
+        if (!versionFound)
+        {
+            auto version = GetVssToolsVersion();
+            if (version.find("6.1") == std::string::npos) 
+            {
+                wxMessageBox("vss-tools 6.1 required, found: " + version,
+                        kApplicationName,
+                        wxOK | wxICON_ERROR, this);     
+            }
+            else
+            {              
+                versionFound = true;
+            }
+        }
+
         wxString vspecDirectory;
         wxConfigBase::Get()->Read(kVspecDirectoryConfigKey, &vspecDirectory);
 
@@ -1271,4 +1288,39 @@ namespace acd
 
         return outputFile;
     }
+
+    std::string  MainFrame::GetVssToolsVersion()
+    {
+    #ifdef _WIN32
+        const char* cmd = "pip show vss-tools 2>NUL";
+        FILE* pipe = _popen(cmd, "r");
+    #else
+        const char* cmd = "pip show vss-tools 2>/dev/null";
+        FILE* pipe = popen(cmd, "r");
+    #endif
+
+        if (!pipe)
+            return "";
+
+        char buffer[256];
+        std::string output;
+
+        while (fgets(buffer, sizeof(buffer), pipe))
+            output += buffer;
+
+    #ifdef _WIN32
+        _pclose(pipe);
+    #else
+        pclose(pipe);
+    #endif
+
+        std::regex versionRegex(R"(Version:\s*([^\r\n]+))");
+        std::smatch match;
+
+        if (std::regex_search(output, match, versionRegex))
+            return match[1];
+
+        return "";
+    }
+
 } // namespace acd
