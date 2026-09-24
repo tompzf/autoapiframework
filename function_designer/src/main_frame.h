@@ -47,7 +47,7 @@ namespace acd
             ID_OpenMetaModel,
             ID_ShowMetaModel,
             ID_Settings,
-            ID_AddViaVss,
+            ID_AddVWithVspecFile,
             ID_Add,
             ID_Delete,
             ID_Edit,
@@ -67,7 +67,8 @@ namespace acd
         void OnOpenMetaModel(wxCommandEvent& event);
         void OnShowMetaModel(wxCommandEvent& event);
         void OnSettings(wxCommandEvent& event);
-        void OnAddViaVss(wxCommandEvent& event);
+        void OnAddWithVspecFile(wxCommandEvent& event);
+        void VspecFile2Json(wxCommandEvent& event);        
         void OnAdd(wxCommandEvent& event);
         void OnDelete(wxCommandEvent& event);
         void OnEdit(wxCommandEvent& event);
@@ -112,7 +113,7 @@ namespace acd
         wxButton* m_settingsButton = nullptr;
         wxButton* m_saveButton = nullptr;
         wxButton* m_saveAsButton = nullptr;
-        wxButton* m_addViaVssButton = nullptr;
+        wxButton* m_addWithVspecFileButton = nullptr;
         wxButton* m_addButton = nullptr;
         wxButton* m_deleteButton = nullptr;
         wxButton* m_editButton = nullptr;

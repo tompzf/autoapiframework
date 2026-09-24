@@ -151,7 +151,7 @@ namespace acd
         EVT_BUTTON(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
         EVT_BUTTON(MainFrame::ID_ShowMetaModel, MainFrame::OnShowMetaModel)
         EVT_BUTTON(MainFrame::ID_Settings, MainFrame::OnSettings)
-        EVT_BUTTON(MainFrame::ID_AddViaVss, MainFrame::OnAddViaVss)
+        EVT_BUTTON(MainFrame::ID_AddVWithVspecFile, MainFrame::OnAddWithVspecFile)
         EVT_BUTTON(MainFrame::ID_Add, MainFrame::OnAdd)
         EVT_BUTTON(MainFrame::ID_Delete, MainFrame::OnDelete)
         EVT_BUTTON(MainFrame::ID_Edit, MainFrame::OnEdit)
@@ -256,8 +256,8 @@ namespace acd
         mainSizer->Add(buttonSizer, 0, wxEXPAND);
 
         wxBoxSizer* editButtonSizer = new wxBoxSizer(wxHORIZONTAL);
-        m_addViaVssButton = new wxButton(panel, ID_AddViaVss, "Add via vss");
-        m_addViaVssButton->Enable(false);
+        m_addWithVspecFileButton = new wxButton(panel, ID_AddVWithVspecFile, "Add by vspec file");
+        m_addWithVspecFileButton->Enable(false);
         m_addButton = new wxButton(panel, ID_Add, "Add");
         m_addButton->Enable(false);
         m_deleteButton = new wxButton(panel, ID_Delete, "Delete");
@@ -270,7 +270,7 @@ namespace acd
         m_showButton->Enable(false);
         m_createAPIButton = new wxButton(panel, ID_CreateAPI, "Create API");
         m_createAPIButton->Enable(false);
-        editButtonSizer->Add(m_addViaVssButton, 0, wxALL, 5);
+        editButtonSizer->Add(m_addWithVspecFileButton, 0, wxALL, 5);
         editButtonSizer->Add(m_addButton, 0, wxALL, 5);
         editButtonSizer->Add(m_deleteButton, 0, wxALL, 5);
         editButtonSizer->Add(m_editButton, 0, wxALL, 5);
@@ -684,7 +684,7 @@ namespace acd
         dialog.ShowModal();
     }
 
-    void MainFrame::OnAddViaVss(wxCommandEvent&)
+    void MainFrame::OnAddWithVspecFile(wxCommandEvent&)
     {
         static bool versionFound = false;
         if (!versionFound)
@@ -702,6 +702,41 @@ namespace acd
             }
         }
 
+        wxString vspecDirectory;
+        wxConfigBase::Get()->Read(kVspecDirectoryConfigKey, &vspecDirectory);
+
+        wxFileDialog sourceDialog(this, "Select VSpec file", vspecDirectory, wxEmptyString,
+                                  "VSpec files (*.vspec)|*.vspec|All files (*.*)|*.*",
+                                  wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        if (sourceDialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+
+        const wxFileName sourceFile(sourceDialog.GetPath());
+        wxFileDialog outputDialog(this, "Write JSON file", sourceFile.GetPath(),
+                                  sourceFile.GetName() + ".json",
+                                  "JSON files (*.json)|*.json|All files (*.*)|*.*",
+                                  wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+        if (outputDialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+
+        const wxString result = RunVspec2Json(sourceDialog.GetPath(), outputDialog.GetPath());
+        const bool failed = result.StartsWith("ERROR:");
+
+        wxMessageBox(failed ? result : "VSpec JSON written to:\n\n" + result,
+                     kApplicationName,
+                     wxOK | (failed ? wxICON_ERROR : wxICON_INFORMATION), this);
+        if (!failed)
+        {
+            SetStatusText("Written: " + result, 0);
+        }
+    }
+
+    void MainFrame::VspecFile2Json(wxCommandEvent&)
+    {
         wxString vspecDirectory;
         wxConfigBase::Get()->Read(kVspecDirectoryConfigKey, &vspecDirectory);
 
@@ -1184,7 +1219,7 @@ namespace acd
     {
         wxListCtrl* selectedList = GetSelectedCollectionList();
         const bool hasSelectedItem = selectedList && selectedList->GetSelectedItemCount() > 0;
-        m_addViaVssButton->Enable(m_notebook->GetSelection() == 1);
+        m_addWithVspecFileButton->Enable(m_notebook->GetSelection() == 1);
         m_addButton->Enable(selectedList != nullptr);
         m_deleteButton->Enable(hasSelectedItem);
         m_editButton->Enable(hasSelectedItem);
