@@ -84,6 +84,7 @@ endif()
 add_executable(AutoAPIFunctionDesigner WIN32
     src/main.cpp
     src/main_frame.cpp
+    src/json_signal_parser.cpp
     src/yaml_node.cpp
     src/yaml_parser.cpp
     src/yaml_writer.cpp
