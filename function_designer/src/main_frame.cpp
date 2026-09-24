@@ -1292,10 +1292,11 @@ namespace acd
     std::string  MainFrame::GetVssToolsVersion()
     {
     #ifdef _WIN32
-        const char* cmd = "pip show vss-tools 2>NUL";
+        const char* cmd = getenv("VIRTUAL_ENV") ? "%USERPROFILE%\\venvs\\vss-tools\\Scripts\\pip.exe show vss-tools 2>NUL" : "pip show vss-tools 2>NUL";
         FILE* pipe = _popen(cmd, "r");
     #else
-        const char* cmd = "pip show vss-tools 2>/dev/null";
+
+        const char* cmd = getenv("VIRTUAL_ENV") ? "$HOME/venvs/vss-tools/bin/pip show vss-tools 2>/dev/null" : "pip show vss-tools 2>/dev/null";
         FILE* pipe = popen(cmd, "r");
     #endif
 
