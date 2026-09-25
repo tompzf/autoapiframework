@@ -15,11 +15,14 @@
  ********************************************************************************/
  
 #include "main_frame.h"
+#include "json_signal_parser.h"
 #include "validate_function.h"
 
 #include <wx/config.h>
 #include <wx/dirdlg.h>
+#include <wx/file.h>
 #include <wx/filedlg.h>
+#include <wx/filefn.h>
 #include <wx/filename.h>
 #include <wx/icon.h>
 #include <wx/image.h>
@@ -28,7 +31,9 @@
 #include <wx/stdpaths.h>
 
 #include <algorithm>
+#include <functional>
 #include <vector>
+#include <regex>
 
 namespace acd 
 {
@@ -38,7 +43,6 @@ namespace acd
         constexpr const char* kMetaModelFileConfigKey = "/Paths/MetaModelFile";
         constexpr const char* kMetaModelDirectoryConfigKey = "/Paths/MetaModelDirectory";
         constexpr const char* kVspecDirectoryConfigKey = "/Paths/VSpecDirectory";
-        constexpr const char* kCovesaToolsDirectoryConfigKey = "/Paths/CovesaToolsDirectory";
         constexpr const char* kCreateApiLanguageConfigKey = "/CreateAPI/Language";
         constexpr const char* kLogoFileName = "autoapiframework_logo.png";
         constexpr const char* kLogoFileNameLarge = "autoapiframework_logo_large.png";		
@@ -60,7 +64,7 @@ namespace acd
                 wxFileName(executableDirectory, fileName).GetFullPath(),
                 wxFileName(wxGetCwd(), fileName).GetFullPath(),
                 wxFileName(wxGetCwd() + "/..", fileName).GetFullPath(),
-                wxFileName(wxGetCwd() + "/component_designer", fileName).GetFullPath()};
+                wxFileName(wxGetCwd() + "/function_designer", fileName).GetFullPath()};
 
             for (const wxString& candidate : candidates)
             {
@@ -150,7 +154,7 @@ namespace acd
         EVT_BUTTON(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
         EVT_BUTTON(MainFrame::ID_ShowMetaModel, MainFrame::OnShowMetaModel)
         EVT_BUTTON(MainFrame::ID_Settings, MainFrame::OnSettings)
-        EVT_BUTTON(MainFrame::ID_AddViaVss, MainFrame::OnAddViaVss)
+        EVT_BUTTON(MainFrame::ID_AddVWithVspecFile, MainFrame::OnAddWithVspecFile)
         EVT_BUTTON(MainFrame::ID_Add, MainFrame::OnAdd)
         EVT_BUTTON(MainFrame::ID_Delete, MainFrame::OnDelete)
         EVT_BUTTON(MainFrame::ID_Edit, MainFrame::OnEdit)
@@ -164,6 +168,7 @@ namespace acd
         EVT_MENU(MainFrame::ID_ShowMetaModel, MainFrame::OnShowMetaModel)
         EVT_MENU(MainFrame::ID_Settings, MainFrame::OnSettings)
         EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
+        EVT_MENU(MainFrame::ID_GetVssToolsVersion, MainFrame::OnGetVssToolVersion)        
         EVT_MENU(wxID_HELP, MainFrame::OnHelp)
         EVT_MENU(wxID_EXIT, MainFrame::OnExit)
     wxEND_EVENT_TABLE()
@@ -207,6 +212,7 @@ namespace acd
 
         wxMenu* helpMenu = new wxMenu();
         helpMenu->Append(wxID_ABOUT);
+        helpMenu->Append(ID_GetVssToolsVersion, "Get vss-tools version");        
         helpMenu->Append(wxID_HELP, "&Help...");
 
         wxMenuBar* menuBar = new wxMenuBar();
@@ -224,7 +230,7 @@ namespace acd
 
         wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
         m_newButton = new wxButton(panel, ID_NewSpecification, "New");
-        m_readButton = new wxButton(panel, ID_OpenSpecification, "Read .acs file");
+        m_readButton = new wxButton(panel, ID_OpenSpecification, "Read .afs file");
         m_saveButton = new wxButton(panel, ID_SaveSpecification, "Save");
         m_saveButton->Enable(false);
         m_saveAsButton = new wxButton(panel, ID_SaveSpecificationAs, "Save as...");
@@ -255,8 +261,8 @@ namespace acd
         mainSizer->Add(buttonSizer, 0, wxEXPAND);
 
         wxBoxSizer* editButtonSizer = new wxBoxSizer(wxHORIZONTAL);
-        m_addViaVssButton = new wxButton(panel, ID_AddViaVss, "Add via vss");
-        m_addViaVssButton->Enable(false);
+        m_addWithVspecFileButton = new wxButton(panel, ID_AddVWithVspecFile, "Add by vspec file");
+        m_addWithVspecFileButton->Enable(false);
         m_addButton = new wxButton(panel, ID_Add, "Add");
         m_addButton->Enable(false);
         m_deleteButton = new wxButton(panel, ID_Delete, "Delete");
@@ -269,7 +275,7 @@ namespace acd
         m_showButton->Enable(false);
         m_createAPIButton = new wxButton(panel, ID_CreateAPI, "Create API");
         m_createAPIButton->Enable(false);
-        editButtonSizer->Add(m_addViaVssButton, 0, wxALL, 5);
+        editButtonSizer->Add(m_addWithVspecFileButton, 0, wxALL, 5);
         editButtonSizer->Add(m_addButton, 0, wxALL, 5);
         editButtonSizer->Add(m_deleteButton, 0, wxALL, 5);
         editButtonSizer->Add(m_editButton, 0, wxALL, 5);
@@ -398,7 +404,7 @@ namespace acd
             wxFileName(exeDir + "/../../..", kMetaModelFileName).GetFullPath(),
             wxFileName(wxGetCwd(), kMetaModelFileName).GetFullPath(),
             wxFileName(wxGetCwd() + "/..", kMetaModelFileName).GetFullPath(),
-            wxFileName(wxGetCwd() + "/component_designer", kMetaModelFileName).GetFullPath()
+            wxFileName(wxGetCwd() + "/function_designer", kMetaModelFileName).GetFullPath()
         };
 
         for (const wxString& candidate : candidates) 
@@ -437,8 +443,8 @@ namespace acd
     void MainFrame::OnOpenSpecification(wxCommandEvent&) 
     {
         wxFileDialog dialog(this, "Read function specification", wxEmptyString, wxEmptyString,
-                            "Function specification (*.acs;*.afs)|*.acs;*.afs|"
-                            "Function specification (*.acs.yaml;*.afs.yaml)|*.acs.yaml;*.afs.yaml|"
+                            "Function specification (*.afs;*.afs)|*.afs;*.afs|"
+                            "Function specification (*.afs.yaml;*.afs.yaml)|*.afs.yaml;*.afs.yaml|"
                             "YAML files (*.yaml;*.yml)|*.yaml;*.yml|All files (*.*)|*.*",
                             wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dialog.ShowModal() == wxID_CANCEL) 
@@ -485,14 +491,14 @@ namespace acd
 
         wxFileName source(ToWx(m_specification.GetSourcePath()));
         wxString suggested = source.GetFullName();
-        const wxString suffix = ".acs";
-        if (suggested.EndsWith(".acs") || suggested.EndsWith(".afs")) 
+        const wxString suffix = ".afs";
+        if (suggested.EndsWith(".afs") || suggested.EndsWith(".afs")) 
         {
             suggested = suggested.Left(suggested.length() - suffix.length()) + "_copy" + suffix;
         } 
-        else if (suggested.EndsWith(".acs.yaml") || suggested.EndsWith(".afs.yaml")) 
+        else if (suggested.EndsWith(".afs.yaml") || suggested.EndsWith(".afs.yaml")) 
         {
-            suggested = suggested.Left(suggested.length() - wxString(".acs.yaml").length()) + "_copy" + suffix;
+            suggested = suggested.Left(suggested.length() - wxString(".afs.yaml").length()) + "_copy" + suffix;
         } 
         else 
         {
@@ -500,7 +506,7 @@ namespace acd
         }
 
         wxFileDialog dialog(this, "Write function specification as", source.GetPath(), suggested,
-                            "Function specification (*.acs)|*.acs|All files (*.*)|*.*",
+                            "Function specification (*.afs)|*.afs|All files (*.*)|*.*",
                             wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
         if (dialog.ShowModal() == wxID_CANCEL) 
         {
@@ -554,10 +560,8 @@ namespace acd
         wxConfigBase* config = wxConfigBase::Get();
         wxString metaModelFile = kMetaModelFileName;
         wxString vspecDirectory;
-        wxString covesaToolsDirectory;
         config->Read(kMetaModelFileConfigKey, &metaModelFile);
         config->Read(kVspecDirectoryConfigKey, &vspecDirectory);
-        config->Read(kCovesaToolsDirectoryConfigKey, &covesaToolsDirectory);
 
         MetaModel metaModel;
         std::string metaModelVersion = "unknown";
@@ -575,22 +579,22 @@ namespace acd
 
         wxTextCtrl* metaModelControl = new wxTextCtrl(&dialog, wxID_ANY, metaModelFile);
         wxTextCtrl* vspecControl = new wxTextCtrl(&dialog, wxID_ANY, vspecDirectory);
-        wxTextCtrl* covesaToolsControl = new wxTextCtrl(&dialog, wxID_ANY, covesaToolsDirectory);
         wxStaticText* metaModelVersionLabel = new wxStaticText(&dialog, wxID_ANY, metaModelVersion);    
         
-        wxString vspecVersion = GetGitTagAndVersion("VSpec version: ", vspecDirectory).c_str();
-        wxString covesaToolsVersion = GetGitTagAndVersion("Covesa tools version: ",covesaToolsDirectory).c_str();
+        wxString vspecVersion = ToWx(GetGitTagAndVersion("VSpec version: ", vspecDirectory));
         wxStaticText* vspecVersionLabel = new wxStaticText(&dialog, wxID_ANY, vspecVersion.IsEmpty() ? "Version: unknown" : vspecVersion);
-        wxStaticText* toolsVersionLabel = new wxStaticText(&dialog, wxID_ANY, covesaToolsVersion.IsEmpty() ? "Version: unknown" : covesaToolsVersion);
 
-        const auto addField = [&dialog, fields](const wxString& label, wxTextCtrl* control, bool isFile, wxStaticText* versionLabel = nullptr)
+        const auto addField = [&dialog, fields](const wxString& label, wxTextCtrl* control, bool isFile,
+                                               wxStaticText* versionLabel,
+                                               const std::function<wxString(const wxString&)>& getVersion)
         {
             fields->Add(new wxStaticText(&dialog, wxID_ANY, label),
                         0, wxALIGN_CENTER_VERTICAL);    
             fields->Add(control, 1, wxEXPAND);
             wxButton* browseButton = new wxButton(&dialog, wxID_ANY, "Browse...");
-            browseButton->Bind(wxEVT_BUTTON, [&dialog, control, isFile](wxCommandEvent&)
+            browseButton->Bind(wxEVT_BUTTON, [&dialog, control, isFile, versionLabel, getVersion](wxCommandEvent&)
             {
+                wxString selectedPath;
                 if (isFile)
                 {
                     wxFileName current(control->GetValue());
@@ -599,16 +603,24 @@ namespace acd
                                         wxFD_OPEN | wxFD_FILE_MUST_EXIST);
                     if (picker.ShowModal() == wxID_OK)
                     {
-                        control->SetValue(picker.GetPath());
+                        selectedPath = picker.GetPath();
                     }
-                    return;
+                }
+                else
+                {
+                    wxDirDialog picker(&dialog, "Select folder", control->GetValue(),
+                                       wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+                    if (picker.ShowModal() == wxID_OK)
+                    {
+                        selectedPath = picker.GetPath();
+                    }
                 }
 
-                wxDirDialog picker(&dialog, "Select folder", control->GetValue(),
-                                   wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
-                if (picker.ShowModal() == wxID_OK)
+                if (!selectedPath.empty())
                 {
-                    control->SetValue(picker.GetPath());
+                    control->SetValue(selectedPath);
+                    versionLabel->SetLabel(getVersion(selectedPath));
+                    dialog.Fit();
                 }
             });
             fields->Add(browseButton);
@@ -622,9 +634,20 @@ namespace acd
             }
         };
 
-        addField("Meta model file", metaModelControl, true, metaModelVersionLabel);
-        addField("COVESA VSpec folder", vspecControl, false, vspecVersionLabel);
-        addField("COVESA tools folder", covesaToolsControl, false, toolsVersionLabel);
+        addField("Meta model file", metaModelControl, true, metaModelVersionLabel,
+                 [](const wxString& path)
+                 {
+                     MetaModel selectedMetaModel;
+                     std::string loadError;
+                     return selectedMetaModel.Load(ToStd(path), loadError)
+                         ? ToWx(selectedMetaModel.GetVersion()) : "unknown";
+                 });
+        addField("COVESA VSpec folder", vspecControl, false, vspecVersionLabel,
+                 [this](const wxString& path)
+                 {
+                     const wxString version = ToWx(GetGitTagAndVersion("VSpec version: ", path));
+                     return version.IsEmpty() ? wxString("Version: unknown") : version;
+                 });
 
         dialogSizer->Add(fields, 1, wxEXPAND | wxALL, 12);
         dialogSizer->Add(dialog.CreateSeparatedButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 8);
@@ -638,7 +661,6 @@ namespace acd
 
         config->Write(kMetaModelFileConfigKey, metaModelControl->GetValue());
         config->Write(kVspecDirectoryConfigKey, vspecControl->GetValue());
-        config->Write(kCovesaToolsDirectoryConfigKey, covesaToolsControl->GetValue());
         config->Flush();
         SetStatusText("Global settings updated", 0);
         if (metaModelFile.CompareTo(metaModelControl->GetValue()) != 0)
@@ -667,11 +689,146 @@ namespace acd
         dialog.ShowModal();
     }
 
-    void MainFrame::OnAddViaVss(wxCommandEvent&)
+    void MainFrame::OnAddWithVspecFile(wxCommandEvent&)
     {
-        wxMessageBox("Add signal via vss:\n\n NOT IMPLEMENTED ",
-                kApplicationName,
-                wxOK | wxICON_ERROR, this);                
+        wxString vspecDirectory;
+        wxConfigBase::Get()->Read(kVspecDirectoryConfigKey, &vspecDirectory);
+
+        wxFileDialog sourceDialog(this, "Select VSpec file", vspecDirectory, wxEmptyString,
+                                  "VSpec files (*.vspec)|*.vspec|All files (*.*)|*.*",
+                                  wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        if (sourceDialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+
+        const wxString tempJsonPath = wxFileName::CreateTempFileName("acd_vspec_");
+        if (tempJsonPath.empty())
+        {
+            wxMessageBox("Could not create a temporary file for the VSpec conversion.",
+                         kApplicationName, wxOK | wxICON_ERROR, this);
+            return;
+        }
+
+        const wxString result = RunVspec2Json(sourceDialog.GetPath(), tempJsonPath);
+        if (result.StartsWith("ERROR:"))
+        {
+            wxMessageBox(result, kApplicationName, wxOK | wxICON_ERROR, this);
+            wxRemoveFile(tempJsonPath);
+            return;
+        }
+
+        wxFile jsonFile(tempJsonPath);
+        wxString jsonContent;
+        const bool readOk = jsonFile.IsOpened() && jsonFile.ReadAll(&jsonContent);
+        jsonFile.Close();
+        wxRemoveFile(tempJsonPath);
+        if (!readOk)
+        {
+            wxMessageBox("Could not read the converted VSpec JSON file.", kApplicationName,
+                         wxOK | wxICON_ERROR, this);
+            return;
+        }
+
+        JsonValue root;
+        std::string parseError;
+        if (!JsonParser().Parse(ToStd(jsonContent), root, parseError))
+        {
+            wxMessageBox("Could not parse VSpec JSON:\n\n" + ToWx(parseError), kApplicationName,
+                         wxOK | wxICON_ERROR, this);
+            return;
+        }
+
+        std::vector<VssSignal> signals;
+        FlattenVssTree(root, "", signals);
+        if (signals.empty())
+        {
+            wxMessageBox("No signals found in the converted VSpec JSON.", kApplicationName,
+                         wxOK | wxICON_INFORMATION, this);
+            return;
+        }
+
+        SelectSignalsDialog selectDialog(this, signals);
+        if (selectDialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+
+        const std::vector<VssSignal> selected = selectDialog.GetSelectedSignals();
+        if (selected.empty())
+        {
+            return;
+        }
+
+        const std::vector<std::string> fields = m_metaModel.ColumnsFor(kDataInterfaceTypeKey, {});
+        std::size_t added = 0;
+        for (const VssSignal& signal : selected)
+        {
+            YamlNodePtr item = YamlNode::MakeMap();
+            for (const std::string& field : fields)
+            {
+                std::string value;
+                if (field == FunctionSpecification::kNamePathKey)
+                {
+                    value = signal.path;
+                }
+                else if (field == kCovesaType)
+                {
+                    value = signal.type;
+                }                
+                else if (field == kMetaModelDataType)
+                {
+                    value = signal.dataType;
+                }
+                else if (field == kCovesaDescription)
+                {
+                    value = signal.description;
+                }
+                else if (field == kCovesaUnit)
+                {
+                    value = signal.unit;
+                }
+                else if (field == kCovesaComment)
+                {
+                    value = signal.comment;
+                }
+                else if (field == kCovesaMin)
+                {
+                    value = signal.min;
+                }
+                else if (field == kCovesaMax)
+                {
+                    value = signal.max;
+                }
+                else if (field == kCovesaAllowed)
+                {
+                    value = signal.allowed;
+                }
+                else if (field == kMetaModelDefaultValue)
+                {
+                    value = signal.defaultValue;
+                }
+                else if (field == kCovesaUuid)
+                {
+                    value = signal.uuid;
+                }
+                else if (field == kCovesaArraySize)
+                {
+                    value = signal.arraySize;
+                }
+                item->Set(field, YamlNode::MakeScalar(value));
+            }
+            if (m_specification.AddCollectionItem(FunctionSpecification::kDataInterfacesKey, std::move(item)))
+            {
+                ++added;
+            }
+        }
+
+        if (added > 0)
+        {
+            RefreshAll();
+            SetStatusText(wxString::Format("Added %zu signal(s)", added), 0);
+        }
     }
 
     void MainFrame::OnAdd(wxCommandEvent&)
@@ -968,13 +1125,22 @@ namespace acd
         }
         sizer->Add(new wxStaticText(&dialog, wxID_ANY, wxString(kApplicationName) + "\n\n"
                     "Reads, displays and writes Eclipse autoapiframework function\n"
-                    "specifications (*.acs, YAML content) based on the framework meta model.",
+                    "specifications (*.afs, YAML content) based on the framework meta model.",
                     wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL),
                    0, wxALIGN_CENTER_HORIZONTAL | wxLEFT | wxRIGHT | wxBOTTOM, 12);
         sizer->Add(dialog.CreateSeparatedButtonSizer(wxOK), 0, wxEXPAND | wxALL, 8);
         dialog.SetSizerAndFit(sizer);
         dialog.CentreOnParent();
         dialog.ShowModal();
+    }
+
+    void MainFrame::OnGetVssToolVersion(wxCommandEvent&)
+    {
+        //ShowVssToolsVersion();
+        auto version = GetVssToolsVersion();
+        wxMessageBox("Recommended vss-tools version: 6.1\n\nFound: " + version,
+                    kApplicationName,
+                    wxOK | wxICON_INFORMATION, this);
     }
 
     void MainFrame::OnHelp(wxCommandEvent&) { wxLaunchDefaultBrowser(kHelpUrl); }
@@ -1123,7 +1289,7 @@ namespace acd
     {
         wxListCtrl* selectedList = GetSelectedCollectionList();
         const bool hasSelectedItem = selectedList && selectedList->GetSelectedItemCount() > 0;
-        m_addViaVssButton->Enable(m_notebook->GetSelection() == 1);
+        m_addWithVspecFileButton->Enable(m_notebook->GetSelection() == 1);
         m_addButton->Enable(selectedList != nullptr);
         m_deleteButton->Enable(hasSelectedItem);
         m_editButton->Enable(hasSelectedItem);
@@ -1175,14 +1341,13 @@ namespace acd
     wxString MainFrame::GetGitVersion(const wxString& repoDir)
     {
         wxArrayString output, errors;
-
-        wxString cmd =
-            wxString::Format("git -C \"%s\" describe --tags", repoDir);
+        wxString cmd = wxString::Format("git -C \"%s\" describe --tags", repoDir);
 
         long rc = wxExecute(cmd, output, errors, wxEXEC_SYNC);
-
         if (rc != 0 || output.IsEmpty())
+        {
             return "Unknown";
+        }
 
         return output[0];
     }
@@ -1190,17 +1355,88 @@ namespace acd
     wxString MainFrame::GetGitTag(const wxString& repoDir)
     {
         wxArrayString output, errors;
-
-        wxString cmd =
-            wxString::Format(
-                "git -C \"%s\" describe --tags --abbrev=0",
-                repoDir);
+        wxString cmd = wxString::Format("git -C \"%s\" describe --tags --abbrev=0", repoDir);
 
         long rc = wxExecute(cmd, output, errors, wxEXEC_SYNC);
-
         if (rc != 0 || output.IsEmpty())
+        {
             return "Unknown";
+        }
 
         return output[0];
+    }
+
+    wxString MainFrame::RunVspec2Json(const wxString& vspecFile, const wxString& outputFile)
+    {
+        wxArrayString output, errors;
+        const wxString executable = wxString::FromUTF8(ACD_VSPEC_EXECUTABLE);
+
+        wxString cmd = wxString::Format(
+            "\"%s\" export json --vspec \"%s\" --output \"%s\"",
+            executable,
+            vspecFile,
+            outputFile);
+
+        long rc = wxExecute(cmd, output, errors, wxEXEC_SYNC);
+        if (rc != 0)
+        {
+            wxString err;
+            for (const auto& e : errors)
+            {
+                err += e + "\n";
+            }
+
+            return err.empty()
+                ? wxString::Format("ERROR: VSpec conversion failed with exit code %ld.", rc)
+                : "ERROR: " + err;
+        }
+
+        return outputFile;
+    }
+
+    std::string  MainFrame::GetVssToolsVersion()
+    {
+    #ifdef _WIN32
+        const char* cmd = getenv("VIRTUAL_ENV") ? "%USERPROFILE%\\venvs\\vss-tools\\Scripts\\pip.exe show vss-tools 2>NUL" : "pip show vss-tools 2>NUL";
+        FILE* pipe = _popen(cmd, "r");
+    #else
+
+        const char* cmd = getenv("VIRTUAL_ENV") ? "$HOME/venvs/vss-tools/bin/pip show vss-tools 2>/dev/null" : "pip show vss-tools 2>/dev/null";
+        FILE* pipe = popen(cmd, "r");
+    #endif
+
+        if (!pipe)
+            return "";
+
+        char buffer[256];
+        std::string output;
+
+        while (fgets(buffer, sizeof(buffer), pipe))
+            output += buffer;
+
+    #ifdef _WIN32
+        _pclose(pipe);
+    #else
+        pclose(pipe);
+    #endif
+
+        std::regex versionRegex(R"(Version:\s*([^\r\n]+))");
+        std::smatch match;
+
+        if (std::regex_search(output, match, versionRegex))
+            return match[1];
+
+        return "";
+    }
+
+    void  MainFrame::ShowVssToolsVersion()
+    {
+        auto version = GetVssToolsVersion();
+        if (version.find("6.1") == std::string::npos) 
+        {
+            wxMessageBox("vss-tools 6.1 required, found: " + version,
+                    kApplicationName,
+                    wxOK | wxICON_ERROR, this);     
+        }
     }
 } // namespace acd

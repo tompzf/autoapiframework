@@ -14,14 +14,14 @@
 #   Thomas Pfleiderer - initial API and implementation
 # *******************************************************************************
 #
-# AutoAPI Component Designer
+# AutoAPI Function Designer
 
 wxWidgets desktop application for reading, inspecting and writing Eclipse
-autoapiframework function specifications (`*.acs`, YAML content).
+autoapiframework function specifications (`*.afs`, YAML content).
 
 ## What it does
 
-* **Read .acs file** – opens a function specification, parses it and builds
+* **Read .afs file** – opens a function specification, parses it and builds
   the in-memory structures (`FunctionSpecification`, order preserving `YamlNode`
   tree).
 * Displays the content on four tabs:
@@ -35,7 +35,7 @@ autoapiframework function specifications (`*.acs`, YAML content).
     `Scheduling` interface type.
   Keys that are present in the file but not in the meta model are appended as
   extra columns, so nothing is hidden.
-* **Write .acs file as...** – writes the parsed content back under a new
+* **Write .afs file as...** – writes the parsed content back under a new
   name in the same block style layout (key order, folded `>-` descriptions and
   quoting are preserved).
 
@@ -45,8 +45,21 @@ manually via *Load meta model...*.
 
 ## Build
 
-Requires CMake >= 3.16 (>= 3.21 for the presets), a C++17 compiler and
-wxWidgets.
+Requires CMake >= 3.16 (>= 3.21 for the presets), a C++17 compiler,
+wxWidgets, and Python. The build requires `vss-tools` version 6.1.0 because
+the application uses its `vspec` executable to convert VSS files to JSON.
+
+Install the Python package in a virtual environment before configuring CMake:
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+python -m pip install vss-tools==6.1.0
+```
+
+On Linux, activate the environment with `source venv/bin/activate` instead.
+Keep the environment activated while configuring and building so CMake can
+find `vspec`.
 
 ### VS Code (CMake Tools extension)
 
@@ -66,7 +79,7 @@ Install CMake, MSYS2 UCRT64 GCC and `mingw32-make`. Ensure
 ```powershell
 cmake --preset windows-gcc-debug
 cmake --build --preset windows-gcc-debug
-.\build\windows-gcc-debug\bin\AutoAPIComponentDesigner.exe
+.\build\windows-gcc-debug\bin\AutoAPIFunctionDesigner.exe
 ```
 
 #### MSVC
@@ -77,7 +90,7 @@ commands from an x64 Native Tools Command Prompt or a Developer PowerShell:
 ```powershell
 cmake --preset msvc_x64_x64_ninja_debug
 cmake --build --preset "msvc_x64_x64 (Ninja - Debug)"
-.\build\msvc_x64_x64_debug\bin\AutoAPIComponentDesigner.exe
+.\build\msvc_x64_x64_debug\bin\AutoAPIFunctionDesigner.exe
 ```
 
 Use `msvc_x64_x64_ninja_release` and
@@ -91,10 +104,10 @@ afterwards. Disable it with `-DACD_FETCH_WXWIDGETS=OFF`.
 
 ```bash
 sudo apt-get install cmake libwxgtk3.2-dev
-cd component_designer
+cd function_designer
 cmake --preset linux-debug
 cmake --build --preset linux-debug
-./build/linux-debug/bin/AutoAPIComponentDesigner
+./build/linux-debug/bin/AutoAPIFunctionDesigner
 ```
 
 The meta model and the sample specification are copied next to the executable
@@ -103,7 +116,7 @@ after each build.
 ## Sample
 
 `../examples/vehicle_speed_fusion_multirate` and
-`../examples/speed_hazard_detection.acs` are ready to use function
+`../examples/speed_hazard_detection.afs` are ready to use function
 specifications for trying out read, display and write.
 
 `../examples/autoapiframework_metadata_V03.yaml` is the current meta model specification file.
@@ -116,12 +129,26 @@ specifications for trying out read, display and write.
 | `src/main_frame.*` | Window, buttons and the four collection views |
 | `src/yaml_node.*` | Order preserving YAML document tree |
 | `src/yaml_parser.*` | Block style YAML subset parser |
-| `src/yaml_writer.*` | Emitter reproducing the `.acs` layout |
+| `src/yaml_writer.*` | Emitter reproducing the `.afs` layout |
 | `src/validate_function.*` | Methods for syntax checks |
 | `src/meta_model.*` | `autoapiframework_meta_model.yaml` (enums, interface types) |
 | `src/function_specification.*` | Function specification access and load/save |
 
 ## vspec files
 
-To get the official vspec files execute:
-`git clone https://github.com/COVESA/vehicle_signal_specification.git` 
+The official VSS repository is recommended when working with `.vspec` files:
+
+```powershell
+git clone https://github.com/COVESA/vehicle_signal_specification.git
+cd vehicle_signal_specification
+```
+
+With the Python virtual environment activated, convert a `.vspec` file to
+JSON with `vss-tools`:
+
+```powershell
+vspec export json --vspec spec/Vehicle/Vehicle.vspec --output VehicleSignalSpecification.json
+```
+
+The application also runs this conversion from *Add via vss* and lets you
+select the input `.vspec` file and output `.json` file.

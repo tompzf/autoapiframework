@@ -19,6 +19,7 @@
 
 #include <map>
 #include <string>
+#include <stdint.h>
 #include <vector>
 
 #include "yaml_node.h"

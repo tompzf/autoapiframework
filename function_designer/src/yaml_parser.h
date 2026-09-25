@@ -23,7 +23,7 @@
 namespace acd 
 {
     /// Parser for the block-style YAML subset used by the autoapiframework meta
-    /// model and function specification (.acs) files.
+    /// model and function specification (.afs) files.
     ///
     /// Supported: nested block mappings, block sequences, plain/quoted scalars,
     /// folded (`>`/`>-`) and literal (`|`/`|-`) block scalars, comments and blank

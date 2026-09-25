@@ -26,7 +26,7 @@
 
 namespace acd 
 {
-    /// In-memory representation of a function specification (*.acs, YAML content).
+    /// In-memory representation of a function specification (*.afs, YAML content).
     ///
     /// The parsed YAML tree is kept as-is so that unknown keys survive a
     /// load/save round trip and the file can be written in the original layout.

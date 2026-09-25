@@ -29,9 +29,9 @@ class wxNotebook;
 
 namespace acd 
 {
-    static constexpr const char* kApplicationName = "AutoAPI Component Designer - Preview 0.1";
+    static constexpr const char* kApplicationName = "AutoAPI Function Designer - Preview 0.1";
 
-    /// Main window of the AutoAPI Component Designer application.
+    /// Main window of the AutoAPI Function Designer application.
     class MainFrame : public wxFrame 
     {
     public:
@@ -47,7 +47,8 @@ namespace acd
             ID_OpenMetaModel,
             ID_ShowMetaModel,
             ID_Settings,
-            ID_AddViaVss,
+            ID_GetVssToolsVersion,
+            ID_AddVWithVspecFile,
             ID_Add,
             ID_Delete,
             ID_Edit,
@@ -67,14 +68,15 @@ namespace acd
         void OnOpenMetaModel(wxCommandEvent& event);
         void OnShowMetaModel(wxCommandEvent& event);
         void OnSettings(wxCommandEvent& event);
-        void OnAddViaVss(wxCommandEvent& event);
+        void OnGetVssToolVersion(wxCommandEvent& event);
+        void OnAddWithVspecFile(wxCommandEvent& event);     
         void OnAdd(wxCommandEvent& event);
         void OnDelete(wxCommandEvent& event);
         void OnEdit(wxCommandEvent& event);
         void OnValidation(wxCommandEvent& event);
         void OnShow(wxCommandEvent& event);
         void OnCreateAPI(wxCommandEvent& event);
-        void OnAbout(wxCommandEvent& event);
+        void OnAbout(wxCommandEvent& event);   
         void OnHelp(wxCommandEvent& event);
         void OnExit(wxCommandEvent& event);
 
@@ -112,7 +114,7 @@ namespace acd
         wxButton* m_settingsButton = nullptr;
         wxButton* m_saveButton = nullptr;
         wxButton* m_saveAsButton = nullptr;
-        wxButton* m_addViaVssButton = nullptr;
+        wxButton* m_addWithVspecFileButton = nullptr;
         wxButton* m_addButton = nullptr;
         wxButton* m_deleteButton = nullptr;
         wxButton* m_editButton = nullptr;
@@ -120,6 +122,9 @@ namespace acd
         wxButton* m_showButton = nullptr;
         wxButton* m_createAPIButton = nullptr;
 
+        std::string GetVssToolsVersion();
+        void ShowVssToolsVersion();
+        wxString RunVspec2Json(const wxString& vspecFile, const wxString& outputFile);
         wxString GetGitVersion(const wxString& repoDir);
         wxString GetGitTag(const wxString& repoDir);
         std::string GetGitTagAndVersion(const std::string& prefix, const wxString& repoDir);

@@ -22,7 +22,7 @@ functionSpecification:
       precision: 1
       ASIL: B
       minUpdatePeriodMs: 10
-      qualityCode: valid
+      qualityCode: Valid
       accuracy: "+/-0.2 km/h"
       protection: complement
 
@@ -38,7 +38,7 @@ functionSpecification:
       precision: 2
       ASIL: B
       minUpdatePeriodMs: 10
-      qualityCode: valid
+      qualityCode: Valid
       accuracy: "+/-0.05 m/s2"
       protection: complement
 
@@ -54,7 +54,7 @@ functionSpecification:
       precision: 1
       ASIL: B
       minUpdatePeriodMs: 20
-      qualityCode: valid
+      qualityCode: Valid
       accuracy: logical
       protection: complement
 
@@ -71,7 +71,7 @@ functionSpecification:
       precision: 1
       ASIL: QM
       minUpdatePeriodMs: 10
-      qualityCode: valid
+      qualityCode: Valid
       accuracy: enum-based
       protection: none
 

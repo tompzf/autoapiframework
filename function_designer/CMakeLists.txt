@@ -16,7 +16,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-project(component_designer
+project(function_designer
         VERSION 0.3.0
         DESCRIPTION "Editor for Eclipse autoapiframework function specifications"
         LANGUAGES CXX)
@@ -28,6 +28,20 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 endif()
+
+
+find_program(VSPEC_EXECUTABLE
+    NAMES vspec vspec.exe
+    HINTS
+        "$ENV{HOME}/venvs/vss-tools/bin"
+        "$ENV{USERPROFILE}/venvs/vss-tools/Scripts"
+)
+
+if(NOT VSPEC_EXECUTABLE)
+    message(FATAL_ERROR
+        "vss-tools not installed")
+endif()
+
 
 option(ACD_FETCH_WXWIDGETS "Download and build wxWidgets when no installation is found" ON)
 
@@ -67,9 +81,10 @@ if(WIN32)
     set(ACD_WINDOWS_RESOURCES "${CMAKE_CURRENT_BINARY_DIR}/app_icon.rc")
 endif()
 
-add_executable(AutoAPIComponentDesigner WIN32
+add_executable(AutoAPIFunctionDesigner WIN32
     src/main.cpp
     src/main_frame.cpp
+    src/json_signal_parser.cpp
     src/yaml_node.cpp
     src/yaml_parser.cpp
     src/yaml_writer.cpp
@@ -79,48 +94,50 @@ add_executable(AutoAPIComponentDesigner WIN32
     ${ACD_WINDOWS_RESOURCES}
 )
 
-target_include_directories(AutoAPIComponentDesigner PRIVATE src)
-target_link_libraries(AutoAPIComponentDesigner PRIVATE ${ACD_WX_LIBRARIES})
+target_include_directories(AutoAPIFunctionDesigner PRIVATE src)
+target_link_libraries(AutoAPIFunctionDesigner PRIVATE ${ACD_WX_LIBRARIES})
+target_compile_definitions(AutoAPIFunctionDesigner PRIVATE
+    ACD_VSPEC_EXECUTABLE="${VSPEC_EXECUTABLE}")
 
 if(MSVC)
-    target_compile_options(AutoAPIComponentDesigner PRIVATE /W4 /utf-8)
-    target_compile_definitions(AutoAPIComponentDesigner PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT AutoAPIComponentDesigner)
+    target_compile_options(AutoAPIFunctionDesigner PRIVATE /W4 /utf-8)
+    target_compile_definitions(AutoAPIFunctionDesigner PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT AutoAPIFunctionDesigner)
 else()
-    target_compile_options(AutoAPIComponentDesigner PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(AutoAPIFunctionDesigner PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
-set_target_properties(AutoAPIComponentDesigner PROPERTIES
-    VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:component_designer>")
+set_target_properties(AutoAPIFunctionDesigner PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:function_designer>")
 
 if(UNIX AND NOT APPLE)
     set(ACD_LINUX_ICON_COMMAND
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_icon-128x128.png"
-                "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/autoapiframework_icon.png")
+                "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/autoapiframework_icon.png")
 endif()
 
 # The meta model and the sample specification are picked up next to the executable.
-add_custom_command(TARGET AutoAPIComponentDesigner POST_BUILD
+add_custom_command(TARGET AutoAPIFunctionDesigner POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/examples/autoapiframework_metadata_V03.yaml"
-            "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/autoapiframework_meta_model.yaml"
+            "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/autoapiframework_meta_model.yaml"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/examples/speed_hazard_detection.acs"
-            "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/speed_hazard_detection.acs"
+            "${CMAKE_CURRENT_SOURCE_DIR}/examples/speed_hazard_detection.afs"
+            "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/speed_hazard_detection.afs"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/examples/vehicle_speed_fusion_multirate.acs"
-            "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/vehicle_speed_fusion_multirate.acs"
+            "${CMAKE_CURRENT_SOURCE_DIR}/examples/vehicle_speed_fusion_multirate.afs"
+            "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/vehicle_speed_fusion_multirate.afs"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_logo.png"
-            "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/autoapiframework_logo.png"
+            "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/autoapiframework_logo.png"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_logo_large.png"
-            "$<TARGET_FILE_DIR:AutoAPIComponentDesigner>/autoapiframework_logo_large.png"
+            "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/autoapiframework_logo_large.png"
     ${ACD_LINUX_ICON_COMMAND}
     VERBATIM)
 
-install(TARGETS AutoAPIComponentDesigner RUNTIME DESTINATION bin)
+install(TARGETS AutoAPIFunctionDesigner RUNTIME DESTINATION bin)
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/examples/autoapiframework_meta_model.yaml" DESTINATION bin)
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_logo.png" DESTINATION bin)
 if(UNIX AND NOT APPLE)
