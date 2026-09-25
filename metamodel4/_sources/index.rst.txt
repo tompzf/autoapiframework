@@ -41,7 +41,7 @@ Meta Model:
    :maxdepth: 1
 
    doc/meta_model/meta_model_purpose
-   doc/meta_model/meta_model_v0_4_0
+   doc/meta_model/meta_model
    doc/meta_model/meta_model_function_adapter
 
 Function Specification File:
