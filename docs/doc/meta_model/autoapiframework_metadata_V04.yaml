@@ -337,8 +337,7 @@ metamodel:
 
     Error:
       status: candidate
-      description: Function-specific diagnostic/error interface, separated from the generic FunctionResult. This model is a candidate for later standardization and
-        shall not be confused with ECU-specific DTC/event-memory configuration.
+      description: Function-specific diagnostic/error interface, separated from the generic FunctionResult. This model is a candidate for later standardization and shall not be confused with ECU-specific DTC/event-memory configuration.
 
       properties:
         name:
