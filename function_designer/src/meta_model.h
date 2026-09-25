@@ -68,7 +68,7 @@ namespace acd
         void CollectEnums(const YamlNodePtr& model);                                    
 
         bool m_loaded = false;
-        std::string m_minimumVersion = "0.3.0";
+        std::string m_minimumVersion = "0.4.0";
         std::string m_fileContent;        
         std::string m_name;
         std::string m_version;

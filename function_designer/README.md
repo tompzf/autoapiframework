@@ -119,7 +119,7 @@ after each build.
 `../examples/speed_hazard_detection.afs` are ready to use function
 specifications for trying out read, display and write.
 
-`../examples/autoapiframework_metadata_V03.yaml` is the current meta model specification file.
+`../examples/autoapiframework_metadata_V04.yaml` is the current meta model specification file.
 
 ## Sources
 
