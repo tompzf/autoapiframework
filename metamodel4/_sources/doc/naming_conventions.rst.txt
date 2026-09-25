@@ -1,0 +1,42 @@
+..
+   # *******************************************************************************
+   # Copyright (c) 2026 ZF Friedrichshafen AG
+   #
+   # See the NOTICE file(s) distributed with this work for additional
+   # information regarding copyright ownership.
+   #
+   # This program and the accompanying materials are made available under the
+   # terms of the Apache License Version 2.0 which is available at
+   # https://www.apache.org/licenses/LICENSE-2.0
+   #
+   # SPDX-License-Identifier: Apache-2.0
+   #
+   # Contributors:
+   #   Thomas Pfleiderer - Meta model added
+   # *******************************************************************************
+
+   
+Discussion about naming conventions
+===================================  
+
+Naming convention are very important. Currently we have 2 proposals for the ``wrapper`` and the ``wrapper description file``.
+
+ 1) Naming used in the current documentation
+
+    - Component Specification file 
+
+    - Component Adapter
+  
+    - ``*.acs*``  file extension
+
+
+ 2) Older version
+
+    - Function Specification file 
+
+    - Function Adapter
+  
+    - ``*.afs*``  file extension
+
+
+Feedback and proposals welcome.
