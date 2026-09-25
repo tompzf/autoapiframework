@@ -17,7 +17,7 @@
 
 metamodel:
   name: Eclipse-autoapiframework-Metamodel
-  version: 0.4.
+  version: 0.4.0
   scope: Middleware-independent metadata for definition and generation of standardized function APIs. Catalogue/interface metadata (fro e.g., from VSS) is separated from function-specific configuration and runtime state where applicable.
   intent: Core interface types and essential metadata are required for standardized API definition and generation.
 
