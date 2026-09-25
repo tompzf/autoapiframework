@@ -14,36 +14,127 @@
 #   Thomas Pfleiderer - Component specification added
 # *******************************************************************************
 
-componentSpecification:
+functionSpecification:
   name: SpeedHazardDetection
   version: 1.0.0
   metaModelRef:
     name: Eclipse-autoapiframework-Metamodel
-    version: 0.3.0
+    version: 0.4.0
 
   description: >-
     Detects rapid acceleration and requests hazard warning lights if the
     configured threshold is exceeded.
 
-  # Each interface/parameter/runnable is one row, in the same order as "columns".
   dataInterfaces:
-    columns: [namePath, direction, dataType, description, unit, min, max, defaultValue, resolution, precision, ASIL, minUpdatePeriodMs, qualityCode, accuracy, protection]
-    rows:
-      - [Vehicle.Speed, input, float, Current vehicle speed value., km/h, 0.0, 300.0, 0.0, 0.1, 1, B, 10, valid, "+/-0.2 km/h", complement]
-      - [Vehicle.Acceleration.Longitudinal, input, float, Longitudinal acceleration used to detect strong acceleration events., m/s2, -20.0, 20.0, 0.0, 0.01, 2, B, 10, valid, "+/-0.05 m/s2", complement]
-      - [Vehicle.Body.Lights.Hazard.Request, output, boolean, True requests activation of hazard warning lights., boolean, 0, 1, false, 1, 1, B, 20, valid, logical, complement]
-      # Quality signals can be modeled as separate interfaces at runtime.
-      - [Vehicle.Speed.Qualifier, input, uint8, Quality qualifier for Vehicle.Speed value., code, 0, 5, 0, 1, 1, QM, 10, valid, enum-based, none]
+    - name: Vehicle.Speed
+      direction: input
+      dataType: float
+      description: Current vehicle speed value.
+      unit: km/h
+      min: 0.0
+      max: 300.0
+      defaultValue: 0.0
+      resolution: 0.1
+      precision: 1
+      FuSa: true
+      ASIL: B
+      minUpdatePeriodMs: 10
+      accuracy: "+/-0.2 km/h"
+      protection: complement
+
+    - name: Vehicle.Acceleration.Longitudinal
+      direction: input
+      dataType: float
+      description: Longitudinal acceleration used to detect strong acceleration events.
+      unit: m/s2
+      min: -20.0
+      max: 20.0
+      defaultValue: 0.0
+      resolution: 0.01
+      precision: 2
+      FuSa: true
+      ASIL: B
+      minUpdatePeriodMs: 10
+      accuracy: "+/-0.05 m/s2"
+      protection: complement
+
+    - name: Vehicle.Body.Lights.Hazard.Request
+      direction: output
+      dataType: boolean
+      description: True requests activation of hazard warning lights.
+      unit: boolean
+      min: 0
+      max: 1
+      defaultValue: false
+      resolution: 1
+      precision: 1
+      FuSa: true
+      ASIL: B
+      minUpdatePeriodMs: 20
+      accuracy: logical
+      protection: complement
+
+    - name: Vehicle.Speed.Qualifier
+      direction: input
+      dataType: uint8
+      description: Runtime quality qualifier for Vehicle.Speed value.
+      unit: code
+      min: 0
+      max: 5
+      defaultValue: 0
+      resolution: 1
+      precision: 1
+      FuSa: false
+      ASIL: QM
+      minUpdatePeriodMs: 10
+      accuracy: enum-based
+      protection: none
 
   parameters:
-    columns: [namePath, dataType, defaultValue, description, unit]
-    rows:
-      - [Vehicle.Chassis.SpeedHazardForward, float, 10.0, Relative speed increase threshold in percent for triggering hazard request while driving forward., percent]
-      - [Vehicle.Chassis.HazardRequestDurationMs, uint32, 3000, Hold time for hazard request after trigger., ms]
+    - name: Vehicle.Chassis.SpeedHazardForward
+      dataType: float
+      defaultValue: 10.0
+      description: >-
+        Relative speed increase threshold in percent for triggering
+        hazard request while driving forward.
+      unit: percent
+      tunable: false
+      min: 0.0
+      max: 100.0
+
+    - name: Vehicle.Chassis.HazardRequestDurationMs
+      dataType: uint32
+      defaultValue: 3000
+      description: Hold time for hazard request after trigger.
+      unit: ms
+      tunable: false
+      min: 0
+      max: 600000
 
   scheduling:
-    columns: [functionName, runType, description, cycleTimeMs, ASIL, previousRunnableRef]
-    rows:
-      - [SpeedHazardDetection.Init, init, Initialize internal states and latched outputs., 0, B, System.Startup]
-      - [SpeedHazardDetection.Step, cyclic, Evaluate inputs and calculate hazard request output., 20, B, SpeedHazardDetection.Init]
-      - [SpeedHazardDetection.Terminate, terminate, Shutdown cleanup for deterministic deactivation., 0, QM, SpeedHazardDetection.Step]
+    - functionName: SpeedHazardDetection.Init
+      runType: init
+      description: Initialize internal states and latched outputs.
+      cycleTimeMs: 0
+      implementedASIL: B
+      previousRunnableRef: System.Startup
+      supervision:
+        required: false
+
+    - functionName: SpeedHazardDetection.Step
+      runType: cyclic
+      description: Evaluate inputs and calculate hazard request output.
+      cycleTimeMs: 20
+      implementedASIL: B
+      previousRunnableRef: SpeedHazardDetection.Init
+      supervision:
+        required: false
+
+    - functionName: SpeedHazardDetection.Terminate
+      runType: terminate
+      description: Shutdown cleanup for deterministic deactivation.
+      cycleTimeMs: 0
+      implementedASIL: QM
+      previousRunnableRef: SpeedHazardDetection.Step
+      supervision:
+        required: false

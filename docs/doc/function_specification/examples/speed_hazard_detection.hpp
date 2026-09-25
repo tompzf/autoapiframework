@@ -24,7 +24,7 @@ namespace autoapiframework {
 namespace speedHazardDetection {
 
 // ============================================================================
-// ENUMS - Based on Eclipse-autoapiframework-Metamodel v0.3.0
+// ENUMS - Based on Eclipse-autoapiframework-Metamodel v0.4.0
 // ============================================================================
 
 enum class ASIL {
@@ -36,12 +36,9 @@ enum class ASIL {
 };
 
 enum class DataQuality {
-    VALID = 0,
-    DEFAULT = 1,
-    INVALID = 2,
-    UNINITIALIZED = 3,
-    DEGRADED = 4,
-    LIMITED_VALIDITY = 5
+    UNINITIALIZED = 0,
+    INVALID = 1,
+    VALID = 2
 };
 
 enum class RunType {
@@ -51,21 +48,16 @@ enum class RunType {
     TERMINATE = 3
 };
 
-enum class Protection {
+enum class ProtectionType {
     NONE = 0,
     COMPLEMENT = 1,
-    COMPLEMENT_SEPARATE = 2
+    OTHER = 2
 };
 
 enum class FunctionResult {
-    OK = 0,
-    NOT_AVAILABLE = 1,
-    INVALID_INPUT = 2,
-    COMPLEMENT_ERROR = 3,
-    RANGE_ERROR = 4,
-    TIMEOUT = 5,
-    CALCULATION_ERROR = 6,
-    INTERNAL_ERROR = 7
+    SUCCESS = 0,
+    FAILURE = 1,
+    NOT_AVAILABLE = 2
 };
 
 // ============================================================================
@@ -207,11 +199,11 @@ struct SpeedHazardDetectionOutputs {
     FunctionResult functionStatus;
     
     SpeedHazardDetectionOutputs()
-        : hazardRequest(), functionStatus(FunctionResult::OK) {}
+        : hazardRequest(), functionStatus(FunctionResult::SUCCESS) {}
     
     void reset() {
         hazardRequest = VehicleBodyLightsHazardRequest();
-        functionStatus = FunctionResult::OK;
+        functionStatus = FunctionResult::SUCCESS;
     }
 };
 
@@ -274,11 +266,15 @@ public:
  * @brief Static C++ API for Speed Hazard Detection Function.
  * 
  * Specification: SpeedHazardDetection v1.0.0
- * Meta Model: Eclipse-autoapiframework-Metamodel v0.3.0
+ * Meta Model: Eclipse-autoapiframework-Metamodel v0.4.0
  * 
  * Description:
  *   Detects rapid acceleration and requests hazard warning lights if the
  *   configured threshold is exceeded.
+ *
+ * Note:
+ *   qualityCode is runtime companion information and is therefore not
+ *   represented as a static metadata field in the function specification.
  */
 class SpeedHazardDetection {
 public:
