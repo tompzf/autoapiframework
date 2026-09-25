@@ -23,47 +23,100 @@
 
 functionSpecification:
   name: <YourFunctionName>              # e.g. SpeedHazardDetection
-  version: 1.0.0                        # semantic version of this component
+  version: 1.0.0                        # semantic version of this function specification
   metaModelRef:
     name: Eclipse-autoapiframework-Metamodel
-    version: 0.3.0                      # meta model version this file was written against
+    version: 0.4.0                      # meta model version this file was written against
 
   description: >-
-    <One or two sentences describing what this function/component does.>
+    <One or two sentences describing what this function does.>
 
   # -----------------------------------------------------------------------
-  # 1) SIGNALS (dataInterfaces): one row per input/output signal.
+  # 1) DATA INTERFACES: one object per input/output signal.
   #    - direction: input | output
+  #    - FuSa: true | false
   #    - ASIL: QM | A | B | C | D
-  #    - qualityCode: Uninitialized | Invalid | Valid (runtime value, use a default here)
-  #    - protection: none | complement
-  #    Add a new row for every additional signal you need. Quality qualifiers
-  #    (e.g. <Signal>.Qualifier) are modeled as their own row, not a property.
+  #    - protection: none | complement | other
+  #    - qualityCode is runtime companion information and therefore is not a
+  #      static metadata value in this specification.
   # -----------------------------------------------------------------------
   dataInterfaces:
-    columns: [namePath, direction, dataType, description, unit, min, max, defaultValue, resolution, precision, ASIL, minUpdatePeriodMs, qualityCode, accuracy, protection]
-    rows:
-      - [Vehicle.<Domain>.<Signal>, input, float, <Functional meaning of the signal.>, <unit>, <min>, <max>, <defaultValue>, <resolution>, <precision>, QM, <minUpdatePeriodMs>, Valid, <expected accuracy>, none]
-      # - [Vehicle.<Domain>.<OutputSignal>, output, float, <...>, <unit>, <min>, <max>, <defaultValue>, <resolution>, <precision>, QM, <minUpdatePeriodMs>, Valid, <expected accuracy>, none]
+    - name: Vehicle.<Domain>.<Signal>
+      direction: input
+      dataType: float
+      description: <Functional meaning of the signal.>
+      unit: <unit>
+      min: <min>
+      max: <max>
+      defaultValue: <defaultValue>
+      resolution: <resolution>
+      precision: <precision>
+      FuSa: true
+      ASIL: QM
+      minUpdatePeriodMs: <minUpdatePeriodMs>
+      accuracy: <expected accuracy>
+      protection: none
+
+    # - name: Vehicle.<Domain>.<OutputSignal>
+    #   direction: output
+    #   dataType: float
+    #   description: <Functional meaning of the output signal.>
+    #   unit: <unit>
+    #   min: <min>
+    #   max: <max>
+    #   defaultValue: <defaultValue>
+    #   resolution: <resolution>
+    #   precision: <precision>
+    #   FuSa: false
+    #   ASIL: QM
+    #   minUpdatePeriodMs: <minUpdatePeriodMs>
+    #   accuracy: <expected accuracy>
+    #   protection: none
 
   # -----------------------------------------------------------------------
-  # 2) PARAMETERS: one row per calibration/configuration value.
+  # 2) PARAMETERS: one object per calibration/configuration value.
   # -----------------------------------------------------------------------
   parameters:
-    columns: [namePath, dataType, defaultValue, description, unit]
-    rows:
-      - [Vehicle.<Domain>.<Parameter>, float, <defaultValue>, <Meaning and intended usage of the parameter.>, <unit>]
+    - name: Vehicle.<Domain>.<Parameter>
+      dataType: float
+      defaultValue: <defaultValue>
+      description: <Meaning and intended usage of the parameter.>
+      unit: <unit>
+      tunable: false
+      min: <min>
+      max: <max>
 
   # -----------------------------------------------------------------------
-  # 3) SCHEDULING: one row per runnable/function entry point.
+  # 3) SCHEDULING: one object per runnable/function entry point.
   #    - runType: init | cyclic | event | terminate
   #    - Naming convention: <FunctionName>.Init / .Step / .Terminate
   #    - previousRunnableRef: name of the runnable that must run right before
   #      this one (use System.Startup for the very first runnable).
   # -----------------------------------------------------------------------
   scheduling:
-    columns: [functionName, runType, description, cycleTimeMs, ASIL, previousRunnableRef]
-    rows:
-      - [<YourFunctionName>.Init, init, <Initialize internal states.>, 0, QM, System.Startup]
-      - [<YourFunctionName>.Step, cyclic, <Evaluate inputs and calculate outputs.>, <cycleTimeMs>, QM, <YourFunctionName>.Init]
-      - [<YourFunctionName>.Terminate, terminate, <Shutdown cleanup.>, 0, QM, <YourFunctionName>.Step]
+    - functionName: <YourFunctionName>.Init
+      runType: init
+      description: <Initialize internal states.>
+      cycleTimeMs: 0
+      implementedASIL: QM
+      previousRunnableRef: System.Startup
+      supervision:
+        required: false
+
+    - functionName: <YourFunctionName>.Step
+      runType: cyclic
+      description: <Evaluate inputs and calculate outputs.>
+      cycleTimeMs: <cycleTimeMs>
+      implementedASIL: QM
+      previousRunnableRef: <YourFunctionName>.Init
+      supervision:
+        required: false
+
+    - functionName: <YourFunctionName>.Terminate
+      runType: terminate
+      description: <Shutdown cleanup.>
+      cycleTimeMs: 0
+      implementedASIL: QM
+      previousRunnableRef: <YourFunctionName>.Step
+      supervision:
+        required: false
