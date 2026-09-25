@@ -37,6 +37,7 @@ namespace acd
     static constexpr const char* kDataInterfaceTypeKey = "Data";
     static constexpr const char* kParameterInterfaceTypeKey = "Parameter";
     static constexpr const char* kSchedulingInterfaceTypeKey = "Scheduling";
+    static constexpr const char* kErrorInterfaceTypeKey = "Error";
     static constexpr const char* kPropertiesKey = "properties";
 
     /// In-memory representation of autoapiframework_meta_model.yaml.

@@ -81,21 +81,26 @@ namespace acd
             const YamlNodePtr dataInterfaces = interfaceTypes->Find(kDataInterfaceTypeKey);
             const YamlNodePtr parameters = interfaceTypes->Find(kParameterInterfaceTypeKey);
             const YamlNodePtr scheduling = interfaceTypes->Find(kSchedulingInterfaceTypeKey);
-            if (dataInterfaces && parameters && scheduling &&
-                dataInterfaces->IsMap() && parameters->IsMap() && scheduling->IsMap())
+            const YamlNodePtr errors = interfaceTypes->Find(kErrorInterfaceTypeKey);
+            if (dataInterfaces && parameters && scheduling && errors &&
+                dataInterfaces->IsMap() && parameters->IsMap() && scheduling->IsMap() &&
+                errors->IsMap())
             {
                 const YamlNodePtr dataProperties = dataInterfaces->Find(kPropertiesKey);
                 const YamlNodePtr parametersProperties = parameters->Find(kPropertiesKey);
                 const YamlNodePtr schedulingParameters = scheduling->Find(kPropertiesKey);  
-                if (dataProperties && parameters && schedulingParameters  &&
-                    dataProperties->IsMap() && parametersProperties->IsMap() && schedulingParameters->IsMap())
+                const YamlNodePtr errorProperties = errors->Find(kPropertiesKey);
+                if (dataProperties && parametersProperties && schedulingParameters && errorProperties &&
+                    dataProperties->IsMap() && parametersProperties->IsMap() &&
+                    schedulingParameters->IsMap() && errorProperties->IsMap())
                 {
                     interfacesNotFound = false;                
                 }
             }
             m_interfaceTypes.push_back(std::move(dataInterfaces));
             m_interfaceTypes.push_back(std::move(parameters));
-            m_interfaceTypes.push_back(std::move(scheduling));            
+            m_interfaceTypes.push_back(std::move(scheduling));
+            m_interfaceTypes.push_back(std::move(errors));
         }
 
         if (interfacesNotFound)
@@ -113,7 +118,8 @@ namespace acd
         static constexpr const char* interfaceTypeNames[] = {
             kDataInterfaceTypeKey,
             kParameterInterfaceTypeKey,
-            kSchedulingInterfaceTypeKey
+            kSchedulingInterfaceTypeKey,
+            kErrorInterfaceTypeKey
         };
 
         for (std::size_t index = 0; index < m_interfaceTypes.size() &&
@@ -178,8 +184,26 @@ namespace acd
                             values.push_back(value->GetScalar());
                         }
                     }
+                    m_enums.emplace(entry.first, std::move(values));                    
                 }
-                m_enums.emplace(entry.first, std::move(values));
+                else
+                {
+                    const YamlNodePtr declaredValues = entry.second
+                        ? entry.second->Find("values")
+                        : nullptr;
+                    if (declaredValues && declaredValues->IsSequence())
+                    {
+                        for (const YamlNodePtr& value : declaredValues->GetSequence())
+                        {
+                            if (value && value->IsScalar())
+                            {
+                                values.push_back(value->GetScalar());
+                            }
+                        }
+                    }
+
+                    m_enums.emplace(entry.first, std::move(values));
+                }
             }
         }
     }

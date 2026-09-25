@@ -73,10 +73,11 @@ namespace acd
         const YamlNodePtr dataInterfaces = root->Find(FunctionSpecification::kDataInterfacesKey);
         const YamlNodePtr parameters = root->Find(FunctionSpecification::kParametersKey);
         const YamlNodePtr scheduling = root->Find(FunctionSpecification::kSchedulingKey);   
-        if (!dataInterfaces || !parameters || !scheduling) 
+        const YamlNodePtr errors = root->Find(FunctionSpecification::kErrorsKey);
+        if (!dataInterfaces || !parameters || !scheduling)
         {
             error = std::string(FunctionSpecification::kDataInterfacesKey) + " or " + std::string(FunctionSpecification::kParametersKey) 
-                    + " or " + std::string(FunctionSpecification::kSchedulingKey) + " not found.";
+                + " or " + std::string(FunctionSpecification::kSchedulingKey) + " not found.";
             return false;
         }
 
@@ -84,10 +85,10 @@ namespace acd
         {
             return false;
         }
-        // if (!ValidateProperties(dataInterfaces, acd::kDataInterfaceTypeKey, metaModel, error))
-        // {
-        //     return false;
-        // }
+        if (!ValidateProperties(dataInterfaces, acd::kDataInterfaceTypeKey, metaModel, error))
+        {
+            return false;
+        }
         if (!ValidateEnums(dataInterfaces, acd::kDataInterfaceTypeKey, metaModel, error))
         {
             return false;
@@ -97,16 +98,27 @@ namespace acd
         {
             return false;
         }
-        // if (!ValidateProperties(parameters, acd::kParameterInterfaceTypeKey, metaModel, error))
-        // {
-        //     return false;
-        // }
+        if (!ValidateProperties(parameters, acd::kParameterInterfaceTypeKey, metaModel, error))
+        {
+            return false;
+        }
         if (!ValidateEnums(parameters, acd::kParameterInterfaceTypeKey, metaModel, error))
         {
             return false;
         }          
 
         if (!SyntaxCheckForSequence(scheduling, FunctionSpecification::kFunctionNameKey, error, FunctionSpecification::kSchedulingKey)) 
+        {
+            return false;
+        }
+
+        if (errors && !SyntaxCheckForSequence(errors, FunctionSpecification::kNamePathKey, error,
+                                               FunctionSpecification::kErrorsKey))
+        {
+            return false;
+        }
+
+        if (errors && !ValidateEnums(errors, acd::kErrorInterfaceTypeKey, metaModel, error))
         {
             return false;
         }

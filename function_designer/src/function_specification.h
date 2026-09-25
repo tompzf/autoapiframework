@@ -41,6 +41,7 @@ namespace acd
         static constexpr const char* kDataInterfacesKey = "dataInterfaces";
         static constexpr const char* kParametersKey = "parameters";
         static constexpr const char* kSchedulingKey = "scheduling";
+        static constexpr const char* kErrorsKey = "errors";
         static constexpr const char* kPropertiesKey = "properties";   
         static constexpr const char* kNamePathKey = "name";
         static constexpr const char* kFunctionNameKey = "functionName";

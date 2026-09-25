@@ -279,7 +279,7 @@ metamodel:
           mandatory: false
           datatype: string
           description: Scheduling mechanism or constraint, e.g. preemptive/non-preemptive.
-
+          
         stackSizeBytes:
           mandatory: false
           datatype: uint32
@@ -293,7 +293,8 @@ metamodel:
 
     Error:
       status: candidate
-      description: Function-specific diagnostic/error interface, separated from the generic FunctionResult. This model is a candidate for later standardization 
+      description: Function-specific diagnostic/error interface, separated from the generic FunctionResult. This model is a candidate for later standardization and
+        shall not be confused with ECU-specific DTC/event-memory configuration.
 
       properties:
         name:
@@ -306,9 +307,6 @@ metamodel:
           mandatory: true
           datatype: string
           description: Datatype of the exposed error interface.
-          examples:
-           - boolean
-           - enum
 
         description:
           mandatory: true

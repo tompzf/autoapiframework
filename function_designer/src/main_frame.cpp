@@ -333,6 +333,7 @@ namespace acd
         wxPanel* signalPage = makeListPage(&m_signalList);
         wxPanel* parameterPage = makeListPage(&m_parameterList);
         wxPanel* schedulingPage = makeListPage(&m_schedulingList);
+        wxPanel* errorPage = makeListPage(&m_errorList);
         auto bindEditButtonState = [this](wxListCtrl* list)
         {
             list->Bind(wxEVT_LIST_ITEM_SELECTED, [this](wxListEvent&)
@@ -347,11 +348,13 @@ namespace acd
         bindEditButtonState(m_signalList);
         bindEditButtonState(m_parameterList);
         bindEditButtonState(m_schedulingList);
+        bindEditButtonState(m_errorList);
 
         m_notebook->AddPage(attributePage, "Attributes", true);
         m_notebook->AddPage(signalPage, "Signal collection");
         m_notebook->AddPage(parameterPage, "Parameter collection");
         m_notebook->AddPage(schedulingPage, "Scheduling collection");
+        m_notebook->AddPage(errorPage, "Error collection");
         m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, [this](wxBookCtrlEvent& event)
         {
             UpdateCollectionButtonStates();
@@ -841,7 +844,8 @@ namespace acd
 
         const int selectedTab = m_notebook->GetSelection();
         const std::string interfaceType = selectedTab == 1 ? "Data" :
-                                          selectedTab == 2 ? "Parameter" : "Scheduling";
+                                          selectedTab == 2 ? "Parameter" :
+                                          selectedTab == 3 ? "Scheduling" : "Error";
         const std::vector<std::string> fields = m_metaModel.ColumnsFor(interfaceType, {});
         if (fields.empty())
         {
@@ -1196,6 +1200,7 @@ namespace acd
         FillCollection(m_signalList, FunctionSpecification::kDataInterfacesKey, kDataInterfaceTypeKey);
         FillCollection(m_parameterList, FunctionSpecification::kParametersKey, kParameterInterfaceTypeKey);
         FillCollection(m_schedulingList, FunctionSpecification::kSchedulingKey, kSchedulingInterfaceTypeKey);
+        FillCollection(m_errorList, FunctionSpecification::kErrorsKey, kErrorInterfaceTypeKey);
 
         m_notebook->SetPageText(1, wxString::Format(
             "Signal collection (%d)",
@@ -1206,6 +1211,9 @@ namespace acd
         m_notebook->SetPageText(3, wxString::Format(
             "Scheduling collection (%d)",
             static_cast<int>(m_specification.GetCollection(FunctionSpecification::kSchedulingKey).size())));
+        m_notebook->SetPageText(4, wxString::Format(
+            "Error collection (%d)",
+            static_cast<int>(m_specification.GetCollection(FunctionSpecification::kErrorsKey).size())));
         UpdateCollectionButtonStates();
     }
 
@@ -1265,6 +1273,8 @@ namespace acd
             return m_parameterList;
         case 3:
             return m_schedulingList;
+        case 4:
+            return m_errorList;
         default:
             return nullptr;
         }
@@ -1280,6 +1290,8 @@ namespace acd
             return FunctionSpecification::kParametersKey;
         case 3:
             return FunctionSpecification::kSchedulingKey;
+        case 4:
+            return FunctionSpecification::kErrorsKey;
         default:
             return nullptr;
         }
