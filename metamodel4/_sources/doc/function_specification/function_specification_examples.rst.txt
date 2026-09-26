@@ -37,6 +37,12 @@ Use the multi-rate example when preprocessing and decision logic should run at d
 
    examples/vehicle_speed_fusion_multirate_example
 
+.. toctree::
+   :caption: Vehicle Speed Plausibility Check including error and supervision example 
+   :maxdepth: 1
+
+   examples/wheel_speed_plausibility_check_example
+
 API
 ---
 

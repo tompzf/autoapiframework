@@ -1,3 +1,4 @@
+
 ..
    # *******************************************************************************
    # Copyright (c) 2026 ZF Friedrichshafen AG
@@ -12,14 +13,15 @@
    # SPDX-License-Identifier: Apache-2.0
    #
    # Contributors:
-   #   Thomas Pfleiderer - documentation
+   #   Thomas Pfleiderer - Function specification added
    # *******************************************************************************
 
-SpeedHazardDetection Example
-============================
+WheelSpeedPlausibilityCheck Error and Supervision Example
+===========================================================
 
-This example shows a single cyclic runnable component specification.
+This example shows function-specific error interfaces (``errorInterfaces``) and full runnable execution supervision (``alive``, ``deadline`` and
+``logical`` supervision types, plus the per-runnable ``executionResult``) as defined in the meta model's ``Scheduling`` and ``Error`` interface types.
 
-.. literalinclude:: speed_hazard_detection.acs.yaml
+.. literalinclude:: wheel_speed_plausibility_check.afs.yaml
    :language: yaml
    :linenos:

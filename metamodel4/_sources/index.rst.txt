@@ -52,6 +52,9 @@ Function Specification File:
 
    doc/function_specification/function_specification_file
    doc/function_specification/function_specification_examples
+   doc/function_specification/examples/speed_hazard_detection_example
+   doc/function_specification/examples/vehicle_speed_fusion_multirate_example
+   doc/function_specification/examples/wheel_speed_plausibility_check_example
    
 Software Architecture:
 ----------------------
