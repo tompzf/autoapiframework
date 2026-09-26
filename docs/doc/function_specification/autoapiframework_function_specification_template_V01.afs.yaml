@@ -75,6 +75,8 @@ functionSpecification:
 
   # -----------------------------------------------------------------------
   # 2) PARAMETERS: one object per calibration/configuration value.
+  #    - dimensions is optional and only needed for array/map parameters,
+  #      e.g. [10] for a vector or [7, 10] for a 7x10 map.
   # -----------------------------------------------------------------------
   parameters:
     - name: Vehicle.<Domain>.<Parameter>
@@ -85,13 +87,38 @@ functionSpecification:
       tunable: false
       min: <min>
       max: <max>
+      # dimensions: [<size>]
 
   # -----------------------------------------------------------------------
-  # 3) SCHEDULING: one object per runnable/function entry point.
+  # 3) ERROR INTERFACES: optional, one object per function-specific
+  #    diagnostic interface. Separate from the generic executionResult
+  #    reported per runnable in "scheduling" below.
+  #    - severity: information | warning | degraded | shutdown
+  #    - Naming convention: <FunctionName>.<ErrorName>.ErrorStatus
+  # -----------------------------------------------------------------------
+  # errorInterfaces:
+  #   - name: <YourFunctionName>.<ErrorName>.ErrorStatus
+  #     dataType: boolean
+  #     description: <Meaning of the error and its trigger scenario.>
+  #     severity: degraded
+  #     maturationTimeMs: <maturationTimeMs>
+  #     resetTimeMs: <resetTimeMs>
+  #     resetCondition: <Condition that clears the error.>
+  #     dependencyRefs: []
+  #     fallbackBehavior: <Function-level fallback/degradation behavior.>
+  #     raisesSafetyReactionRefs: []
+
+  # -----------------------------------------------------------------------
+  # 4) SCHEDULING: one object per runnable/function entry point.
   #    - runType: init | cyclic | event | terminate
   #    - Naming convention: <FunctionName>.Init / .Step / .Terminate
   #    - previousRunnableRef: name of the runnable that must run right before
   #      this one (use System.Startup for the very first runnable).
+  #    - executionResult: success | failure | notAvailable
+  #    - supervision.required: false, or true with one or more of the
+  #      supervision.type values below (alive | deadline | logical), each
+  #      configured via its matching alive/deadline/logical object.
+  #    - schedulingPolicy and stackSizeBytes are optional.
   # -----------------------------------------------------------------------
   scheduling:
     - functionName: <YourFunctionName>.Init
@@ -100,6 +127,7 @@ functionSpecification:
       cycleTimeMs: 0
       implementedASIL: QM
       previousRunnableRef: System.Startup
+      executionResult: success
       supervision:
         required: false
 
@@ -109,8 +137,27 @@ functionSpecification:
       cycleTimeMs: <cycleTimeMs>
       implementedASIL: QM
       previousRunnableRef: <YourFunctionName>.Init
+      executionResult: success
       supervision:
         required: false
+      # supervision:
+      #   required: true
+      #   type:
+      #     - alive
+      #     - deadline
+      #     - logical
+      #   alive:
+      #     minIndications: <minIndications>
+      #     maxIndications: <maxIndications>
+      #     referenceCycleMs: <referenceCycleMs>
+      #   deadline:
+      #     minExecutionTimeMs: <minExecutionTimeMs>
+      #     maxExecutionTimeMs: <maxExecutionTimeMs>
+      #   logical:
+      #     predecessorRefs: []
+      #     successorRefs: []
+      # schedulingPolicy: <e.g. preemptive/non-preemptive>
+      # stackSizeBytes: <stackSizeBytes>
 
     - functionName: <YourFunctionName>.Terminate
       runType: terminate
@@ -118,5 +165,6 @@ functionSpecification:
       cycleTimeMs: 0
       implementedASIL: QM
       previousRunnableRef: <YourFunctionName>.Step
+      executionResult: success
       supervision:
         required: false
