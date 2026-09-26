@@ -1,6 +1,6 @@
 ..
    # *******************************************************************************
-   # Copyright (c) 2026 Contributors to the Eclipse Foundation
+   # Copyright (c) 2026 ZF Friedrichshafen AG
    #
    # See the NOTICE file(s) distributed with this work for additional
    # information regarding copyright ownership.
@@ -13,7 +13,7 @@
    #
    # Contributors:
    #   Thomas Pfleiderer
-   #   Saran Gundlapalli
+   #   Saran Gundlapalli - meta model 1, 2 & 4
    # *******************************************************************************
 
 Current status of the project
