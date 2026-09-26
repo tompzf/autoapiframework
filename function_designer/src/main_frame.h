@@ -99,6 +99,7 @@ namespace acd
         FunctionSpecification m_specification;
         MetaModel   m_metaModel;
         std::string m_metaModelVersion = "";
+        bool m_contentChanged = false;
 
         wxNotebook* m_notebook = nullptr;
         wxListCtrl* m_attributeList = nullptr;

@@ -433,6 +433,7 @@ namespace acd
         }
 
         m_specification.New(m_metaModel.GetName(), m_metaModel.GetVersion());
+        m_contentChanged = true;
         m_newButton->Enable(false);
         GetMenuBar()->Enable(ID_NewSpecification, false);
         m_saveAsButton->Enable(true);		        
@@ -831,6 +832,7 @@ namespace acd
 
         if (added > 0)
         {
+            m_contentChanged = true;
             RefreshAll();
             SetStatusText(wxString::Format("Added %zu signal(s)", added), 0);
         }
@@ -902,6 +904,7 @@ namespace acd
         }
         if (m_specification.AddCollectionItem(collectionKey, std::move(item)))
         {
+            m_contentChanged = true;
             RefreshAll();
             SetStatusText("Added item", 0);
         }
@@ -1022,6 +1025,7 @@ namespace acd
             return;
         }
 
+        m_contentChanged = true;        
         for (const EditableValue& value : editableValues)
         {
             value.node->SetScalar(ToStd(value.control->GetValue()));
@@ -1171,10 +1175,11 @@ namespace acd
                         kApplicationName, wxOK | wxICON_ERROR, this);
             return;
         }
+        m_contentChanged = false;
         m_specification = std::move(specification);
         m_newButton->Enable(false);
         GetMenuBar()->Enable(ID_NewSpecification, false);
-        m_saveButton->Enable(true);
+        m_saveButton->Enable(m_saveButton);
         m_saveAsButton->Enable(true);
         GetMenuBar()->Enable(ID_SaveSpecification, true);	        
         GetMenuBar()->Enable(ID_SaveSpecificationAs, true);				
@@ -1206,6 +1211,7 @@ namespace acd
 
     void MainFrame::RefreshAll() 
     {
+        m_saveButton->Enable(m_contentChanged);  
         FillAttributes();
         FillCollection(m_signalList, FunctionSpecification::kDataInterfacesKey, kDataInterfaceTypeKey);
         FillCollection(m_parameterList, FunctionSpecification::kParametersKey, kParameterInterfaceTypeKey);
@@ -1320,7 +1326,7 @@ namespace acd
     void MainFrame::UpdateMetaModelButtonStates()
     {
         const bool metaModelLoaded = m_metaModel.IsLoaded();
-        const bool specificationLoaded = m_specification.IsLoaded();
+        const bool specificationLoaded = m_specification.IsLoaded();     
         m_newButton->Enable(metaModelLoaded && !specificationLoaded);
         GetMenuBar()->Enable(ID_NewSpecification, metaModelLoaded && !specificationLoaded);		
         m_readButton->Enable(metaModelLoaded);
