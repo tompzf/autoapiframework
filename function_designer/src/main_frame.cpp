@@ -169,7 +169,7 @@ namespace acd
         EVT_MENU(MainFrame::ID_Settings, MainFrame::OnSettings)
         EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
         EVT_MENU(MainFrame::ID_GetVssToolsVersion, MainFrame::OnGetVssToolVersion)
-        EVT_MENU(MainFrame::ID_NotImplemented, MainFrame::OnNotImplemented)
+        EVT_MENU(MainFrame::ID_QuickTips, MainFrame::OnQuickTips)
         EVT_MENU(wxID_HELP, MainFrame::OnHelp)
         EVT_MENU(wxID_EXIT, MainFrame::OnExit)
     wxEND_EVENT_TABLE()
@@ -214,7 +214,7 @@ namespace acd
         wxMenu* helpMenu = new wxMenu();
         helpMenu->Append(wxID_ABOUT);
         helpMenu->Append(ID_GetVssToolsVersion, "Get vss-tools version");
-        helpMenu->Append(ID_NotImplemented, "Not yet implemented...");
+        helpMenu->Append(ID_QuickTips, "Quick Tips...");
         helpMenu->Append(wxID_HELP, "&Help...");
 
         wxMenuBar* menuBar = new wxMenuBar();
@@ -1148,12 +1148,11 @@ namespace acd
                     wxOK | wxICON_INFORMATION, this);
     }
 
-    void MainFrame::OnNotImplemented(wxCommandEvent&)
+    void MainFrame::OnQuickTips(wxCommandEvent&)
     {
-        std::string title = "The following is not implemented or supported yet:\n";
-        wxMessageBox( title
-                      + "\nAPI creation"
-                      + "\n\nnot supported node: supervision in scheduling",
+        std::string title = "";
+        wxMessageBox( title + "API creation is not implemented yet.\n" +
+                     "\nThe supervision node in scheduling\ncan only be edited in an external editor.",
                      kApplicationName,
                      wxOK | wxICON_INFORMATION, this);
     } 
