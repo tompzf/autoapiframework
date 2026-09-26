@@ -280,6 +280,50 @@ metamodel:
           datatype: string
           description: Scheduling mechanism or constraint, e.g. preemptive/non-preemptive.
 
+        supervision:
+          mandatory: true
+          datatype: object
+
+          properties:
+
+            required:
+              mandatory: true
+              datatype: boolean
+
+            type:
+              mandatory: conditional
+              condition: required == true
+              datatype: enum[]
+              values:
+                - alive
+                - deadline
+                - logical
+
+              alive:
+                mandatory: conditional
+                condition: type contains alive
+                datatype: object
+                properties:
+                minIndications: {datatype: uint32, mandatory: false}
+                maxIndications: {datatype: uint32, mandatory: false}
+                referenceCycleMs: {datatype: number, mandatory: false}
+                
+              deadline:
+                mandatory: conditional
+                condition: type contains deadline
+                datatype: object
+                properties:
+                  minExecutionTimeMs: {datatype: number, mandatory: false}
+                  maxExecutionTimeMs: {datatype: number, mandatory: true}
+
+              logical:
+                mandatory: conditional
+                condition: type contains logical
+                datatype: object
+                properties:
+                  predecessorRefs: {datatype: "string[]", mandatory: false}
+                  successorRefs: {datatype: "string[]", mandatory: false}
+
         stackSizeBytes:
           mandatory: false
           datatype: uint32
@@ -293,7 +337,7 @@ metamodel:
 
     Error:
       status: candidate
-      description: Function-specific diagnostic/error interface, separated from the generic FunctionResult. This model is a candidate for later standardization 
+      description: Function-specific diagnostic/error interface, separated from the generic FunctionResult. This model is a candidate for later standardization and shall not be confused with ECU-specific DTC/event-memory configuration.
 
       properties:
         name:
@@ -352,3 +396,29 @@ metamodel:
           mandatory: false
           datatype: "string[]"
           description: References to safety reactions associated with this error - <SafetyCondition>.SafetyConditionStatus.
+
+  modelingRules:
+    - id: MR-001
+      rule: >-
+        VSS sensor/actuator type and function input/output direction are different
+        concepts. Direction shall be assigned per function-interface usage.
+
+    - id: MR-002
+      rule: >-
+        Runtime quality shall not be populated as a static constant in a function
+        specification. Quality information shall be transported/represented at runtime.
+
+    - id: MR-003
+      rule: >-
+        Generic FunctionResult shall be limited to execution outcome and shall not
+        replace function-specific diagnostic/error interfaces.
+
+    - id: MR-004
+      rule: >-
+        Protection indicates a requirement at function configuration level; concrete
+        middleware specific protection realization belongs to platform/deployment binding.
+
+    - id: MR-005
+      rule: >-
+        Unknown metadata shall remain null according to the consuming schema/tool
+        and shall not be replaced with invented plausible values.

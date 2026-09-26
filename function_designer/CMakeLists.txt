@@ -129,6 +129,9 @@ add_custom_command(TARGET AutoAPIFunctionDesigner POST_BUILD
             "${CMAKE_CURRENT_SOURCE_DIR}/examples/vehicle_speed_fusion_multirate.afs"
             "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/vehicle_speed_fusion_multirate.afs"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/examples/wheel_speed_plausibility_check.afs"
+            "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/wheel_speed_plausibility_check.afs"            
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_logo.png"
             "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/autoapiframework_logo.png"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different

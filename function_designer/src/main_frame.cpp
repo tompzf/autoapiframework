@@ -168,7 +168,8 @@ namespace acd
         EVT_MENU(MainFrame::ID_ShowMetaModel, MainFrame::OnShowMetaModel)
         EVT_MENU(MainFrame::ID_Settings, MainFrame::OnSettings)
         EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
-        EVT_MENU(MainFrame::ID_GetVssToolsVersion, MainFrame::OnGetVssToolVersion)        
+        EVT_MENU(MainFrame::ID_GetVssToolsVersion, MainFrame::OnGetVssToolVersion)
+        EVT_MENU(MainFrame::ID_NotImplemented, MainFrame::OnNotImplemented)
         EVT_MENU(wxID_HELP, MainFrame::OnHelp)
         EVT_MENU(wxID_EXIT, MainFrame::OnExit)
     wxEND_EVENT_TABLE()
@@ -212,7 +213,8 @@ namespace acd
 
         wxMenu* helpMenu = new wxMenu();
         helpMenu->Append(wxID_ABOUT);
-        helpMenu->Append(ID_GetVssToolsVersion, "Get vss-tools version");        
+        helpMenu->Append(ID_GetVssToolsVersion, "Get vss-tools version");
+        helpMenu->Append(ID_NotImplemented, "Not yet implemented...");
         helpMenu->Append(wxID_HELP, "&Help...");
 
         wxMenuBar* menuBar = new wxMenuBar();
@@ -1140,12 +1142,23 @@ namespace acd
 
     void MainFrame::OnGetVssToolVersion(wxCommandEvent&)
     {
-        //ShowVssToolsVersion();
         auto version = GetVssToolsVersion();
         wxMessageBox("Recommended vss-tools version: 6.1\n\nFound: " + version,
                     kApplicationName,
                     wxOK | wxICON_INFORMATION, this);
     }
+
+    void MainFrame::OnNotImplemented(wxCommandEvent&)
+    {
+        std::string title = "The following is not implemented or supported yet:\n";
+        wxMessageBox( title
+                      + "\nAPI creation"
+                      + "\n\nnot supported nodes:"                      
+                      + "\nsupervision node in scheduling"
+                      + "\nerror node",
+                     kApplicationName,
+                     wxOK | wxICON_INFORMATION, this);
+    } 
 
     void MainFrame::OnHelp(wxCommandEvent&) { wxLaunchDefaultBrowser(kHelpUrl); }
 

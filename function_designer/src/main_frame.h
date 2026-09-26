@@ -48,6 +48,7 @@ namespace acd
             ID_ShowMetaModel,
             ID_Settings,
             ID_GetVssToolsVersion,
+            ID_NotImplemented,            
             ID_AddVWithVspecFile,
             ID_Add,
             ID_Delete,
@@ -69,6 +70,7 @@ namespace acd
         void OnShowMetaModel(wxCommandEvent& event);
         void OnSettings(wxCommandEvent& event);
         void OnGetVssToolVersion(wxCommandEvent& event);
+        void OnNotImplemented(wxCommandEvent& event);      
         void OnAddWithVspecFile(wxCommandEvent& event);     
         void OnAdd(wxCommandEvent& event);
         void OnDelete(wxCommandEvent& event);

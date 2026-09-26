@@ -1,0 +1,186 @@
+# *******************************************************************************
+# Copyright (c) 2026 ZF Friedrichshafen AG
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#   Thomas Pfleiderer - Function specification added
+# *******************************************************************************
+
+functionSpecification:
+  name: WheelSpeedPlausibilityCheck
+  version: 1.0.0
+  metaModelRef:
+    name: Eclipse-autoapiframework-Metamodel
+    version: 0.4.0
+
+  description: >-
+    Checks wheel-based vehicle speed for plausibility and signal loss, exposes
+    dedicated error interfaces for both fault conditions, and runs its
+    runnables under full execution supervision (alive, deadline and logical).
+
+  dataInterfaces:
+    - name: Vehicle.WheelBasedSpeed
+      direction: input
+      dataType: float
+      description: Wheel-based vehicle speed estimate to be plausibility-checked.
+      unit: km/h
+      min: 0.0
+      max: 320.0
+      defaultValue: 0.0
+      resolution: 0.1
+      precision: 1
+      FuSa: true
+      ASIL: B
+      minUpdatePeriodMs: 10
+      accuracy: "+/-0.3 km/h"
+      protection: complement
+
+    - name: Vehicle.WheelBasedSpeed.Qualifier
+      direction: input
+      dataType: uint8
+      description: Runtime quality qualifier for the wheel-based speed input.
+      unit: code
+      min: 0
+      max: 5
+      defaultValue: 0
+      resolution: 1
+      precision: 1
+      FuSa: false
+      ASIL: QM
+      minUpdatePeriodMs: 10
+      accuracy: enum-based
+      protection: none
+
+    - name: Vehicle.WheelSpeedPlausibilityCheck.Valid
+      direction: output
+      dataType: boolean
+      description: True while the wheel-based speed input is considered plausible.
+      unit: boolean
+      min: 0
+      max: 1
+      defaultValue: false
+      resolution: 1
+      precision: 1
+      FuSa: true
+      ASIL: B
+      minUpdatePeriodMs: 20
+      accuracy: logical
+      protection: complement
+
+  parameters:
+    - name: Vehicle.WheelSpeedPlausibilityCheck.MaxDeltaPerStep
+      dataType: float
+      defaultValue: 8.0
+      description: Maximum plausible wheel-based speed change per 20 ms cycle.
+      unit: km/h
+      tunable: false
+      min: 0.0
+      max: 50.0
+
+  # -----------------------------------------------------------------------
+  # ERROR INTERFACES: function-specific diagnostic interfaces, separate from
+  # the generic executionResult reported per runnable in "scheduling" below.
+  # -----------------------------------------------------------------------
+  errorInterfaces:
+    - name: WheelSpeedPlausibilityCheck.RangeError.ErrorStatus
+      dataType: boolean
+      description: >-
+        Set when the wheel-based speed value or its rate of change exceeds
+        physically plausible limits.
+      severity: degraded
+      maturationTimeMs: 100
+      resetTimeMs: 200
+      resetCondition: Input remains within plausible range for resetTimeMs.
+      dependencyRefs: []
+      fallbackBehavior: Hold last plausible value and set Vehicle.WheelSpeedPlausibilityCheck.Valid to false.
+      raisesSafetyReactionRefs: []
+
+    - name: WheelSpeedPlausibilityCheck.SignalLossError.ErrorStatus
+      dataType: boolean
+      description: >-
+        Set when the wheel-based speed quality qualifier reports invalid or
+        uninitialized data for longer than maturationTimeMs.
+      severity: shutdown
+      maturationTimeMs: 500
+      resetTimeMs: 100
+      resetCondition: Quality qualifier reports valid for resetTimeMs.
+      dependencyRefs:
+        - WheelSpeedPlausibilityCheck.RangeError.ErrorStatus
+      fallbackBehavior: Set Vehicle.WheelSpeedPlausibilityCheck.Valid to false and request safe state.
+      raisesSafetyReactionRefs:
+        - SafeState.SafeStateRequest.SafetyConditionStatus
+
+  # -----------------------------------------------------------------------
+  # SCHEDULING: PreProcess (10 ms) is alive-supervised, Step (20 ms) is
+  # deadline- and logical-supervised against its predecessor runnable.
+  # -----------------------------------------------------------------------
+  scheduling:
+    - functionName: WheelSpeedPlausibilityCheck.Init
+      runType: init
+      description: Initialize internal states and latched outputs.
+      cycleTimeMs: 0
+      implementedASIL: B
+      previousRunnableRef: System.Startup
+      executionResult: success
+      supervision:
+        required: false
+
+    - functionName: WheelSpeedPlausibilityCheck.PreProcess
+      runType: cyclic
+      description: >-
+        10 ms cyclic runnable that samples the input signal and its quality
+        qualifier. Alive-supervised to detect a stalled/missing task activation.
+      cycleTimeMs: 10
+      implementedASIL: B
+      previousRunnableRef: WheelSpeedPlausibilityCheck.Init
+      executionResult: success
+      supervision:
+        required: true
+        type:
+          - alive
+        alive:
+          minIndications: 1
+          maxIndications: 1
+          referenceCycleMs: 10
+
+    - functionName: WheelSpeedPlausibilityCheck.Step
+      runType: cyclic
+      description: >-
+        20 ms cyclic runnable that evaluates plausibility/signal-loss error
+        conditions and publishes the Valid output. Deadline-supervised for
+        worst-case execution time and logically supervised to ensure it only
+        runs after PreProcess has completed.
+      cycleTimeMs: 20
+      implementedASIL: B
+      previousRunnableRef: WheelSpeedPlausibilityCheck.PreProcess
+      executionResult: success
+      supervision:
+        required: true
+        type:
+          - deadline
+          - logical
+        deadline:
+          minExecutionTimeMs: 1
+          maxExecutionTimeMs: 15
+        logical:
+          predecessorRefs:
+            - WheelSpeedPlausibilityCheck.PreProcess
+          successorRefs: []
+
+    - functionName: WheelSpeedPlausibilityCheck.Terminate
+      runType: terminate
+      description: Shutdown cleanup for deterministic deactivation.
+      cycleTimeMs: 0
+      implementedASIL: QM
+      previousRunnableRef: WheelSpeedPlausibilityCheck.Step
+      executionResult: success
+      supervision:
+        required: false
