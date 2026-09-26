@@ -84,6 +84,16 @@ Content Of Function Specification File
    |                |          |                                                          |                                                     |
    |                |          |                                                          |   etc.                                              |
    +----------------+----------+----------------------------------------------------------+-----------------------------------------------------+
+   | errorInterfaces| Optional | Collection of function-specific diagnostic interfaces,   | - name: <Function>.<ErrorName>.ErrorStatus          |
+   |                |          | separate from the generic executionResult reported per   |                                                     |
+   |                |          | runnable in scheduling [2]_                              |   severity: degraded                                |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   maturationTimeMs: 100                             |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   resetCondition: ...                               |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   etc.                                              |
+   +----------------+----------+----------------------------------------------------------+-----------------------------------------------------+
    | scheduling     | Yes      | Scheduling information for runnable/function entry point | - functionName: SpeedHazardDetection.Init           |
    |                |          | [1]_                                                     |                                                     |   
    |                |          |                                                          |   runType: init                                     |
@@ -94,8 +104,22 @@ Content Of Function Specification File
    |                |          |                                                          |                                                     |   
    |                |          |                                                          |   previousRunnableRef: System.Startup               |
    +----------------+----------+----------------------------------------------------------+-----------------------------------------------------+
+   | supervision    | Yes [2]_ | Per-runnable execution supervision configured within     | - required: true                                    |
+   |                |          | scheduling: alive, deadline and/or logical checks.       |                                                     |
+   |                |          |                                                          |   type: [alive, deadline]                           |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   alive:                                            |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |     referenceCycleMs: 10                            |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |   deadline:                                         |
+   |                |          |                                                          |                                                     |
+   |                |          |                                                          |     maxExecutionTimeMs: 15                          |
+   +----------------+----------+----------------------------------------------------------+-----------------------------------------------------+
 
 .. [1] **Remark:** There may be dependencies to other functions not included in this specification file. This is allowed. The whole picture is defined in the runtime specification, see :doc:`Software Architecture </doc/runtime_specification/runtime_specification_file>`.
+
+.. [2] **Remark:** ``supervision`` is a mandatory object within each ``scheduling`` entry, but only requires the ``required: false`` case; ``type``/``alive``/``deadline``/``logical`` are only needed when ``required: true``. See the :doc:`error/supervision example </doc/function_specification/examples/wheel_speed_plausibility_check_example>` for a fully populated ``errorInterfaces`` and ``supervision`` configuration.
 
 
 
