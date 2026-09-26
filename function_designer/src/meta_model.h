@@ -37,6 +37,7 @@ namespace acd
     static constexpr const char* kDataInterfaceTypeKey = "Data";
     static constexpr const char* kParameterInterfaceTypeKey = "Parameter";
     static constexpr const char* kSchedulingInterfaceTypeKey = "Scheduling";
+    static constexpr const char* kErrorInterfaceTypeKey = "Error";
     static constexpr const char* kPropertiesKey = "properties";
 
     /// In-memory representation of autoapiframework_meta_model.yaml.
@@ -68,7 +69,7 @@ namespace acd
         void CollectEnums(const YamlNodePtr& model);                                    
 
         bool m_loaded = false;
-        std::string m_minimumVersion = "0.3.0";
+        std::string m_minimumVersion = "0.4.0";
         std::string m_fileContent;        
         std::string m_name;
         std::string m_version;

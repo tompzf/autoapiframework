@@ -168,7 +168,8 @@ namespace acd
         EVT_MENU(MainFrame::ID_ShowMetaModel, MainFrame::OnShowMetaModel)
         EVT_MENU(MainFrame::ID_Settings, MainFrame::OnSettings)
         EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
-        EVT_MENU(MainFrame::ID_GetVssToolsVersion, MainFrame::OnGetVssToolVersion)        
+        EVT_MENU(MainFrame::ID_GetVssToolsVersion, MainFrame::OnGetVssToolVersion)
+        EVT_MENU(MainFrame::ID_NotImplemented, MainFrame::OnNotImplemented)
         EVT_MENU(wxID_HELP, MainFrame::OnHelp)
         EVT_MENU(wxID_EXIT, MainFrame::OnExit)
     wxEND_EVENT_TABLE()
@@ -212,7 +213,8 @@ namespace acd
 
         wxMenu* helpMenu = new wxMenu();
         helpMenu->Append(wxID_ABOUT);
-        helpMenu->Append(ID_GetVssToolsVersion, "Get vss-tools version");        
+        helpMenu->Append(ID_GetVssToolsVersion, "Get vss-tools version");
+        helpMenu->Append(ID_NotImplemented, "Not yet implemented...");
         helpMenu->Append(wxID_HELP, "&Help...");
 
         wxMenuBar* menuBar = new wxMenuBar();
@@ -333,6 +335,7 @@ namespace acd
         wxPanel* signalPage = makeListPage(&m_signalList);
         wxPanel* parameterPage = makeListPage(&m_parameterList);
         wxPanel* schedulingPage = makeListPage(&m_schedulingList);
+        wxPanel* errorPage = makeListPage(&m_errorList);
         auto bindEditButtonState = [this](wxListCtrl* list)
         {
             list->Bind(wxEVT_LIST_ITEM_SELECTED, [this](wxListEvent&)
@@ -347,11 +350,13 @@ namespace acd
         bindEditButtonState(m_signalList);
         bindEditButtonState(m_parameterList);
         bindEditButtonState(m_schedulingList);
+        bindEditButtonState(m_errorList);
 
         m_notebook->AddPage(attributePage, "Attributes", true);
         m_notebook->AddPage(signalPage, "Signal collection");
         m_notebook->AddPage(parameterPage, "Parameter collection");
         m_notebook->AddPage(schedulingPage, "Scheduling collection");
+        m_notebook->AddPage(errorPage, "Error collection");
         m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, [this](wxBookCtrlEvent& event)
         {
             UpdateCollectionButtonStates();
@@ -841,7 +846,8 @@ namespace acd
 
         const int selectedTab = m_notebook->GetSelection();
         const std::string interfaceType = selectedTab == 1 ? "Data" :
-                                          selectedTab == 2 ? "Parameter" : "Scheduling";
+                                          selectedTab == 2 ? "Parameter" :
+                                          selectedTab == 3 ? "Scheduling" : "Error";
         const std::vector<std::string> fields = m_metaModel.ColumnsFor(interfaceType, {});
         if (fields.empty())
         {
@@ -1136,12 +1142,21 @@ namespace acd
 
     void MainFrame::OnGetVssToolVersion(wxCommandEvent&)
     {
-        //ShowVssToolsVersion();
         auto version = GetVssToolsVersion();
         wxMessageBox("Recommended vss-tools version: 6.1\n\nFound: " + version,
                     kApplicationName,
                     wxOK | wxICON_INFORMATION, this);
     }
+
+    void MainFrame::OnNotImplemented(wxCommandEvent&)
+    {
+        std::string title = "The following is not implemented or supported yet:\n";
+        wxMessageBox( title
+                      + "\nAPI creation"
+                      + "\n\nnot supported node: supervision in scheduling",
+                     kApplicationName,
+                     wxOK | wxICON_INFORMATION, this);
+    } 
 
     void MainFrame::OnHelp(wxCommandEvent&) { wxLaunchDefaultBrowser(kHelpUrl); }
 
@@ -1196,6 +1211,7 @@ namespace acd
         FillCollection(m_signalList, FunctionSpecification::kDataInterfacesKey, kDataInterfaceTypeKey);
         FillCollection(m_parameterList, FunctionSpecification::kParametersKey, kParameterInterfaceTypeKey);
         FillCollection(m_schedulingList, FunctionSpecification::kSchedulingKey, kSchedulingInterfaceTypeKey);
+        FillCollection(m_errorList, FunctionSpecification::kErrorsKey, kErrorInterfaceTypeKey);
 
         m_notebook->SetPageText(1, wxString::Format(
             "Signal collection (%d)",
@@ -1206,6 +1222,9 @@ namespace acd
         m_notebook->SetPageText(3, wxString::Format(
             "Scheduling collection (%d)",
             static_cast<int>(m_specification.GetCollection(FunctionSpecification::kSchedulingKey).size())));
+        m_notebook->SetPageText(4, wxString::Format(
+            "Error collection (%d)",
+            static_cast<int>(m_specification.GetCollection(FunctionSpecification::kErrorsKey).size())));
         UpdateCollectionButtonStates();
     }
 
@@ -1265,6 +1284,8 @@ namespace acd
             return m_parameterList;
         case 3:
             return m_schedulingList;
+        case 4:
+            return m_errorList;
         default:
             return nullptr;
         }
@@ -1280,6 +1301,8 @@ namespace acd
             return FunctionSpecification::kParametersKey;
         case 3:
             return FunctionSpecification::kSchedulingKey;
+        case 4:
+            return FunctionSpecification::kErrorsKey;
         default:
             return nullptr;
         }

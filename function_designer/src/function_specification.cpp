@@ -61,6 +61,7 @@ namespace acd
         spec->Set(kDataInterfacesKey, YamlNode::MakeSequence());
         spec->Set(kParametersKey, YamlNode::MakeSequence());
         spec->Set(kSchedulingKey, YamlNode::MakeSequence());
+        spec->Set(kErrorsKey, YamlNode::MakeSequence());
 
         YamlNodePtr root = YamlNode::MakeMap();
         root->Set(kRootKey, spec);

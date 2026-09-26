@@ -17,7 +17,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(function_designer
-        VERSION 0.3.0
+        VERSION 0.4.0
         DESCRIPTION "Editor for Eclipse autoapiframework function specifications"
         LANGUAGES CXX)
 
@@ -120,7 +120,7 @@ endif()
 # The meta model and the sample specification are picked up next to the executable.
 add_custom_command(TARGET AutoAPIFunctionDesigner POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/examples/autoapiframework_metadata_V03.yaml"
+            "${CMAKE_CURRENT_SOURCE_DIR}/examples/autoapiframework_metadata_V04.yaml"
             "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/autoapiframework_meta_model.yaml"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/examples/speed_hazard_detection.afs"
@@ -128,6 +128,9 @@ add_custom_command(TARGET AutoAPIFunctionDesigner POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/examples/vehicle_speed_fusion_multirate.afs"
             "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/vehicle_speed_fusion_multirate.afs"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/examples/wheel_speed_plausibility_check.afs"
+            "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/wheel_speed_plausibility_check.afs"            
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_logo.png"
             "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/autoapiframework_logo.png"
