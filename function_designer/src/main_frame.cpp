@@ -436,7 +436,8 @@ namespace acd
         m_contentChanged = true;
         m_newButton->Enable(false);
         GetMenuBar()->Enable(ID_NewSpecification, false);
-        m_saveAsButton->Enable(true);		        
+        m_saveAsButton->Enable(true);
+        GetMenuBar()->Enable(ID_SaveSpecification, m_contentChanged);          
         GetMenuBar()->Enable(ID_SaveSpecificationAs, true);		
         m_showButton->Enable(true);
         GetMenuBar()->Enable(ID_ShowMetaModel, true);			
@@ -1155,7 +1156,7 @@ namespace acd
     void MainFrame::OnQuickTips(wxCommandEvent&)
     {
         std::string title = "";
-        wxMessageBox( title + "API creation is not implemented yet.\n" +
+        wxMessageBox( title + "\nAPI creation is not implemented yet.\n" +
                      "\nThe supervision node in scheduling\ncan only be edited in an external editor.",
                      kApplicationName,
                      wxOK | wxICON_INFORMATION, this);
@@ -1181,7 +1182,7 @@ namespace acd
         GetMenuBar()->Enable(ID_NewSpecification, false);
         m_saveButton->Enable(m_saveButton);
         m_saveAsButton->Enable(true);
-        GetMenuBar()->Enable(ID_SaveSpecification, true);	        
+        GetMenuBar()->Enable(ID_SaveSpecification, m_contentChanged);	        
         GetMenuBar()->Enable(ID_SaveSpecificationAs, true);				
         m_showButton->Enable(true);
         GetMenuBar()->Enable(ID_ShowMetaModel, true);				
@@ -1211,6 +1212,7 @@ namespace acd
 
     void MainFrame::RefreshAll() 
     {
+        GetMenuBar()->Enable(ID_SaveSpecification, m_contentChanged);	        
         m_saveButton->Enable(m_contentChanged);  
         FillAttributes();
         FillCollection(m_signalList, FunctionSpecification::kDataInterfacesKey, kDataInterfaceTypeKey);
