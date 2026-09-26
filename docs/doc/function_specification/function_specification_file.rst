@@ -114,8 +114,3 @@ What needs to be added for the SpeedHazardDetection example:
    :linenos:
 
 
-.. toctree::
-   :caption: SpeedHazardDetection (single cyclic runnable)
-   :maxdepth: 1
-
-   examples/speed_hazard_detection_example
