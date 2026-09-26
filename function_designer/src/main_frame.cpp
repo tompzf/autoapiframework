@@ -1153,9 +1153,7 @@ namespace acd
         std::string title = "The following is not implemented or supported yet:\n";
         wxMessageBox( title
                       + "\nAPI creation"
-                      + "\n\nnot supported nodes:"                      
-                      + "\nsupervision node in scheduling"
-                      + "\nerror node",
+                      + "\n\nnot supported node: supervision in scheduling",
                      kApplicationName,
                      wxOK | wxICON_INFORMATION, this);
     } 
