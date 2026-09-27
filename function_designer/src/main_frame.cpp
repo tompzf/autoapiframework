@@ -461,7 +461,7 @@ namespace acd
         LoadSpecification(dialog.GetPath());
     }
 
-    void MainFrame::OnSaveSpecification(wxCommandEvent&)
+    void MainFrame::OnSaveSpecification(wxCommandEvent& e)
     {
         if (!m_specification.IsLoaded())
         {
@@ -473,6 +473,12 @@ namespace acd
         }
 
         const wxString path = ToWx(m_specification.GetSourcePath());
+        if (path.IsEmpty())
+        {
+            OnSaveSpecificationAs(e);
+            return;
+        }
+        
         std::string error;
         if (!m_specification.Save(ToStd(path), error))
         {
@@ -499,7 +505,11 @@ namespace acd
         wxFileName source(ToWx(m_specification.GetSourcePath()));
         wxString suggested = source.GetFullName();
         const wxString suffix = ".afs";
-        if (suggested.EndsWith(".afs") || suggested.EndsWith(".afs")) 
+        if(suggested.IsEmpty())
+        {
+            suggested = "untitled" + suffix;
+        }
+        else if (suggested.EndsWith(".afs") || suggested.EndsWith(".afs")) 
         {
             suggested = suggested.Left(suggested.length() - suffix.length()) + "_copy" + suffix;
         } 
