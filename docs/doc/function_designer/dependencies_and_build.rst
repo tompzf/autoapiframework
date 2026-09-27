@@ -17,7 +17,7 @@
    # *******************************************************************************
 
 Dependencies and Build
-=======================
+======================
 
 The Function Designer is a wxWidgets desktop application for reading,
 inspecting, validating, and writing Eclipse autoapiframework function
