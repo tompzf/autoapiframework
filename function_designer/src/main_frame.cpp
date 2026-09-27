@@ -381,25 +381,21 @@ namespace acd
         {
             if (LoadMetaModel(configuredMetaModelFile, true) && m_metaModel.IsLoaded())
             {
-
-            wxMessageBox("loaded 1." +m_metaModel.GetVersion() , kApplicationName,
-                        wxOK | wxICON_INFORMATION, this);
-
                 return true;
             }
         }
 
         wxString configuredDirectory;
+        wxString tmpConfiguredPath;
         wxConfigBase::Get()->Read(kMetaModelDirectoryConfigKey, &configuredDirectory);
         if (!configuredDirectory.empty())
         {
             const wxString configuredPath = wxFileName(configuredDirectory, kMetaModelFileName).GetFullPath();
+            tmpConfiguredPath = configuredPath;
             if (wxFileName::FileExists(configuredPath))
             {
                 if (m_metaModel.IsLoaded())
-                {
-            wxMessageBox("loaded 2." +m_metaModel.GetVersion() , kApplicationName,
-                        wxOK | wxICON_INFORMATION, this);                    
+                {                    
                     return true;
                 }
             }
@@ -426,14 +422,11 @@ namespace acd
                 }
                 if (m_metaModel.IsLoaded()) 
                 {
-                                wxMessageBox("loaded 4." +m_metaModel.GetVersion() , kApplicationName,
-                        wxOK | wxICON_INFORMATION, this);
                     return true;
                 }
             }
         }
-                    wxMessageBox("loaded 5." +m_metaModel.GetVersion() , kApplicationName,
-                        wxOK | wxICON_INFORMATION, this);
+
         return false;
     }
 
