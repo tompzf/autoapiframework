@@ -370,7 +370,7 @@ namespace acd
         m_attributeList->AppendColumn("Value", wxLIST_FORMAT_LEFT, 600);
     }
 
-    void MainFrame::AutoLoadMetaModel() 
+    bool MainFrame::AutoLoadMetaModel() 
     {
         wxFileName executable(wxStandardPaths::Get().GetExecutablePath());
         const wxString exeDir = executable.GetPath();
@@ -379,10 +379,13 @@ namespace acd
         wxConfigBase::Get()->Read(kMetaModelFileConfigKey, &configuredMetaModelFile);
         if (!configuredMetaModelFile.empty() && wxFileName::FileExists(configuredMetaModelFile))
         {
-            m_metaModelVersion = LoadMetaModel(configuredMetaModelFile, true);
-            if (m_metaModel.IsLoaded())
+            if (LoadMetaModel(configuredMetaModelFile, true) && m_metaModel.IsLoaded())
             {
-                return;
+
+            wxMessageBox("loaded 1." +m_metaModel.GetVersion() , kApplicationName,
+                        wxOK | wxICON_INFORMATION, this);
+
+                return true;
             }
         }
 
@@ -393,10 +396,11 @@ namespace acd
             const wxString configuredPath = wxFileName(configuredDirectory, kMetaModelFileName).GetFullPath();
             if (wxFileName::FileExists(configuredPath))
             {
-                m_metaModelVersion = LoadMetaModel(configuredPath, true);
                 if (m_metaModel.IsLoaded())
                 {
-                    return;
+            wxMessageBox("loaded 2." +m_metaModel.GetVersion() , kApplicationName,
+                        wxOK | wxICON_INFORMATION, this);                    
+                    return true;
                 }
             }
         }
@@ -416,13 +420,21 @@ namespace acd
         {
             if (wxFileName::FileExists(candidate)) 
             {
-                m_metaModelVersion = LoadMetaModel(candidate, true);
+                if (!LoadMetaModel(candidate, true))
+                {
+                    continue;
+                }
                 if (m_metaModel.IsLoaded()) 
                 {
-                    return;
+                                wxMessageBox("loaded 4." +m_metaModel.GetVersion() , kApplicationName,
+                        wxOK | wxICON_INFORMATION, this);
+                    return true;
                 }
             }
         }
+                    wxMessageBox("loaded 5." +m_metaModel.GetVersion() , kApplicationName,
+                        wxOK | wxICON_INFORMATION, this);
+        return false;
     }
 
     void MainFrame::OnNewSpecification(wxCommandEvent&)
@@ -555,21 +567,23 @@ namespace acd
         {
             return;
         }
-        m_metaModelVersion = LoadMetaModel(dialog.GetPath(), true);
-        if (m_metaModel.IsLoaded())
+        if (LoadMetaModel(dialog.GetPath(), true))
         {
-            wxConfigBase::Get()->Write(kMetaModelFileConfigKey, dialog.GetPath());
-            wxConfigBase::Get()->Flush();
-            if (isLoaded)
+            if (m_metaModel.IsLoaded())
             {
-                wxMessageBox("Meta model reloaded successfully,\nto activate changes restart application.", kApplicationName,
-                             wxOK | wxICON_INFORMATION, this);
+                wxConfigBase::Get()->Write(kMetaModelFileConfigKey, dialog.GetPath());
+                wxConfigBase::Get()->Flush();
+                if (isLoaded)
+                {
+                    wxMessageBox("Meta model reloaded successfully,\nto activate changes restart application.", kApplicationName,
+                                wxOK | wxICON_INFORMATION, this);
+                }
             }
-        }
-        SetStatusText(m_metaModel.IsLoaded() ? "Meta model loaded" : "No meta model", 1);
+            SetStatusText(m_metaModel.IsLoaded() ? "Meta model loaded" : "No meta model", 1);
 
-        UpdateMetaModelButtonStates();
-        RefreshAll();
+            UpdateMetaModelButtonStates();
+            RefreshAll();
+        }
     }
 
     void MainFrame::OnSettings(wxCommandEvent&)
@@ -1180,7 +1194,7 @@ namespace acd
     {
         std::string error;
         FunctionSpecification specification;
-        if (!specification.Load(m_metaModelVersion, ToStd(path), error)) 
+        if (!specification.Load(m_metaModel.GetVersion(), ToStd(path), error)) 
         {
             wxMessageBox("Could not read function specification:\n\n" + ToWx(error),
                         kApplicationName, wxOK | wxICON_ERROR, this);
@@ -1202,7 +1216,7 @@ namespace acd
         UpdateTitleAndStatus();
     }
 
-    std::string MainFrame::LoadMetaModel(const wxString& path, bool reportErrors) 
+    bool MainFrame::LoadMetaModel(const wxString& path, bool reportErrors) 
     {
         std::string error;
         if (!m_metaModel.Load(ToStd(path), error)) 
@@ -1212,12 +1226,12 @@ namespace acd
                 wxMessageBox("Could not read meta model:\n\n" + ToWx(error), kApplicationName,
                             wxOK | wxICON_ERROR, this);
             }
-            return "";
+            return false;
         }
         m_metaModelLabel->SetLabel("Meta model: " + ToWx(m_metaModel.GetName()) + " " +
                                 ToWx(m_metaModel.GetVersion()));
         m_metaModelLabel->GetParent()->Layout();
-        return m_metaModel.GetVersion();
+        return true;
     }
 
     void MainFrame::RefreshAll() 

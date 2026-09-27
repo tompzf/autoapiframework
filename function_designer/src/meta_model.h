@@ -78,6 +78,7 @@ namespace acd
         std::map<std::string, std::vector<std::string>> m_enums;
         std::vector<uint32_t> SplitVersion(const std::string& version) const;
         bool IsGreaterOrEqual(const std::string& version1, const std::string& version2) const;
+        void Reset();
     };
 
 } // namespace acd

@@ -59,7 +59,7 @@ namespace acd
         };
 
         void BuildUi();
-        void AutoLoadMetaModel();
+        bool AutoLoadMetaModel();
         void UpdateMetaModelButtonStates();
 
         void OnNewSpecification(wxCommandEvent& event);
@@ -83,7 +83,7 @@ namespace acd
         void OnExit(wxCommandEvent& event);
 
         void LoadSpecification(const wxString& path);
-        std::string LoadMetaModel(const wxString& path, bool reportErrors);
+        bool LoadMetaModel(const wxString& path, bool reportErrors);
 
         bool SyntaxCheckIsOK(bool doNotShowOnSuccess, const std::string& contextMessage = "");
 
@@ -98,7 +98,6 @@ namespace acd
 
         FunctionSpecification m_specification;
         MetaModel   m_metaModel;
-        std::string m_metaModelVersion = "";
         bool m_contentChanged = false;
 
         wxNotebook* m_notebook = nullptr;

@@ -25,33 +25,32 @@ namespace acd
 {
     bool MetaModel::Load(const std::string& path, std::string& error) 
     {
+        Reset();
         YamlParser parser;
         const YamlNodePtr root = parser.ParseFile(path, error);
         if (!root) 
         {
+            Reset();            
             return false;
         }
         const YamlNodePtr model = root->Find(kMetaModelKey);
         if (!model || !model->IsMap()) 
         {
+            Reset();            
             error = std::string("'") + std::string(kMetaModelKey) + "' root key not found in " + path;
             return false;
         }
         
-        m_interfaceTypes.clear();  
-        m_enums.clear(); 
         if (!FindRequiredAttributesAndInterfaces(model, path, error))
         {
-            m_interfaceTypes.clear();     
-            m_enums.clear(); 
+            Reset();
             return false;
         }
 
         if (!IsGreaterOrEqual(m_version, m_minimumVersion))
         {
-            error = "Metamodel version " + m_version + " is lower than the minimum required version " + m_minimumVersion;
-            m_interfaceTypes.clear();     
-            m_enums.clear();             
+            Reset();
+            error = "Metamodel version " + m_version + " is lower than the minimum required version " + m_minimumVersion;        
             return false;
         }
 
@@ -277,4 +276,16 @@ namespace acd
         return true; // equal
     }    
 
+    void MetaModel::Reset()
+    {
+        m_loaded = false;
+        m_minimumVersion = "";
+        m_fileContent = "";
+        m_name = "";
+        m_version = "";
+        m_sourcePath = "";
+        m_interfaceTypes.clear();
+        m_enums.clear();
+    }
+    
 } // namespace acd
