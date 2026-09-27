@@ -598,7 +598,7 @@ namespace acd
         wxTextCtrl* vspecControl = new wxTextCtrl(&dialog, wxID_ANY, vspecDirectory);
         wxStaticText* metaModelVersionLabel = new wxStaticText(&dialog, wxID_ANY, metaModelVersion);    
         
-        wxString vspecVersion = ToWx(GetGitTagAndVersion("VSpec version: ", vspecDirectory));
+        wxString vspecVersion = ToWx(GetGitTagAndVersion("VSS version: ", vspecDirectory));
         wxStaticText* vspecVersionLabel = new wxStaticText(&dialog, wxID_ANY, vspecVersion.IsEmpty() ? "Version: unknown" : vspecVersion);
 
         const auto addField = [&dialog, fields](const wxString& label, wxTextCtrl* control, bool isFile,
@@ -659,10 +659,10 @@ namespace acd
                      return selectedMetaModel.Load(ToStd(path), loadError)
                          ? ToWx(selectedMetaModel.GetVersion()) : "unknown";
                  });
-        addField("COVESA VSpec folder", vspecControl, false, vspecVersionLabel,
+        addField("COVESA VSS folder", vspecControl, false, vspecVersionLabel,
                  [this](const wxString& path)
                  {
-                     const wxString version = ToWx(GetGitTagAndVersion("VSpec version: ", path));
+                     const wxString version = ToWx(GetGitTagAndVersion("VSS version: ", path));
                      return version.IsEmpty() ? wxString("Version: unknown") : version;
                  });
 
@@ -711,8 +711,8 @@ namespace acd
         wxString vspecDirectory;
         wxConfigBase::Get()->Read(kVspecDirectoryConfigKey, &vspecDirectory);
 
-        wxFileDialog sourceDialog(this, "Select VSpec file", vspecDirectory, wxEmptyString,
-                                  "VSpec files (*.vspec)|*.vspec|All files (*.*)|*.*",
+        wxFileDialog sourceDialog(this, "Select vspec file", vspecDirectory, wxEmptyString,
+                                  "vspec files (*.vspec)|*.vspec|All files (*.*)|*.*",
                                   wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (sourceDialog.ShowModal() != wxID_OK)
         {
@@ -722,7 +722,7 @@ namespace acd
         const wxString tempJsonPath = wxFileName::CreateTempFileName("acd_vspec_");
         if (tempJsonPath.empty())
         {
-            wxMessageBox("Could not create a temporary file for the VSpec conversion.",
+            wxMessageBox("Could not create a temporary file for the vspec conversion.",
                          kApplicationName, wxOK | wxICON_ERROR, this);
             return;
         }
@@ -742,7 +742,7 @@ namespace acd
         wxRemoveFile(tempJsonPath);
         if (!readOk)
         {
-            wxMessageBox("Could not read the converted VSpec JSON file.", kApplicationName,
+            wxMessageBox("Could not read the converted VSPEC JSON file.", kApplicationName,
                          wxOK | wxICON_ERROR, this);
             return;
         }
@@ -751,7 +751,7 @@ namespace acd
         std::string parseError;
         if (!JsonParser().Parse(ToStd(jsonContent), root, parseError))
         {
-            wxMessageBox("Could not parse VSpec JSON:\n\n" + ToWx(parseError), kApplicationName,
+            wxMessageBox("Could not parse VSPEC JSON:\n\n" + ToWx(parseError), kApplicationName,
                          wxOK | wxICON_ERROR, this);
             return;
         }
@@ -760,7 +760,7 @@ namespace acd
         FlattenVssTree(root, "", signals);
         if (signals.empty())
         {
-            wxMessageBox("No signals found in the converted VSpec JSON.", kApplicationName,
+            wxMessageBox("No signals found in the converted VSPEC JSON.", kApplicationName,
                          wxOK | wxICON_INFORMATION, this);
             return;
         }
@@ -1427,7 +1427,7 @@ namespace acd
             }
 
             return err.empty()
-                ? wxString::Format("ERROR: VSpec conversion failed with exit code %ld.", rc)
+                ? wxString::Format("ERROR: VSPEC conversion failed with exit code %ld.", rc)
                 : "ERROR: " + err;
         }
 
