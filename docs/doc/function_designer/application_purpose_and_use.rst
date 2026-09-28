@@ -17,7 +17,12 @@
    # *******************************************************************************
 
 Application Purpose and Use
-============================
+===========================
+
+Function designer is an executable for viewing and editing Eclipse autoapiframework function specifications.
+
+.. figure:: figures/meta_model_window.png
+   :alt: meta model window
 
 Purpose
 -------
@@ -37,9 +42,7 @@ The application works with two related files:
 The current example meta model is
 ``examples/autoapiframework_metadata_V04.yaml``.
 
-.. figure:: figures/meta_model_window.png
-   :alt: meta model window
-   
+  
 
 Main Views
 ----------
@@ -86,7 +89,7 @@ Typical Workflow
 4. Inspect attributes, data interfaces, parameters, scheduling, and error
    interfaces in their respective views.
 5. Use *Load meta model...* when the meta model is not found beside the
-   executable or when another compatible meta model is required.
+   executable or when another compatible meta model is required. A restart of the application is required.
 6. Use *Write .afs file as...* to save the specification under a new name.
 7. Use *add via vss* to import signal information from a VSS file.
 8. The *supervision* node needs to be edited in an extermnal editor.
