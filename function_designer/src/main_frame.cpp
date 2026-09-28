@@ -346,6 +346,18 @@ namespace acd
             {
                 UpdateCollectionButtonStates();
             });
+            list->Bind(wxEVT_LIST_ITEM_ACTIVATED, [this, list](wxListEvent& event)
+            {
+                if (list->GetSelectedItemCount() == 1)
+                {
+                    wxCommandEvent editEvent(wxEVT_BUTTON, ID_Edit);
+                    OnEdit(editEvent);
+                }
+                else
+                {
+                    event.Skip();
+                }
+            });
         };
         bindEditButtonState(m_signalList);
         bindEditButtonState(m_parameterList);

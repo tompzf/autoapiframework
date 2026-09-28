@@ -16,15 +16,13 @@
    #   Thomas Pfleiderer - Function designer added
    # *******************************************************************************
 
+Application Purpose and Use
+===========================
 
-Function Designer
-=================
+Function designer is an executable for viewing and editing Eclipse autoapiframework function specifications.
 
 .. figure:: figures/meta_model_window.png
    :alt: meta model window
-
-Application Purpose and Use
-===========================
 
 Purpose
 -------
