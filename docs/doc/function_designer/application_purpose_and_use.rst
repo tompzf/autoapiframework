@@ -88,11 +88,11 @@ Typical Workflow
 3. Confirm that the referenced meta-model version is supported.
 4. Inspect attributes, data interfaces, parameters, scheduling, and error
    interfaces in their respective views.
-5. Use *Load meta model...* when the meta model is not found beside the
+5. Use **'Load meta model...'** when the meta model is not found beside the
    executable or when another compatible meta model is required. A restart of the application is required.
-6. Use *Write .afs file as...* to save the specification under a new name.
-7. Use *add via vss* to import signal information from a VSS file.
-8. The *supervision* node needs to be edited in an extermnal editor.
+6. Use **'Write .afs file as...'** to save the specification under a new name.
+7. Use **'Add via VSS'** to import signal information from a VSS file.
+8. The **'supervision'** node needs to be edited in an extermnal editor.
 
 The editor keeps the parsed YAML tree in memory. When the file is written, key
 order, block-style layout, folded descriptions, and quoting are preserved as
@@ -101,7 +101,7 @@ far as supported by the YAML writer.
 Working with VSS Signals
 ------------------------
 
-The *Add via vss* workflow can import signal information from a VSS file. The
+The **'Add via vss'** workflow can import signal information from a VSS file. The
 application uses the ``vspec`` executable supplied by ``vss-tools`` to convert
 the selected ``.vspec`` file to JSON, after which the signal can be added to
 the function specification.
@@ -120,6 +120,14 @@ For a direct conversion, run:
 
 .. figure:: figures/signal_selection_window.png
    :alt: signal selection window  
+
+After pressing the **'Add via VSS'** button, you will be prompted to select a vspec file. When you select a vspec file, the included signals are displayed.
+
+If an error message appears, you may have selected a vspec file that has dependencies on other vspec files. In this case, you need to open the root vspec file instead.
+
+
+.. figure:: figures/error_opening_vspec_file.png
+   :alt: error opening VSS file window  
 
 Examples
 --------
