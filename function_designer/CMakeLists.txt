@@ -100,11 +100,11 @@ target_compile_definitions(AutoAPIFunctionDesigner PRIVATE
     ACD_VSPEC_EXECUTABLE="${VSPEC_EXECUTABLE}")
 
 if(MSVC)
-    target_compile_options(AutoAPIFunctionDesigner PRIVATE /W4 /utf-8)
+    target_compile_options(AutoAPIFunctionDesigner PRIVATE /W4 /WX /utf-8)
     target_compile_definitions(AutoAPIFunctionDesigner PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT AutoAPIFunctionDesigner)
 else()
-    target_compile_options(AutoAPIFunctionDesigner PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(AutoAPIFunctionDesigner PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
 
 set_target_properties(AutoAPIFunctionDesigner PROPERTIES

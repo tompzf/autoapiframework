@@ -83,7 +83,7 @@ project-specific metadata to remain visible during inspection.
 Typical Workflow
 ----------------
 
-1. Start the application. The application will load the configured meta model if it is available. If  not found it looks automatically for a file named ``autoapiframework_metadatayaml``.
+1. Start the application. The application will load the configured meta model if it is available. If  not found it looks automatically for a file named ``autoapiframework_meta_model.yaml``.
 2. Open an existing ``.afs`` file.
 3. Confirm that the referenced meta-model version is supported.
 4. Inspect attributes, data interfaces, parameters, scheduling, and error
@@ -92,7 +92,7 @@ Typical Workflow
    executable or when another compatible meta model is required. A restart of the application is required.
 6. Use **'Write .afs file as...'** to save the specification under a new name.
 7. Use **'Add via VSS'** to import signal information from a VSS file.
-8. The **'supervision'** node needs to be edited in an extermnal editor.
+8. The **'supervision'** node needs to be edited in an external editor.
 
 The editor keeps the parsed YAML tree in memory. When the file is written, key
 order, block-style layout, folded descriptions, and quoting are preserved as

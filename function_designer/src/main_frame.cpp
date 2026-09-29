@@ -398,12 +398,10 @@ namespace acd
         }
 
         wxString configuredDirectory;
-        wxString tmpConfiguredPath;
         wxConfigBase::Get()->Read(kMetaModelDirectoryConfigKey, &configuredDirectory);
         if (!configuredDirectory.empty())
         {
             const wxString configuredPath = wxFileName(configuredDirectory, kMetaModelFileName).GetFullPath();
-            tmpConfiguredPath = configuredPath;
             if (wxFileName::FileExists(configuredPath))
             {
                 if (m_metaModel.IsLoaded())
