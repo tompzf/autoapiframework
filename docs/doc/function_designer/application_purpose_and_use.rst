@@ -83,7 +83,7 @@ project-specific metadata to remain visible during inspection.
 Typical Workflow
 ----------------
 
-1. Start the application. The application will load the configured meta model if it is available. If  not found it looks automatically for a file named ``autoapiframework_metadatayaml``.
+1. Start the application. The application will load the configured meta model if it is available. If  not found it looks automatically for a file named ``autoapiframework_meta_model.yaml``.
 2. Open an existing ``.afs`` file.
 3. Confirm that the referenced meta-model version is supported.
 4. Inspect attributes, data interfaces, parameters, scheduling, and error
