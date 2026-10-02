@@ -955,6 +955,7 @@ namespace acd
 
         if (m_specification.RemoveCollectionItem(collectionKey, static_cast<std::size_t>(selectedRow)))
         {
+            m_contentChanged = true;
             RefreshAll();
             SetStatusText(wxString::Format("Deleted item %ld", selectedRow + 1), 0);
         }
