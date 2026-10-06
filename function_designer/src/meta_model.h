@@ -46,6 +46,8 @@ namespace acd
     static constexpr const char* kQualityCodeKey = "qualityCode";
     static constexpr const char* kQualityNameKey = "name";
     static constexpr const char* kDatatypeKey = "datatype";
+    static constexpr const char* kMandatoryKey = "mandatory";
+    static constexpr const char* kBooleanType = "boolean";    
     static constexpr const char* kDataQualityKey = "DataQuality";
     static constexpr const char* kExecutionResultTypeKey = "type";
     static constexpr const char* kExecutionResultKey = "executionResult";
@@ -54,6 +56,7 @@ namespace acd
     static constexpr const char* kExecutionResultTypeFieldPath = "executionResult.type";
     static constexpr const char* kSupervisionKey = "supervision";
     static constexpr const char* kSupervisionRequiredKey = "required";
+
     
     /// In-memory representation of autoapiframework_meta_model.yaml.
     class MetaModel 

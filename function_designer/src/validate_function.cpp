@@ -88,11 +88,7 @@ namespace acd
         if (!ValidateProperties(dataInterfaces, acd::kDataInterfaceTypeKey, metaModel, error))
         {
             return false;
-        }
-        if (!ValidateEnums(dataInterfaces, acd::kDataInterfaceTypeKey, metaModel, error))
-        {
-            return false;
-        }        
+        }                
 
         if (!SyntaxCheckForSequence(parameters, FunctionSpecification::kNamePathKey, error, FunctionSpecification::kParametersKey)) 
         {
@@ -101,11 +97,7 @@ namespace acd
         if (!ValidateProperties(parameters, acd::kParameterInterfaceTypeKey, metaModel, error))
         {
             return false;
-        }
-        if (!ValidateEnums(parameters, acd::kParameterInterfaceTypeKey, metaModel, error))
-        {
-            return false;
-        }          
+        }                          
 
         if (!SyntaxCheckForSequence(scheduling, FunctionSpecification::kFunctionNameKey, error, FunctionSpecification::kSchedulingKey)) 
         {
@@ -126,6 +118,28 @@ namespace acd
         return true;
     }
 
+    bool ValidateFunction::ValidateProperties(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
+                                            const MetaModel& metaModel, std::string& error)
+    {
+        if (!ValidatePropertiesExists(dataInterfaces, interfaceTypeName, metaModel, error))
+        {
+            return false;
+        }
+        if (!ValidateEnums(dataInterfaces, interfaceTypeName, metaModel, error))
+        {
+            return false;
+        }    
+        if (!ValidateBoolean(dataInterfaces, interfaceTypeName, metaModel, error))
+        {
+            return false;
+        }   
+        if (!ValidateMandatory(dataInterfaces, interfaceTypeName, metaModel, error))
+        {
+            return false;
+        }          
+        return true;
+    }
+
     bool ValidateFunction::SyntaxCheckForSequence(const YamlNodePtr& node, const std::string& key, std::string& error, const std::string& displayName)
     {
         for (const YamlNodePtr& dataInterface : node->GetSequence())
@@ -142,7 +156,7 @@ namespace acd
         return true;
     }    
 
-    bool ValidateFunction::ValidateProperties(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
+    bool ValidateFunction::ValidatePropertiesExists(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
                                             const MetaModel& metaModel, std::string& error)
     {
         const std::vector<std::string> validPropertyNamesFromMetaModel = metaModel.ColumnsFor(interfaceTypeName, {});
@@ -150,7 +164,7 @@ namespace acd
         if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
         {
             companionDefinitions = interfaceTypeName == kDataInterfaceTypeKey
-                ? (*type)->Find("runtimeCompanion") : nullptr;
+                ? (*type)->Find(kRuntimeCompanionKey) : nullptr;
         }
 
         bool syntaxError = false;
@@ -235,6 +249,97 @@ namespace acd
                     {
                         return false;
                     }  
+                }
+            }
+        }        
+        return true;
+    }
+
+
+    bool ValidateFunction::ValidateBoolean(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
+                                         const MetaModel& metaModel, std::string& error)
+    {
+        std::map<std::string, std::string> propertiesWithBooleanType;
+        if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
+        {
+            const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
+            if (properties && properties->IsMap())
+            {
+                for (const auto& property : properties->GetMap())                
+                {
+                    const YamlNodePtr enumRef = property.second->Find(kDatatypeKey );
+                    if (enumRef && enumRef->IsScalar() && enumRef->GetScalar() == kBooleanType)
+                    {
+                        propertiesWithBooleanType.insert(std::make_pair(property.first, enumRef->GetScalar()));
+                    }
+                }
+            }
+        }
+
+        for (const YamlNodePtr& item : dataInterfaces->GetSequence())
+        {
+            if (!item || !item->IsMap())
+            {
+                error = "Each collection item must be a mapping.";
+                return false;
+            }
+            std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : "<unknown>";            
+            for (const auto& property : item->GetMap())
+            {
+                auto it = propertiesWithBooleanType.find(property.first.c_str());
+                if (it != propertiesWithBooleanType.end())
+                {
+                    if (property.second->GetScalar() != "true" && property.second->GetScalar() != "false")
+                    {
+                        error = property.first + " = " + property.second->GetScalar() + 
+                                " but must be either 'true' or 'false'. (" + itemName + ")";
+                        return false;
+                    }
+                }
+            }
+        }        
+        return true;
+    }
+
+    
+    bool ValidateFunction::ValidateMandatory(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
+                                         const MetaModel& metaModel, std::string& error)
+    {
+        std::map<std::string, std::string> propertiesWithMandatory;
+        if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
+        {
+            const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
+            if (properties && properties->IsMap())
+            {
+                for (const auto& property : properties->GetMap())                
+                {
+                    const YamlNodePtr enumRef = property.second->Find(kMandatoryKey);
+                    if (enumRef && enumRef->IsScalar() && enumRef->GetScalar() == "true")
+                    {
+                        propertiesWithMandatory.insert(std::make_pair(property.first, enumRef->GetScalar()));
+                    }
+                }
+            }
+        }
+
+        for (const YamlNodePtr& item : dataInterfaces->GetSequence())
+        {
+            if (!item || !item->IsMap())
+            {
+                error = "Each collection item must be a mapping.";
+                return false;
+            }
+            std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : "<unknown>";
+            for (const auto& property : item->GetMap())
+            {
+                auto it = propertiesWithMandatory.find(property.first.c_str());
+                if (it != propertiesWithMandatory.end())
+                {
+                    if (property.second->GetScalar() == "" || property.second->GetScalar() == " ")
+                    {
+                        error = property.first + " is empty but property is mandatory. (" + itemName + ")";
+                        return false;
+                    }
                 }
             }
         }        
