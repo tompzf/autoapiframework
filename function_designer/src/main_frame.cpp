@@ -110,6 +110,10 @@ namespace acd
             {
                 return OneLine(value->ScalarOf(kExecutionResultTypeKey));
             }
+            if (key == kSupervisionKey && value->IsMap())
+            {
+                return OneLine(value->ScalarOf(kSupervisionRequiredKey));
+            }
             if (value->IsScalar()) 
             {
                 return OneLine(value->GetScalar());
@@ -910,11 +914,14 @@ namespace acd
         std::vector<std::pair<std::string, wxTextCtrl*>> controls;
         for (const std::string& field : fields)
         {
-            fieldSizer->Add(new wxStaticText(&dialog, wxID_ANY, ToWx(field)), 0,
+            const bool isSupervisionRequired =
+                interfaceType == kSchedulingInterfaceTypeKey && field == kSupervisionKey;
+            const std::string fieldName = isSupervisionRequired ? kSupervisionRequiredKey : field;
+            fieldSizer->Add(new wxStaticText(&dialog, wxID_ANY, ToWx(fieldName)), 0,
                             wxALIGN_CENTER_VERTICAL);
 
             wxTextCtrl* control = nullptr;
-            if (field == "description")
+            if (field == kDescriptionKey)
             {
                 control = new wxTextCtrl(
                     &dialog,
@@ -942,9 +949,14 @@ namespace acd
                 }
                 control->SetEditable(false);
             }
+            else if (isSupervisionRequired)
+            {
+                control->SetValue("false");
+                control->SetEditable(false);
+            }
 
             fieldSizer->Add(control, 1, wxEXPAND);
-            controls.emplace_back(field, control);
+            controls.emplace_back(fieldName, control);
         }
 
         sizer->Add(fieldSizer, 1, wxEXPAND | wxALL, 12);
@@ -965,6 +977,13 @@ namespace acd
                 YamlNodePtr result = YamlNode::MakeMap();
                 result->Set(kExecutionResultTypeKey, YamlNode::MakeScalar(ToStd(control.second->GetValue())));
                 item->Set(control.first, std::move(result));
+                continue;
+            }
+            if (interfaceType == kSchedulingInterfaceTypeKey && control.first == kSupervisionRequiredKey)
+            {
+                YamlNodePtr supervision = YamlNode::MakeMap();
+                supervision->Set(kSupervisionRequiredKey, YamlNode::MakeScalar(ToStd(control.second->GetValue())));
+                item->Set(kSupervisionKey, std::move(supervision));
                 continue;
             }
             if (interfaceType == kDataInterfaceTypeKey && control.first == kQualityCodeKey)
@@ -1059,7 +1078,7 @@ namespace acd
             fields->Add(new wxStaticText(&dialog, wxID_ANY, name), 0, wxALIGN_CENTER_VERTICAL);
 
             wxTextCtrl* control = nullptr;
-            if (name.CmpNoCase("description") == 0)
+            if (name.CmpNoCase(kDescriptionKey) == 0)
             {
                 control = new wxTextCtrl(
                     &dialog,
@@ -1079,7 +1098,10 @@ namespace acd
                 control->SetEditable(false);
             }
             fields->Add(control, 1, wxEXPAND);
-            editableValues.push_back({node, control});
+            if (!readOnly)
+            {
+                editableValues.push_back({node, control});
+            }
         };
 
         for (const auto& entry : entries[selectedRow]->GetMap())
@@ -1103,7 +1125,7 @@ namespace acd
                 {
                     const std::string fieldPath = entry.first + "." + nested.first;
                     const bool readOnly = collectionKey == FunctionSpecification::kSchedulingKey &&
-                        (fieldPath == kExecutionResultTypeFieldPath || fieldPath == kSupervisionRequiredKey);
+                        (fieldPath == kExecutionResultTypeFieldPath || fieldPath == kSupervisionRequiredPath);
                     addField(ToWx(fieldPath), nested.second, readOnly);
                 }
             }
@@ -1345,8 +1367,8 @@ namespace acd
         long row = 0;
         for (const auto& attribute : m_specification.GetAttributes()) 
         {
-            if (attribute.first == "name" || attribute.first == "version" ||
-                attribute.first == "description")
+            if (attribute.first == kNameKey || attribute.first == kVersionKey  ||
+                attribute.first == kDescriptionKey)
             {
                 continue;
             }

@@ -30,6 +30,7 @@ namespace acd
     static constexpr const char* kExpectedName = "Eclipse-autoapiframework-Metamodel";
     static constexpr const char* kMetaModelKey = "metamodel";
     static constexpr const char* kNameKey = "name";
+    static constexpr const char* kDescriptionKey = "description";    
     static constexpr const char* kVersionKey = "version";    
     static constexpr const char* kEnumsKey = "enums";
     static constexpr const char* kEnumRefKey = "enumRef";
@@ -49,8 +50,10 @@ namespace acd
     static constexpr const char* kExecutionResultTypeKey = "type";
     static constexpr const char* kExecutionResultKey = "executionResult";
 
-    static constexpr const char* kSupervisionRequiredKey = "supervision.required";
+    static constexpr const char* kSupervisionRequiredPath = "supervision.required";
     static constexpr const char* kExecutionResultTypeFieldPath = "executionResult.type";
+    static constexpr const char* kSupervisionKey = "supervision";
+    static constexpr const char* kSupervisionRequiredKey = "required";
     
     /// In-memory representation of autoapiframework_meta_model.yaml.
     class MetaModel 
