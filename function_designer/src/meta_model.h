@@ -41,6 +41,12 @@ namespace acd
     static constexpr const char* kErrorInterfaceTypeKey = "Error";
     static constexpr const char* kPropertiesKey = "properties";
 
+    static constexpr const char* kRuntimeCompanionKey = "runtimeCompanion";
+    static constexpr const char* kQualityCodeKey = "qualityCode";
+    static constexpr const char* kQualityNameKey = "name";
+    static constexpr const char* kDatatypeKey = "datatype";
+    static constexpr const char* kDataQualityKey = "DataQuality";
+
     /// In-memory representation of autoapiframework_meta_model.yaml.
     class MetaModel 
     {

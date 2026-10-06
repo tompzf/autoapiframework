@@ -16,6 +16,7 @@
  
 #include "main_frame.h"
 #include "json_signal_parser.h"
+#include "meta_model.h"
 #include "validate_function.h"
 
 #include <wx/config.h>
@@ -91,7 +92,16 @@ namespace acd
             {
                 return wxEmptyString;
             }
-            const YamlNodePtr value = entry->Find(key);
+            YamlNodePtr value = entry->Find(key);
+            if (!value && key == kQualityCodeKey)
+            {
+                const YamlNodePtr companion = entry->Find(kRuntimeCompanionKey);
+                value = companion ? companion->Find(key) : nullptr;
+                if (value && value->IsMap())
+                {
+                    return OneLine(value->ScalarOf(kQualityNameKey));
+                }
+            }
             if (!value) 
             {
                 return wxEmptyString;
@@ -801,6 +811,10 @@ namespace acd
             YamlNodePtr item = YamlNode::MakeMap();
             for (const std::string& field : fields)
             {
+                if (field == kQualityCodeKey)
+                {
+                    continue;
+                }
                 std::string value;
                 if (field == FunctionSpecification::kNamePathKey)
                 {
@@ -928,6 +942,21 @@ namespace acd
         YamlNodePtr item = YamlNode::MakeMap();
         for (const auto& control : controls)
         {
+            if (interfaceType == kDataInterfaceTypeKey && control.first == kQualityCodeKey)
+            {
+                const std::string name = ToStd(control.second->GetValue());
+                if (!name.empty())
+                {
+                    YamlNodePtr quality = YamlNode::MakeMap();
+                    quality->Set(kNameKey, YamlNode::MakeScalar(name));
+                    quality->Set(kDatatypeKey, YamlNode::MakeScalar(kEnumsKey));
+                    quality->Set(kEnumRefKey, YamlNode::MakeScalar(kDataQualityKey));
+                    YamlNodePtr companion = YamlNode::MakeMap();
+                    companion->Set(kQualityCodeKey , std::move(quality));
+                    item->Set(kRuntimeCompanionKey, std::move(companion));
+                }
+                continue;
+            }
             item->Set(control.first, YamlNode::MakeScalar(ToStd(control.second->GetValue())));
         }
         if (m_specification.AddCollectionItem(collectionKey, std::move(item)))
@@ -1026,7 +1055,20 @@ namespace acd
 
         for (const auto& entry : entries[selectedRow]->GetMap())
         {
-            if (entry.second && entry.second->IsMap())
+            if (entry.first == kRuntimeCompanionKey && entry.second && entry.second->IsMap())
+            {
+                for (const auto& companion : entry.second->GetMap())
+                {
+                    if (companion.second && companion.second->IsMap())
+                    {
+                        for (const auto& field : companion.second->GetMap())
+                        {
+                            addField(ToWx(companion.first + "." + field.first), field.second);
+                        }
+                    }
+                }
+            }
+            else if (entry.second && entry.second->IsMap())
             {
                 for (const auto& nested : entry.second->GetMap())
                 {
@@ -1185,7 +1227,9 @@ namespace acd
     {
         std::string title = "";
         wxMessageBox( title + "\nAPI creation is not implemented yet.\n" +
-                     "\nThe supervision node in scheduling\ncan only be edited in an external editor.",
+                     "\nScheduling:" +
+                     "\n- ExecutionResult node" +
+                     "\n- The supervision node in scheduling can only be edited in an external editor.",
                      kApplicationName,
                      wxOK | wxICON_INFORMATION, this);
     } 

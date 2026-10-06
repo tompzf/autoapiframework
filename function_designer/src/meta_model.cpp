@@ -147,6 +147,17 @@ namespace acd
                     columns.push_back(property.first);
                 }
             }
+            if (interfaceTypeName == kDataInterfaceTypeKey)
+            {
+                const YamlNodePtr companion = (*type)->Find(kRuntimeCompanionKey);
+                if (companion && companion->IsMap())
+                {
+                    for (const auto& property : companion->GetMap())
+                    {
+                        columns.push_back(property.first);
+                    }
+                }
+            }
         }
         for (const YamlNodePtr& entry : entries) 
         {
@@ -156,6 +167,10 @@ namespace acd
             }
             for (const auto& field : entry->GetMap()) 
             {
+                if (interfaceTypeName == kDataInterfaceTypeKey && field.first == kRuntimeCompanionKey)
+                {
+                    continue;
+                }
                 if (std::find(columns.begin(), columns.end(), field.first) == columns.end()) 
                 {
                     columns.push_back(field.first);

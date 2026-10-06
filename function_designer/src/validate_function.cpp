@@ -145,17 +145,12 @@ namespace acd
     bool ValidateFunction::ValidateProperties(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
                                             const MetaModel& metaModel, std::string& error)
     {
-        std::vector<std::string> validPropertyNamesFromMetaModel;
+        const std::vector<std::string> validPropertyNamesFromMetaModel = metaModel.ColumnsFor(interfaceTypeName, {});
+        YamlNodePtr companionDefinitions;
         if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
         {
-            const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
-            if (properties && properties->IsMap())
-            {
-                for (const auto& property : properties->GetMap())
-                {
-                    validPropertyNamesFromMetaModel.push_back(property.first);
-                }
-            }
+            companionDefinitions = interfaceTypeName == kDataInterfaceTypeKey
+                ? (*type)->Find("runtimeCompanion") : nullptr;
         }
 
         bool syntaxError = false;
@@ -169,6 +164,23 @@ namespace acd
             }
             for (const auto& property : item->GetMap())
             {
+                if (property.first == kRuntimeCompanionKey && companionDefinitions && companionDefinitions->IsMap())
+                {
+                    if (!property.second || !property.second->IsMap())
+                    {
+                        error = std::string(kRuntimeCompanionKey) + " must be a mapping.";
+                        return false;
+                    }
+                    for (const auto& companion : property.second->GetMap())
+                    {
+                        if (!companionDefinitions->Find(companion.first))
+                        {
+                            error = "Invalid " + std::string(kRuntimeCompanionKey) + ": " + companion.first;
+                            return false;
+                        }
+                    }
+                    continue;
+                }
                 auto it = std::find(validPropertyNamesFromMetaModel.begin(), 
                                     validPropertyNamesFromMetaModel.end(), property.first);
                 if (it == validPropertyNamesFromMetaModel.end())
