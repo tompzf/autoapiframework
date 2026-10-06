@@ -31,6 +31,8 @@ class wxWindow;
 
 namespace acd 
 {
+    /// @brief Expected strings within the VSS JSON file and the corresponding keys in
+    /// the autoapiframework function specification file if they do not match.        
     static constexpr const char* kCovesaPath = "path";
     static constexpr const char* kCovesaType = "type";
     static constexpr const char* kMetaModelDataType = "dataType";

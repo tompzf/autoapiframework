@@ -24,6 +24,9 @@ inspecting, validating, and writing Eclipse autoapiframework function
 specifications. Function specifications use the ``.afs`` extension and YAML
 syntax.
 
+.. figure:: figures/function_designer_window.png
+   :alt: function specification window   
+
 Dependencies
 ------------
 

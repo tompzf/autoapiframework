@@ -140,3 +140,26 @@ The ``examples`` directory contains ready-to-use specifications, including:
 
 These files can be opened to explore data interfaces, parameters, scheduling,
 execution supervision, and function-specific error interfaces.
+
+Application Menu Overview
+-------------------------
+
+.. figure:: figures/settings.png
+   :alt: settings window   
+
+The function designer is self explaining and provides an intuitive interface for managing function specifications.
+It only requires a meta model file to be present beside the executable. If the setting is changed a restart is required.
+
+If you select the folder of the cloned vspec repository, the function designer will be able to get the version information from it.
+
+.. figure:: figures/menu_file.png
+   :alt: file menu   
+
+As said before the function designer is self-explanatory. This applies particularly to the File menu.
+
+.. figure:: figures/menu_help.png
+   :alt: help menu    
+
+Beside the help you also can detect if the covesa tools are installed correctly. This information is useful for troubleshooting and ensuring that all necessary dependencies are in place.
+
+Below the Quick tips are some useful hints for example what is not yet implemented and may need other tooling to be completed.

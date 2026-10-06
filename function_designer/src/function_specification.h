@@ -33,6 +33,7 @@ namespace acd
     class FunctionSpecification 
     {
     public:
+        /// @brief Expected strings within the autoapiframework function specification file
         static constexpr const char* kRootKey = "functionSpecification";
         static constexpr const char* kNameKey = "name";
         static constexpr const char* kVersionKey = "version";

@@ -11,8 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # Contributors:
-#   Saran Gundlapalli
-#   Thomas Pfleiderer
+#   Saran Gundlapalli - Error handling added
 # *******************************************************************************
 
 metamodel:

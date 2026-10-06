@@ -26,6 +26,7 @@
 
 namespace acd 
 {
+    /// @brief Expected strings within the the autoapiframework_meta_model.yaml file.
     static constexpr const char* kExpectedName = "Eclipse-autoapiframework-Metamodel";
     static constexpr const char* kMetaModelKey = "metamodel";
     static constexpr const char* kNameKey = "name";
@@ -46,6 +47,7 @@ namespace acd
     public:
         /// Loads the meta model from @p path. Returns false and fills @p error on failure.
         bool Load(const std::string& path, std::string& error);
+        std::vector<std::string> GetAllProperties();
         bool IsLoaded() const { return m_loaded; }
         bool FindRequiredAttributesAndInterfaces(const YamlNodePtr model, 
                                                  const std::string& path, std::string& error);
