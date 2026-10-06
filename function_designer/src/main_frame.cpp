@@ -940,6 +940,7 @@ namespace acd
                         control->SetValue(ToWx(result->ScalarOf(kEnumRefKey)));
                     }
                 }
+                control->SetEditable(false);
             }
 
             fieldSizer->Add(control, 1, wxEXPAND);
@@ -1048,7 +1049,7 @@ namespace acd
 
         const auto addField =
             [&fields, &editableValues, &dialog]
-            (const wxString& name, const YamlNodePtr& node)
+            (const wxString& name, const YamlNodePtr& node, bool readOnly)
         {
             if (!node || !node->IsScalar())
             {
@@ -1073,6 +1074,10 @@ namespace acd
                 control = new wxTextCtrl(&dialog, wxID_ANY, ToWx(node->GetScalar()));
             }
 
+            if (readOnly)
+            {
+                control->SetEditable(false);
+            }
             fields->Add(control, 1, wxEXPAND);
             editableValues.push_back({node, control});
         };
@@ -1087,7 +1092,7 @@ namespace acd
                     {
                         for (const auto& field : companion.second->GetMap())
                         {
-                            addField(ToWx(companion.first + "." + field.first), field.second);
+                            addField(ToWx(companion.first + "." + field.first), field.second, false);
                         }
                     }
                 }
@@ -1096,12 +1101,15 @@ namespace acd
             {
                 for (const auto& nested : entry.second->GetMap())
                 {
-                    addField(ToWx(entry.first + "." + nested.first), nested.second);
+                    const std::string fieldPath = entry.first + "." + nested.first;
+                    const bool readOnly = collectionKey == FunctionSpecification::kSchedulingKey &&
+                        (fieldPath == kExecutionResultTypeFieldPath || fieldPath == kSupervisionRequiredKey);
+                    addField(ToWx(fieldPath), nested.second, readOnly);
                 }
             }
             else
             {
-                addField(ToWx(entry.first), entry.second);
+                addField(ToWx(entry.first), entry.second, false);
             }
         }
 

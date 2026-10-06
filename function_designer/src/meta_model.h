@@ -49,6 +49,9 @@ namespace acd
     static constexpr const char* kExecutionResultTypeKey = "type";
     static constexpr const char* kExecutionResultKey = "executionResult";
 
+    static constexpr const char* kSupervisionRequiredKey = "supervision.required";
+    static constexpr const char* kExecutionResultTypeFieldPath = "executionResult.type";
+    
     /// In-memory representation of autoapiframework_meta_model.yaml.
     class MetaModel 
     {
