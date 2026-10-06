@@ -106,6 +106,10 @@ namespace acd
             {
                 return wxEmptyString;
             }
+            if (key == kExecutionResultKey && value->IsMap())
+            {
+                return OneLine(value->ScalarOf(kExecutionResultTypeKey));
+            }
             if (value->IsScalar()) 
             {
                 return OneLine(value->GetScalar());
@@ -925,6 +929,19 @@ namespace acd
                 control = new wxTextCtrl(&dialog, wxID_ANY);
             }
 
+            if (interfaceType == kSchedulingInterfaceTypeKey && field == kExecutionResultKey)
+            {
+                if (const YamlNodePtr* type = m_metaModel.FindInterfaceType(interfaceType))
+                {
+                    const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
+                    const YamlNodePtr result = properties ? properties->Find(field) : nullptr;
+                    if (result)
+                    {
+                        control->SetValue(ToWx(result->ScalarOf(kEnumRefKey)));
+                    }
+                }
+            }
+
             fieldSizer->Add(control, 1, wxEXPAND);
             controls.emplace_back(field, control);
         }
@@ -942,6 +959,13 @@ namespace acd
         YamlNodePtr item = YamlNode::MakeMap();
         for (const auto& control : controls)
         {
+            if (interfaceType == kSchedulingInterfaceTypeKey && control.first == kExecutionResultKey)
+            {
+                YamlNodePtr result = YamlNode::MakeMap();
+                result->Set(kExecutionResultTypeKey, YamlNode::MakeScalar(ToStd(control.second->GetValue())));
+                item->Set(control.first, std::move(result));
+                continue;
+            }
             if (interfaceType == kDataInterfaceTypeKey && control.first == kQualityCodeKey)
             {
                 const std::string name = ToStd(control.second->GetValue());
@@ -1227,9 +1251,9 @@ namespace acd
     {
         std::string title = "";
         wxMessageBox( title + "\nAPI creation is not implemented yet.\n" +
-                     "\nScheduling:" +
-                     "\n- ExecutionResult node" +
-                     "\n- The supervision node in scheduling can only be edited in an external editor.",
+                     "\nThe supervision node in scheduling can only be edited in an external editor." +
+                     "\n" +
+                     "\nThe syntax check is minimal. To edit the correct settings a close look at the Meta Model Specification is required.",
                      kApplicationName,
                      wxOK | wxICON_INFORMATION, this);
     } 

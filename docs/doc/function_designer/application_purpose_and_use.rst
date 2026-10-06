@@ -42,7 +42,7 @@ The application works with two related files:
 The current example meta model is
 ``examples/autoapiframework_metadata_V04.yaml``.
 
-  
+
 
 Main Views
 ----------
@@ -97,6 +97,19 @@ Typical Workflow
 The editor keeps the parsed YAML tree in memory. When the file is written, key
 order, block-style layout, folded descriptions, and quoting are preserved as
 far as supported by the YAML writer.
+
+  
+Limitations
+-----------
+
+This is a work in progress, and some features may not be fully implemented yet. Users should be aware that certain functionalities might require additional tooling or manual intervention to complete.
+
+For example the **supervision node** in ``scheduling`` can only be edited in an external editor.
+
+.. attention::
+
+   The syntax check is limited for this Pre-Version. To create a valid specification file a deep look into the meta model specification is required.
+   
 
 Working with VSS Signals
 ------------------------
@@ -163,3 +176,4 @@ As said before the function designer is self-explanatory. This applies particula
 Beside the help you also can detect if the covesa tools are installed correctly. This information is useful for troubleshooting and ensuring that all necessary dependencies are in place.
 
 Below the Quick tips are some useful hints for example what is not yet implemented and may need other tooling to be completed.
+

@@ -46,6 +46,8 @@ namespace acd
     static constexpr const char* kQualityNameKey = "name";
     static constexpr const char* kDatatypeKey = "datatype";
     static constexpr const char* kDataQualityKey = "DataQuality";
+    static constexpr const char* kExecutionResultTypeKey = "type";
+    static constexpr const char* kExecutionResultKey = "executionResult";
 
     /// In-memory representation of autoapiframework_meta_model.yaml.
     class MetaModel 
