@@ -1179,7 +1179,7 @@ namespace acd
         {
             if (!doNotShowOnSuccess)
             {
-                wxMessageBox(contextMessage + "Minimal syntax check, no syntax errors found.",
+                wxMessageBox(contextMessage + "No syntax errors found.",
                             kApplicationName,
                             wxOK | wxICON_INFORMATION, this);
             }
