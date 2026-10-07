@@ -250,6 +250,7 @@ namespace acd
                 error = "Each collection item must be a mapping.";
                 return false;
             }
+            std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : "<unknown>";                   
             for (const auto& property : item->GetMap())
             {
                 auto it = propertiesWithEnumRef.find(property.first.c_str());
@@ -257,6 +258,7 @@ namespace acd
                 {
                     if (!metaModel.ValidateEnumValue(property.first, it->second, property.second->GetScalar(), error))
                     {
+                        error +=  "\n(" + itemName + ")";
                         return false;
                     }  
                 }
