@@ -143,7 +143,7 @@ namespace acd
         {
             return false;
         }  
-        if (!ValidateType(dataInterfaces, interfaceTypeName, metaModel, error))
+        if (!ValidateType(dataInterfaces, error))
         {
             return false;
         }
@@ -356,42 +356,62 @@ namespace acd
         return true;
     }
 
-    bool ValidateFunction::ValidateType(const YamlNodePtr& /*dataInterfaces*/, const std::string& interfaceTypeName,
-                                         const MetaModel& metaModel, std::string& /*error*/)
+    bool ValidateFunction::ValidateType(const YamlNodePtr& dataInterfaces, std::string& error)
     {
-        std::string propertyType = "float";
-        auto propertiesOfDataType = GetAllPropertiesOfType(interfaceTypeName, metaModel, propertyType);
-        return true;
+        for (const YamlNodePtr& item : dataInterfaces->GetSequence())
+        {
+            if (!item || !item->IsMap())
+            {
+                error = "Each collection item must be a mapping.";
+                return false;
+            }
+            std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : "<unknown>";  
+            std::string itemMin = item->Find(FunctionSpecification::kMinKey) ? item->Find(FunctionSpecification::kMinKey)->GetScalar() : "";
+            std::string itemMax = item->Find(FunctionSpecification::kMaxKey) ? item->Find(FunctionSpecification::kMaxKey)->GetScalar() : "";
+            std::string itemDefault = item->Find(FunctionSpecification::kDefaultValueKey) ? item->Find(FunctionSpecification::kDefaultValueKey)->GetScalar() : "";                        
+            std::string itemDataType = item->Find(FunctionSpecification::kDataTypeKey) ? item->Find(FunctionSpecification::kDataTypeKey)->GetScalar() : "";
+            if (itemDataType == FunctionSpecification::kFloatDataType)
+            {                
+                if (!ValidateFloatType(itemName, itemDefault, itemMin, itemMax, error))
+                {
+                    return false;
+                }   
+            }                             
+        }  
 
-        // std::string msg;
-        // for (const auto& property : propertiesOfDataType)
-        // {
-        //     msg += property.first + " = " + property.second + "\n";
-        // }
-        // error = msg;
-        // return false;
+        return true;
     }
 
-    std::map<std::string, std::string> ValidateFunction::GetAllPropertiesOfType(const std::string& interfaceTypeName,
-                                         const MetaModel& metaModel, std::string& propertyType)
+    bool ValidateFunction::ValidateFloatType(const std::string& itemName, const std::string& defaultValue,
+                         const std::string& min, const std::string& max, std::string& error )
     {
-        std::map<std::string, std::string> propertiesOfDataType;
-        if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
+        if (IsFloat(defaultValue) && IsFloat(min) && IsFloat(max))
         {
-            const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
-            if (properties && properties->IsMap())
-            {
-                for (const auto& property : properties->GetMap())                
-                {
-                    const YamlNodePtr propertyTypeNode = property.second->Find(kDatatypeKey );
-                    if (propertyTypeNode && propertyTypeNode->IsScalar() && propertyTypeNode->GetScalar() == propertyType)
-                    {
-                        propertiesOfDataType.insert(std::make_pair(property.first, propertyTypeNode->GetScalar()));
-                    }
-                }
-            }
+            return true;
         }
-        return propertiesOfDataType;
+
+        error = itemName + ", all value must be float: "  + min + ",  " + max + ",  " + defaultValue;        
+        return false;
+    }
+
+    bool ValidateFunction::IsFloat(const std::string& str)
+    {
+        if (str.empty() || str == "null")
+        {
+            return true;
+        }
+
+        try
+        {
+            size_t pos;
+            std::stof(str, &pos);
+            
+            return pos == str.length(); // Ensure the entire string was parsed
+        }
+        catch (...)
+        {
+            return false;
+        }
     }
 
 } // namespace acd

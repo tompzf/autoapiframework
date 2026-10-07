@@ -40,8 +40,9 @@ namespace acd
         bool ValidateEnums(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);        
         bool ValidateBoolean(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);        
         bool ValidateMandatory(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);        
-        bool ValidateType(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);        
-        std::map<std::string, std::string> GetAllPropertiesOfType(const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& propertyType);
+        bool ValidateType(const YamlNodePtr& dataInterfaces, std::string& error);        
+        bool ValidateFloatType(const std::string& itemName, const std::string& defaultValue, const std::string& min, const std::string& max, std::string& error );
+        bool IsFloat(const std::string& str);
     };
 } // namespace acd
 

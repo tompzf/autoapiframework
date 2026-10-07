@@ -47,6 +47,12 @@ namespace acd
         static constexpr const char* kNamePathKey = "name";
         static constexpr const char* kFunctionNameKey = "functionName";
 
+        static constexpr const char* kMinKey = "min";
+        static constexpr const char* kMaxKey = "max";
+        static constexpr const char* kDefaultValueKey = "defaultValue";
+        static constexpr const char* kDataTypeKey = "dataType";
+        static constexpr const char* kFloatDataType = "float";
+
         bool Load(const std::string& expectedVersion, const std::string& path, std::string& error);
         /// Creates a fresh, empty function specification referencing the given meta model.
         void New(const std::string& metaModelName, const std::string& metaModelVersion);
