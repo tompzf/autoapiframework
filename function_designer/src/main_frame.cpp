@@ -45,6 +45,7 @@ namespace acd
         constexpr const char* kMetaModelDirectoryConfigKey = "/Paths/MetaModelDirectory";
         constexpr const char* kVspecDirectoryConfigKey = "/Paths/VSpecDirectory";
         constexpr const char* kCreateApiLanguageConfigKey = "/CreateAPI/Language";
+        constexpr const char* kDisableSyntaxCheckBeforeSavingConfigKey = "/Settings/DisableSyntaxCheckBeforeSaving";
         constexpr const char* kLogoFileName = "autoapiframework_logo.png";
         constexpr const char* kLogoFileNameLarge = "autoapiframework_logo_large.png";		
         constexpr const char* kIconFileName = "autoapiframework_icon.png";
@@ -56,6 +57,13 @@ namespace acd
         wxString ToWx(const std::string& text) { return wxString::FromUTF8(text.c_str()); }
 
         std::string ToStd(const wxString& text) { return std::string(text.utf8_str()); }
+
+        bool IsSyntaxCheckDisabledBeforeSaving()
+        {
+            bool disabled = false;
+            wxConfigBase::Get()->Read(kDisableSyntaxCheckBeforeSavingConfigKey, &disabled, false);
+            return disabled;
+        }
 
         wxString FindRuntimeFile(const char* fileName)
         {
@@ -500,7 +508,7 @@ namespace acd
         {
             return;
         }
-        if (!SyntaxCheckIsOK(true, "Not saved! "))
+        if (!IsSyntaxCheckDisabledBeforeSaving() && !SyntaxCheckIsOK(true, "Not saved! "))
         {
             return;
         }
@@ -530,7 +538,7 @@ namespace acd
                         wxOK | wxICON_INFORMATION, this);
             return;
         }
-        if (!SyntaxCheckIsOK(true))        
+        if (!IsSyntaxCheckDisabledBeforeSaving() && !SyntaxCheckIsOK(true))
         {
             return;
         }
@@ -612,8 +620,10 @@ namespace acd
         wxConfigBase* config = wxConfigBase::Get();
         wxString metaModelFile = kMetaModelFileName;
         wxString vspecDirectory;
+        bool disableSyntaxCheckBeforeSaving = false;
         config->Read(kMetaModelFileConfigKey, &metaModelFile);
         config->Read(kVspecDirectoryConfigKey, &vspecDirectory);
+        config->Read(kDisableSyntaxCheckBeforeSavingConfigKey, &disableSyntaxCheckBeforeSaving, false);
 
         MetaModel metaModel;
         std::string metaModelVersion = "unknown";
@@ -631,6 +641,9 @@ namespace acd
 
         wxTextCtrl* metaModelControl = new wxTextCtrl(&dialog, wxID_ANY, metaModelFile);
         wxTextCtrl* vspecControl = new wxTextCtrl(&dialog, wxID_ANY, vspecDirectory);
+        wxCheckBox* disableSyntaxCheckControl = new wxCheckBox(
+            &dialog, wxID_ANY, "Syntax check disabled before saving the file.");
+        disableSyntaxCheckControl->SetValue(disableSyntaxCheckBeforeSaving);
         wxStaticText* metaModelVersionLabel = new wxStaticText(&dialog, wxID_ANY, metaModelVersion);    
         
         wxString vspecVersion = ToWx(GetGitTagAndVersion("VSS version: ", vspecDirectory));
@@ -702,6 +715,7 @@ namespace acd
                  });
 
         dialogSizer->Add(fields, 1, wxEXPAND | wxALL, 12);
+        dialogSizer->Add(disableSyntaxCheckControl, 0, wxLEFT | wxRIGHT | wxBOTTOM, 12);
         dialogSizer->Add(dialog.CreateSeparatedButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 8);
         dialog.SetSizerAndFit(dialogSizer);
         dialog.SetMinSize(wxSize(700, -1));
@@ -713,6 +727,7 @@ namespace acd
 
         config->Write(kMetaModelFileConfigKey, metaModelControl->GetValue());
         config->Write(kVspecDirectoryConfigKey, vspecControl->GetValue());
+        config->Write(kDisableSyntaxCheckBeforeSavingConfigKey, disableSyntaxCheckControl->GetValue());
         config->Flush();
         SetStatusText("Global settings updated", 0);
         if (metaModelFile.CompareTo(metaModelControl->GetValue()) != 0)

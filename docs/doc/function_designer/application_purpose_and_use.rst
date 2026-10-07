@@ -160,20 +160,22 @@ Application Menu Overview
 .. figure:: figures/settings.png
    :alt: settings window   
 
-The function designer is self explaining and provides an intuitive interface for managing function specifications.
-It only requires a meta model file to be present beside the executable. If the setting is changed a restart is required.
+The Function Designer provides an intuitive interface for creating and managing function specifications. To operate correctly, it requires a meta model file to be located in the same directory as the executable. If this setting is modified, the application must be restarted for the change to take effect.
 
-If you select the folder of the cloned vspec repository, the function designer will be able to get the version information from it.
+If you select the root folder of the cloned VSS/VSpec repository, the Function Designer can automatically retrieve version information from the repository.
+
+.. tip::
+
+   Before saving the specification to disk, a syntax check is performed. To bypass the syntax check, disable it in the settings.
 
 .. figure:: figures/menu_file.png
    :alt: file menu   
 
-As said before the function designer is self-explanatory. This applies particularly to the File menu.
+The Function Designer provides an intuitive user interface. In particular, the functions available in the File menu should require little additional explanation.
 
 .. figure:: figures/menu_help.png
    :alt: help menu    
 
-Beside the help you also can detect if the covesa tools are installed correctly. This information is useful for troubleshooting and ensuring that all necessary dependencies are in place.
+In addition to the help documentation, the application can check whether the COVESA tools are installed correctly. This information is useful for troubleshooting and for verifying that all required dependencies are in place.
 
-Below the Quick tips are some useful hints for example what is not yet implemented and may need other tooling to be completed.
-
+The **Quick Tips** section also provides useful hints, including information about features that are not yet implemented and may require additional tools to complete the task.
