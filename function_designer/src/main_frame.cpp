@@ -1295,10 +1295,9 @@ namespace acd
     void MainFrame::OnQuickTips(wxCommandEvent&)
     {
         std::string title = "";
-        wxMessageBox( title + "\nAPI creation is not implemented yet.\n" +
-                     "\nThe supervision node in scheduling can only be edited in an external editor." +
-                     "\n" +
-                     "\nThe syntax check is minimal. To edit the correct settings a close look at the Meta Model Specification is required.",
+        wxMessageBox( title + "\nThe automatic syntax check performed before saving a file to disk can be disabled.\n" +
+                     "\nAPI creation is not implemented yet.\n" +
+                     "\nThe supervision node in scheduling can only be edited in an external editor.",
                      kApplicationName,
                      wxOK | wxICON_INFORMATION, this);
     } 
