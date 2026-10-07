@@ -52,6 +52,13 @@ namespace acd
         static constexpr const char* kDefaultValueKey = "defaultValue";
         static constexpr const char* kDataTypeKey = "dataType";
         static constexpr const char* kFloatDataType = "float";
+        static constexpr const char* kDoubleDataType = "double";
+        static constexpr const char* kInt8DataType = "int8";        
+        static constexpr const char* kInt16DataType = "int16";        
+        static constexpr const char* kInt32DataType = "int32";        
+        static constexpr const char* kUint8DataType = "uint8";        
+        static constexpr const char* kUint16DataType = "uint16";        
+        static constexpr const char* kUint32DataType = "uint32";        
 
         bool Load(const std::string& expectedVersion, const std::string& path, std::string& error);
         /// Creates a fresh, empty function specification referencing the given meta model.

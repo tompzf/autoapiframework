@@ -376,7 +376,23 @@ namespace acd
                 {
                     return false;
                 }   
-            }                             
+            }   
+            if ((itemDataType == FunctionSpecification::kInt8DataType ) || (itemDataType == FunctionSpecification::kUint16DataType ) 
+               || (itemDataType == FunctionSpecification::kUint32DataType ) || (itemDataType == FunctionSpecification::kInt8DataType ) 
+               || (itemDataType == FunctionSpecification::kInt16DataType ) || (itemDataType == FunctionSpecification::kInt32DataType ))
+            {                
+                if (!ValidateintegerType(itemName, itemDefault, itemMin, itemMax, error))
+                {
+                    return false;
+                }   
+            } 
+            if (itemDataType == FunctionSpecification::kDoubleDataType) 
+            {                
+                if (!ValidateDoubleType(itemName, itemDefault, itemMin, itemMax, error))
+                {
+                    return false;
+                }   
+            }                                                     
         }  
 
         return true;
@@ -390,7 +406,7 @@ namespace acd
             return true;
         }
 
-        error = itemName + ", all value must be float: "  + min + ",  " + max + ",  " + defaultValue;        
+        error = itemName + ", all values must be float: "  + min + ",  " + max + ",  " + defaultValue;        
         return false;
     }
 
@@ -413,5 +429,69 @@ namespace acd
             return false;
         }
     }
+
+    bool ValidateFunction::ValidateintegerType(const std::string& itemName, const std::string& defaultValue,
+                         const std::string& min, const std::string& max, std::string& error )
+    {
+        if (Isinteger(defaultValue) && Isinteger(min) && Isinteger(max))
+        {
+            return true;
+        }
+
+        error = itemName + ", all values must be integer: "  + min + ",  " + max + ",  " + defaultValue;        
+        return false;
+    }    
+    
+    bool ValidateFunction::Isinteger(const std::string& str)
+    {
+        if (str.empty() || str == "null")
+        {
+            return true;
+        }
+
+        try
+        {
+            size_t pos;
+            std::stoi(str, &pos);
+            
+            return pos == str.length(); // Ensure the entire string was parsed
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }   
+
+    bool ValidateFunction::ValidateDoubleType(const std::string& itemName, const std::string& defaultValue,
+                         const std::string& min, const std::string& max, std::string& error )
+    {
+        if (IsDouble(defaultValue) && IsDouble(min) && IsDouble(max))
+        {
+            return true;
+        }
+
+        error = itemName + ", all values must be double: "  + min + ",  " + max + ",  " + defaultValue;        
+        return false;
+    }    
+    
+    bool ValidateFunction::IsDouble(const std::string& str)
+    {
+        if (str.empty() || str == "null")
+        {
+            return true;
+        }
+
+        try
+        {
+            size_t pos;
+            std::stod(str, &pos);
+            
+            return pos == str.length(); // Ensure the entire string was parsed
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }      
 
 } // namespace acd
