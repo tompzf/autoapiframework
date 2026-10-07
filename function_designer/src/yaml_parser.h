@@ -13,14 +13,14 @@
  * Contributors:
  *   Thomas Pfleiderer - initial API and implementation
  ********************************************************************************/
-#ifndef ACD_YAML_PARSER_H
-#define ACD_YAML_PARSER_H
+#ifndef AFD_YAML_PARSER_H
+#define AFD_YAML_PARSER_H
 
 #include <string>
 
 #include "yaml_node.h"
 
-namespace acd 
+namespace afd 
 {
     /// Parser for the block-style YAML subset used by the autoapiframework meta
     /// model and function specification (.afs) files.
@@ -40,6 +40,6 @@ namespace acd
         std::string GetFileContent(const std::string& path);        
     };
 
-} // namespace acd
+} // namespace afd
 
-#endif // ACD_YAML_PARSER_H
+#endif // AFD_YAML_PARSER_H

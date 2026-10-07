@@ -20,7 +20,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace acd 
+namespace afd 
 {
     namespace 
     {
@@ -289,4 +289,4 @@ namespace acd
         return true;
     }
 
-} // namespace acd
+} // namespace afd

@@ -17,14 +17,14 @@
 
 #include "main_frame.h"
 
-namespace acd 
+namespace afd 
 {
     class DesignerApp : public wxApp 
     {
     public:
         bool OnInit() override 
         {
-            SetAppName(acd::kApplicationName);
+            SetAppName(afd::kApplicationName);
             wxInitAllImageHandlers();
             MainFrame* frame = new MainFrame();
             frame->Show(true);
@@ -32,6 +32,6 @@ namespace acd
         }
     };
 
-} // namespace acd
+} // namespace afd
 
-wxIMPLEMENT_APP(acd::DesignerApp);
+wxIMPLEMENT_APP(afd::DesignerApp);

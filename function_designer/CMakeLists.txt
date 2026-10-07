@@ -97,7 +97,7 @@ add_executable(AutoAPIFunctionDesigner WIN32
 target_include_directories(AutoAPIFunctionDesigner PRIVATE src)
 target_link_libraries(AutoAPIFunctionDesigner PRIVATE ${ACD_WX_LIBRARIES})
 target_compile_definitions(AutoAPIFunctionDesigner PRIVATE
-    ACD_VSPEC_EXECUTABLE="${VSPEC_EXECUTABLE}")
+    AFD_VSPEC_EXECUTABLE="${VSPEC_EXECUTABLE}")
 
 if(MSVC)
     target_compile_options(AutoAPIFunctionDesigner PRIVATE /W4 /WX /utf-8)

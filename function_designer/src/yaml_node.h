@@ -14,15 +14,15 @@
  *   Thomas Pfleiderer - initial API and implementation
  ********************************************************************************/
  
-#ifndef ACD_YAML_NODE_H
-#define ACD_YAML_NODE_H
+#ifndef AFD_YAML_NODE_H
+#define AFD_YAML_NODE_H
 
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-namespace acd 
+namespace afd 
 {
     /// Scalar presentation style, kept so that a parsed file can be written back
     /// in the very same layout it was read in.
@@ -81,6 +81,6 @@ namespace acd
         std::vector<YamlNodePtr> m_sequence;
     };
 
-} // namespace acd
+} // namespace afd
 
-#endif // ACD_YAML_NODE_H
+#endif // AFD_YAML_NODE_H

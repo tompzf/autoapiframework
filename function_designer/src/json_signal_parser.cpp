@@ -27,7 +27,7 @@
 #include <cctype>
 #include <cstdlib>
 
-namespace acd 
+namespace afd 
 {
     namespace 
     {
@@ -561,4 +561,4 @@ namespace acd
         }
     }
 
-} // namespace acd
+} // namespace afd

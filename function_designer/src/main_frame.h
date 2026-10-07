@@ -14,8 +14,8 @@
  *   Thomas Pfleiderer - initial API and implementation
  ********************************************************************************/
  
-#ifndef ACD_MAIN_FRAME_H
-#define ACD_MAIN_FRAME_H
+#ifndef AFD_MAIN_FRAME_H
+#define AFD_MAIN_FRAME_H
 
 #include <wx/wx.h>
 
@@ -27,7 +27,7 @@
 class wxListCtrl;
 class wxNotebook;
 
-namespace acd 
+namespace afd 
 {
     static constexpr const char* kApplicationName = "AutoAPI Function Designer - Preview 0.1";
 
@@ -135,6 +135,6 @@ namespace acd
         wxDECLARE_EVENT_TABLE();
     };
 
-} // namespace acd
+} // namespace afd
 
-#endif // ACD_MAIN_FRAME_H
+#endif // AFD_MAIN_FRAME_H

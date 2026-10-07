@@ -16,7 +16,7 @@
  
 #include "yaml_node.h"
 
-namespace acd 
+namespace afd 
 {
     YamlNodePtr YamlNode::MakeScalar(std::string value, ScalarStyle style) 
     {
@@ -88,4 +88,4 @@ namespace acd
         return std::string();
     }
 
-} // namespace acd
+} // namespace afd

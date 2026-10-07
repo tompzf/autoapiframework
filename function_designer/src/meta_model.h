@@ -14,8 +14,8 @@
  *   Thomas Pfleiderer - initial API and implementation
  ********************************************************************************/
  
-#ifndef ACD_META_MODEL_H
-#define ACD_META_MODEL_H
+#ifndef AFD_META_MODEL_H
+#define AFD_META_MODEL_H
 
 #include <map>
 #include <string>
@@ -24,7 +24,7 @@
 
 #include "yaml_node.h"
 
-namespace acd 
+namespace afd 
 {
     /// @brief Expected strings within the the autoapiframework_meta_model.yaml file.
     static constexpr const char* kExpectedName = "Eclipse-autoapiframework-Metamodel";
@@ -100,6 +100,6 @@ namespace acd
         void Reset();
     };
 
-} // namespace acd
+} // namespace afd
 
-#endif // ACD_META_MODEL_H
+#endif // AFD_META_MODEL_H

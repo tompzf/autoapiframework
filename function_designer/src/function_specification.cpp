@@ -19,7 +19,7 @@
 #include "yaml_parser.h"
 #include "yaml_writer.h"
 
-namespace acd 
+namespace afd 
 {
     bool FunctionSpecification::Load(const std::string& expectedVersion, const std::string& path, std::string& error) 
     {
@@ -253,4 +253,4 @@ namespace acd
         }
         return node->RemoveAt(index);
     }
-} // namespace acd
+} // namespace afd

@@ -14,8 +14,8 @@
  *   Thomas Pfleiderer - initial API and implementation
  ********************************************************************************/
  
-#ifndef ACD_FUNCTION_SPECIFICATION_H
-#define ACD_FUNCTION_SPECIFICATION_H
+#ifndef AFD_FUNCTION_SPECIFICATION_H
+#define AFD_FUNCTION_SPECIFICATION_H
 
 #include <cstddef>
 #include <string>
@@ -24,7 +24,7 @@
 
 #include "yaml_node.h"
 
-namespace acd 
+namespace afd 
 {
     /// In-memory representation of a function specification (*.afs, YAML content).
     ///
@@ -58,7 +58,10 @@ namespace acd
         static constexpr const char* kInt32DataType = "int32";        
         static constexpr const char* kUint8DataType = "uint8";        
         static constexpr const char* kUint16DataType = "uint16";        
-        static constexpr const char* kUint32DataType = "uint32";        
+        static constexpr const char* kUint32DataType = "uint32";   
+        static constexpr const char* kPrecisionKey = "precision";
+        static constexpr const char* kMinUpdatePeriodMsKey = "minUpdatePeriodMs";
+        static constexpr const char* kCycleTimeMsKey = "cycleTimeMs";
 
         bool Load(const std::string& expectedVersion, const std::string& path, std::string& error);
         /// Creates a fresh, empty function specification referencing the given meta model.
@@ -97,6 +100,6 @@ namespace acd
         std::string m_sourcePath;
     };
 
-} // namespace acd
+} // namespace afd
 
-#endif // ACD_FUNCTION_SPECIFICATION_H
+#endif // AFD_FUNCTION_SPECIFICATION_H

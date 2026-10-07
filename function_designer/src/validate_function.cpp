@@ -24,7 +24,7 @@
 
 #include "yaml_parser.h"
 
-namespace acd 
+namespace afd 
 {
     bool ValidateFunction::SyntaxCheckIsOK(const MetaModel& metaModel, const std::string& content, std::string& error)
     {
@@ -86,7 +86,7 @@ namespace acd
         {
             return false;
         }
-        if (!ValidateProperties(dataInterfaces, acd::kDataInterfaceTypeKey, metaModel, error))
+        if (!ValidateProperties(dataInterfaces, afd::kDataInterfaceTypeKey, metaModel, error))
         {
             return false;
         }       
@@ -96,7 +96,7 @@ namespace acd
         {
             return false;
         }
-        if (!ValidateProperties(parameters, acd::kParameterInterfaceTypeKey, metaModel, error))
+        if (!ValidateProperties(parameters, afd::kParameterInterfaceTypeKey, metaModel, error))
         {
             return false;
         }                          
@@ -115,7 +115,7 @@ namespace acd
                 return false;
             }
 
-            if (!ValidateProperties(parameters, acd::kParameterInterfaceTypeKey, metaModel, error))
+            if (!ValidateProperties(parameters, afd::kParameterInterfaceTypeKey, metaModel, error))
             {
                 return false;
             }
@@ -392,7 +392,26 @@ namespace acd
                 {
                     return false;
                 }   
-            }                                                     
+            }
+
+            std::string itemPrecision = item->Find(FunctionSpecification::kPrecisionKey) ? item->Find(FunctionSpecification::kPrecisionKey)->GetScalar() : "";
+            if (!Isinteger(itemPrecision))
+            {
+                error = itemName + ", " + FunctionSpecification::kPrecisionKey + " must be integer: "  + itemPrecision;        
+                return false;
+            }
+            std::string itemMinUpdatePeriodMs = item->Find(FunctionSpecification::kMinUpdatePeriodMsKey) ? item->Find(FunctionSpecification::kMinUpdatePeriodMsKey)->GetScalar() : "";            
+            if (!Isinteger(itemMinUpdatePeriodMs))
+            {
+                error = itemName + ", " + FunctionSpecification::kMinUpdatePeriodMsKey + " must be integer: "  + itemMinUpdatePeriodMs;        
+                return false;
+            }
+            std::string itemCycleTimeMs = item->Find(FunctionSpecification::kCycleTimeMsKey) ? item->Find(FunctionSpecification::kCycleTimeMsKey)->GetScalar() : "";              
+            if (!Isinteger(itemCycleTimeMs))
+            {
+                error = itemName + ", " + FunctionSpecification::kCycleTimeMsKey + " must be integer: "  + itemCycleTimeMs;        
+                return false;
+            }  
         }  
 
         return true;
@@ -406,7 +425,7 @@ namespace acd
             return true;
         }
 
-        error = itemName + ", all values must be float: "  + min + ",  " + max + ",  " + defaultValue;        
+        error = itemName + ", all values must be empty or float: "  + min + ",  " + max + ",  " + defaultValue;        
         return false;
     }
 
@@ -438,7 +457,7 @@ namespace acd
             return true;
         }
 
-        error = itemName + ", all values must be integer: "  + min + ",  " + max + ",  " + defaultValue;        
+        error = itemName + ", all values must be empty or integer: "  + min + ",  " + max + ",  " + defaultValue;        
         return false;
     }    
     
@@ -470,7 +489,7 @@ namespace acd
             return true;
         }
 
-        error = itemName + ", all values must be double: "  + min + ",  " + max + ",  " + defaultValue;        
+        error = itemName + ", all values must be empty or double: (min) "  + min + ",  (max) " + max + ",  (default) " + defaultValue;        
         return false;
     }    
     
@@ -494,4 +513,4 @@ namespace acd
         }
     }      
 
-} // namespace acd
+} // namespace afd

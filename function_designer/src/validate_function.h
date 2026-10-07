@@ -14,8 +14,8 @@
  *   Thomas Pfleiderer - initial API and implementation
  ********************************************************************************/
  
-#ifndef ACD_VALIDATE_FUNCTION_H
-#define ACD_VALIDATE_FUNCTION_H
+#ifndef AFD_VALIDATE_FUNCTION_H
+#define AFD_VALIDATE_FUNCTION_H
 
 #include <map>
 #include <string>
@@ -24,7 +24,7 @@
 #include "meta_model.h"
 #include "yaml_node.h"
 
-namespace acd 
+namespace afd 
 {
     class ValidateFunction
     {
@@ -48,6 +48,6 @@ namespace acd
         bool ValidateDoubleType(const std::string& itemName, const std::string& defaultValue, const std::string& min, const std::string& max, std::string& error );
         bool IsDouble(const std::string& str);
     };
-} // namespace acd
+} // namespace afd
 
-#endif // ACD_VALIDATE_FUNCTION_H
+#endif // AFD_VALIDATE_FUNCTION_H

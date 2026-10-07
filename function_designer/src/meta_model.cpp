@@ -21,7 +21,7 @@
 
 #include "yaml_parser.h"
 
-namespace acd 
+namespace afd 
 {
     bool MetaModel::Load(const std::string& path, std::string& error) 
     {
@@ -303,4 +303,4 @@ namespace acd
         m_enums.clear();
     }
     
-} // namespace acd
+} // namespace afd

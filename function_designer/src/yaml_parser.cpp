@@ -19,7 +19,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace acd 
+namespace afd 
 {
     namespace 
     {
@@ -455,4 +455,4 @@ namespace acd
         return buffer.str();
     }    
 
-} // namespace acd
+} // namespace afd

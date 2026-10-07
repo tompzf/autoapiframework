@@ -36,7 +36,7 @@
 #include <vector>
 #include <regex>
 
-namespace acd 
+namespace afd 
 {
     namespace 
     {
@@ -1539,7 +1539,7 @@ namespace acd
     wxString MainFrame::RunVspec2Json(const wxString& vspecFile, const wxString& outputFile)
     {
         wxArrayString output, errors;
-        const wxString executable = wxString::FromUTF8(ACD_VSPEC_EXECUTABLE);
+        const wxString executable = wxString::FromUTF8(AFD_VSPEC_EXECUTABLE);
 
         wxString cmd = wxString::Format(
             "\"%s\" export json --vspec \"%s\" --output \"%s\"",
@@ -1609,4 +1609,4 @@ namespace acd
                     wxOK | wxICON_ERROR, this);     
         }
     }
-} // namespace acd
+} // namespace afd

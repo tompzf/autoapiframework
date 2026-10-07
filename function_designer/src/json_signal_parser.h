@@ -14,8 +14,8 @@
  *   Thomas Pfleiderer - initial API and implementation
  ********************************************************************************/
 
-#ifndef ACD_JSON_SIGNAL_PARSER_H
-#define ACD_JSON_SIGNAL_PARSER_H
+#ifndef AFD_JSON_SIGNAL_PARSER_H
+#define AFD_JSON_SIGNAL_PARSER_H
 
 #include <cstddef>
 #include <string>
@@ -29,7 +29,7 @@ class wxListCtrl;
 class wxTextCtrl;
 class wxWindow;
 
-namespace acd 
+namespace afd 
 {
     /// @brief Expected strings within the VSS JSON file and the corresponding keys in
     /// the autoapiframework function specification file if they do not match.        
@@ -138,6 +138,6 @@ namespace acd
         std::vector<std::size_t> m_availableDisplayIndex;
     };
 
-} // namespace acd
+} // namespace afd
 
-#endif // ACD_JSON_SIGNAL_PARSER_H
+#endif // AFD_JSON_SIGNAL_PARSER_H
