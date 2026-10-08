@@ -93,6 +93,9 @@ namespace afd
                             const std::string& interfaceTypeName);
         wxListCtrl* GetSelectedCollectionList() const;
         const char* GetSelectedCollectionKey() const;
+        std::string GetSelectedInterfaceType() const;
+        /// Adds the meta model fields that are missing in @p entry so that every column can be edited.
+        void CompleteEntryFromMetaModel(const std::string& interfaceType, const YamlNodePtr& entry) const;
         void UpdateCollectionButtonStates();
         void UpdateTitleAndStatus();
 

@@ -1076,6 +1076,8 @@ namespace afd
             return;
         }
 
+        CompleteEntryFromMetaModel(GetSelectedInterfaceType(), entries[selectedRow]);
+
         struct EditableValue
         {
             YamlNodePtr node;
@@ -1460,6 +1462,100 @@ namespace afd
             return FunctionSpecification::kErrorsKey;
         default:
             return nullptr;
+        }
+    }
+
+    std::string MainFrame::GetSelectedInterfaceType() const
+    {
+        switch (m_notebook->GetSelection())
+        {
+        case 1:
+            return kDataInterfaceTypeKey;
+        case 2:
+            return kParameterInterfaceTypeKey;
+        case 3:
+            return kSchedulingInterfaceTypeKey;
+        case 4:
+            return kErrorInterfaceTypeKey;
+        default:
+            return std::string();
+        }
+    }
+
+    void MainFrame::CompleteEntryFromMetaModel(const std::string& interfaceType,
+                                               const YamlNodePtr& entry) const
+    {
+        if (interfaceType.empty() || !entry || !entry->IsMap())
+        {
+            return;
+        }
+
+        for (const std::string& field : m_metaModel.ColumnsFor(interfaceType, {}))
+        {
+            if (interfaceType == kSchedulingInterfaceTypeKey && field == kExecutionResultKey)
+            {
+                YamlNodePtr result = entry->Find(field);
+                if (!result || !result->IsMap())
+                {
+                    result = YamlNode::MakeMap();
+                    entry->Set(field, result);
+                }
+                if (!result->Find(kExecutionResultTypeKey))
+                {
+                    std::string enumReference;
+                    if (const YamlNodePtr* type = m_metaModel.FindInterfaceType(interfaceType))
+                    {
+                        const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
+                        const YamlNodePtr definition = properties ? properties->Find(field) : nullptr;
+                        if (definition)
+                        {
+                            enumReference = definition->ScalarOf(kEnumRefKey);
+                        }
+                    }
+                    result->Set(kExecutionResultTypeKey, YamlNode::MakeScalar(enumReference));
+                }
+                continue;
+            }
+
+            if (interfaceType == kSchedulingInterfaceTypeKey && field == kSupervisionKey)
+            {
+                YamlNodePtr supervision = entry->Find(field);
+                if (!supervision || !supervision->IsMap())
+                {
+                    supervision = YamlNode::MakeMap();
+                    entry->Set(field, supervision);
+                }
+                if (!supervision->Find(kSupervisionRequiredKey))
+                {
+                    supervision->Set(kSupervisionRequiredKey, YamlNode::MakeScalar("false"));
+                }
+                continue;
+            }
+
+            if (interfaceType == kDataInterfaceTypeKey && field == kQualityCodeKey)
+            {
+                YamlNodePtr companion = entry->Find(kRuntimeCompanionKey);
+                if (!companion || !companion->IsMap())
+                {
+                    companion = YamlNode::MakeMap();
+                    entry->Set(kRuntimeCompanionKey, companion);
+                }
+                YamlNodePtr quality = companion->Find(kQualityCodeKey);
+                if (!quality || !quality->IsMap())
+                {
+                    quality = YamlNode::MakeMap();
+                    quality->Set(kNameKey, YamlNode::MakeScalar(""));
+                    quality->Set(kDatatypeKey, YamlNode::MakeScalar(kEnumsKey));
+                    quality->Set(kEnumRefKey, YamlNode::MakeScalar(kDataQualityKey));
+                    companion->Set(kQualityCodeKey, quality);
+                }
+                continue;
+            }
+
+            if (!entry->Find(field))
+            {
+                entry->Set(field, YamlNode::MakeScalar(""));
+            }
         }
     }
 
