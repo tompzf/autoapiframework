@@ -38,8 +38,9 @@ find_program(VSPEC_EXECUTABLE
 )
 
 if(NOT VSPEC_EXECUTABLE)
-    message(FATAL_ERROR
-        "vss-tools not installed")
+    message(WARNING
+        "vss-tools not installed - importing signals from vspec files will be disabled at runtime.")
+    set(VSPEC_EXECUTABLE "")
 endif()
 
 

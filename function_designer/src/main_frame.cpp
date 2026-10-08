@@ -758,6 +758,14 @@ namespace afd
 
     void MainFrame::OnAddWithVspecFile(wxCommandEvent&)
     {
+        if (!IsVspecAvailable())
+        {
+            wxMessageBox("vss-tools is not installed, so vspec files cannot be imported.\n"
+                         "Install vss-tools and re-run CMake to enable this feature.",
+                         kApplicationName, wxOK | wxICON_WARNING, this);
+            return;
+        }
+
         wxString vspecDirectory;
         wxConfigBase::Get()->Read(kVspecDirectoryConfigKey, &vspecDirectory);
 
@@ -1536,10 +1544,19 @@ namespace afd
         return output[0];
     }
 
+    bool MainFrame::IsVspecAvailable()
+    {
+        return !wxString::FromUTF8(AFD_VSPEC_EXECUTABLE).IsEmpty();
+    }
+
     wxString MainFrame::RunVspec2Json(const wxString& vspecFile, const wxString& outputFile)
     {
         wxArrayString output, errors;
         const wxString executable = wxString::FromUTF8(AFD_VSPEC_EXECUTABLE);
+        if (executable.IsEmpty())
+        {
+            return "ERROR: vss-tools is not installed - the vspec converter is unavailable.";
+        }
 
         wxString cmd = wxString::Format(
             "\"%s\" export json --vspec \"%s\" --output \"%s\"",
