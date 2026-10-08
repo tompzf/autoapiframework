@@ -62,6 +62,9 @@ namespace afd
         static constexpr const char* kPrecisionKey = "precision";
         static constexpr const char* kMinUpdatePeriodMsKey = "minUpdatePeriodMs";
         static constexpr const char* kCycleTimeMsKey = "cycleTimeMs";
+        static constexpr const char* kMaturationTimeMsKey = "maturationTimeMs";
+        static constexpr const char* kResetTimeMsKey = "resetTimeMs";
+        static constexpr const char* kStackSizeBytesKey = "stackSizeBytes";
 
         bool Load(const std::string& expectedVersion, const std::string& path, std::string& error);
         /// Creates a fresh, empty function specification referencing the given meta model.

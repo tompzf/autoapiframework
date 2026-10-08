@@ -408,25 +408,56 @@ namespace afd
                 }   
             }
 
-            std::string itemPrecision = item->Find(FunctionSpecification::kPrecisionKey) ? item->Find(FunctionSpecification::kPrecisionKey)->GetScalar() : "";
-            if (!Isinteger(itemPrecision))
-            {
-                error = itemName + ", " + FunctionSpecification::kPrecisionKey + " must be integer: "  + itemPrecision;        
+            if (!ValidateCertainProperties(item, itemName, error))
+            {     
                 return false;
-            }
-            std::string itemMinUpdatePeriodMs = item->Find(FunctionSpecification::kMinUpdatePeriodMsKey) ? item->Find(FunctionSpecification::kMinUpdatePeriodMsKey)->GetScalar() : "";            
-            if (!Isinteger(itemMinUpdatePeriodMs))
-            {
-                error = itemName + ", " + FunctionSpecification::kMinUpdatePeriodMsKey + " must be integer: "  + itemMinUpdatePeriodMs;        
-                return false;
-            }
-            std::string itemCycleTimeMs = item->Find(FunctionSpecification::kCycleTimeMsKey) ? item->Find(FunctionSpecification::kCycleTimeMsKey)->GetScalar() : "";              
-            if (!Isinteger(itemCycleTimeMs))
-            {
-                error = itemName + ", " + FunctionSpecification::kCycleTimeMsKey + " must be integer: "  + itemCycleTimeMs;        
-                return false;
-            }  
+            }            
         }  
+
+        return true;
+    }
+
+    bool ValidateFunction::ValidateCertainProperties(const YamlNodePtr& node, const std::string& nodeName, std::string& error )
+    {
+        // signal related properties
+        std::string itemPrecision = node->Find(FunctionSpecification::kPrecisionKey) ? node->Find(FunctionSpecification::kPrecisionKey)->GetScalar() : "";
+        if (!Isinteger(itemPrecision))
+        {
+            error = nodeName + ":\n\n" + FunctionSpecification::kPrecisionKey + " must be integer: "  + itemPrecision;        
+            return false;
+        }
+        std::string itemMinUpdatePeriodMs = node->Find(FunctionSpecification::kMinUpdatePeriodMsKey) ? node->Find(FunctionSpecification::kMinUpdatePeriodMsKey)->GetScalar() : "";            
+        if (!Isinteger(itemMinUpdatePeriodMs))
+        {
+            error = nodeName + ":\n\n" + FunctionSpecification::kMinUpdatePeriodMsKey + " must be integer: "  + itemMinUpdatePeriodMs;        
+            return false;
+        }
+        // scheduling related properties
+        std::string itemStackSizeBytes = node->Find(FunctionSpecification::kStackSizeBytesKey) ? node->Find(FunctionSpecification::kStackSizeBytesKey)->GetScalar() : "";              
+        if (!Isinteger(itemStackSizeBytes))
+        {
+            error = nodeName + ":\n\n" + FunctionSpecification::kStackSizeBytesKey + " must be integer: "  + itemStackSizeBytes;        
+            return false;
+        }          
+        std::string itemCycleTimeMs = node->Find(FunctionSpecification::kCycleTimeMsKey) ? node->Find(FunctionSpecification::kCycleTimeMsKey)->GetScalar() : "";              
+        if (!Isinteger(itemCycleTimeMs))
+        {
+            error = nodeName + ":\n\n" + FunctionSpecification::kCycleTimeMsKey + " must be integer: "  + itemCycleTimeMs;        
+            return false;
+        }  
+        // Error interface related properties
+        std::string itemMaturationTimeMs = node->Find(FunctionSpecification::kMaturationTimeMsKey) ? node->Find(FunctionSpecification::kMaturationTimeMsKey)->GetScalar() : "";              
+        if (!Isinteger(itemMaturationTimeMs))
+        {
+            error = nodeName + ":\n\n" + FunctionSpecification::kMaturationTimeMsKey + " must be integer: "  + itemMaturationTimeMs;        
+            return false;
+        }  
+        std::string itemresetTimeMs = node->Find(FunctionSpecification::kResetTimeMsKey) ? node->Find(FunctionSpecification::kResetTimeMsKey)->GetScalar() : "";              
+        if (!Isinteger(itemresetTimeMs))
+        {
+            error = nodeName + ":\n\n" + FunctionSpecification::kResetTimeMsKey + " must be integer: "  + itemresetTimeMs;        
+            return false;
+        } 
 
         return true;
     }

@@ -50,7 +50,8 @@ namespace afd
         bool ValidateDoubleType(const std::string& itemName, const std::string& defaultValue, const std::string& min, const std::string& max, std::string& error );
         bool IsDouble(const std::string& str);
         bool IsLargerThanDouble(const std::string& strMax, const std::string& strMin); 
-        bool SkipCertainPropertiesFromSyntaxCheck(const std::string& property, bool enumCheck, bool mandatoryCheck);                      
+        bool SkipCertainPropertiesFromSyntaxCheck(const std::string& property, bool enumCheck, bool mandatoryCheck);     
+        bool ValidateCertainProperties(const YamlNodePtr& node, const std::string& nodeName, std::string& error );
     };
 } // namespace afd
 
