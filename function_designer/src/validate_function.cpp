@@ -422,10 +422,15 @@ namespace afd
     {
         if (IsFloat(defaultValue) && IsFloat(min) && IsFloat(max))
         {
+            if (!IsLargerThanFloat(max, min))
+            {
+                error = itemName + ":\nmax should be greater than min\n\n" + max + " (max)," + min + " (min)";  
+                return false;
+            }
             return true;
         }
 
-        error = itemName + ", all values must be empty or float: "  + min + ",  " + max + ",  " + defaultValue;        
+        error = itemName + ":\nall values must be empty or float\n\n" + min + " (min)," + max + " (max), " + defaultValue + " (default)";  
         return false;
     }
 
@@ -448,16 +453,33 @@ namespace afd
             return false;
         }
     }
+    
+    bool ValidateFunction::IsLargerThanFloat(const std::string& strMax, const std::string& strMin)
+    {   
+        try
+        {
+            return std::stof(strMax) > std::stof(strMin);
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }
 
     bool ValidateFunction::ValidateintegerType(const std::string& itemName, const std::string& defaultValue,
                          const std::string& min, const std::string& max, std::string& error )
     {
         if (Isinteger(defaultValue) && Isinteger(min) && Isinteger(max))
         {
+            if (!IsLargerThanInteger(max, min))
+            {
+                error = itemName + ":\nmax should be greater than min\n\n" + max + " (max)," + min + " (min)";  
+                return false;
+            }            
             return true;
         }
 
-        error = itemName + ", all values must be empty or integer: "  + min + ",  " + max + ",  " + defaultValue;        
+        error = itemName + ":\nall values must be empty or integer\n\n" + min + " (min)," + max + " (max), " + defaultValue + " (default)";          
         return false;
     }    
     
@@ -481,15 +503,32 @@ namespace afd
         }
     }   
 
+    bool ValidateFunction::IsLargerThanInteger(const std::string& strMax, const std::string& strMin)
+    {   
+        try
+        {
+            return std::stoi(strMax) > std::stoi(strMin);
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }
+
     bool ValidateFunction::ValidateDoubleType(const std::string& itemName, const std::string& defaultValue,
                          const std::string& min, const std::string& max, std::string& error )
     {
         if (IsDouble(defaultValue) && IsDouble(min) && IsDouble(max))
         {
+            if (!IsLargerThanDouble(max, min))
+            {
+                error = itemName + ":\nmax should be greater than min\n\n" + max + " (max)," + min + " (min)";  
+                return false;
+            }
             return true;
         }
 
-        error = itemName + ", all values must be empty or double: (min) "  + min + ",  (max) " + max + ",  (default) " + defaultValue;        
+        error = itemName + ":\nall values must be empty or double\n\n" + min + " (min)," + max + " (max), " + defaultValue + " (default)";        
         return false;
     }    
     
@@ -511,6 +550,18 @@ namespace afd
         {
             return false;
         }
-    }      
+    }     
+    
+    bool ValidateFunction::IsLargerThanDouble(const std::string& strMax, const std::string& strMin)
+    {   
+        try
+        {
+            return std::stod(strMax) > std::stod(strMin);
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }
 
 } // namespace afd

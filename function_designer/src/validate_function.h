@@ -43,10 +43,13 @@ namespace afd
         bool ValidateType(const YamlNodePtr& dataInterfaces, std::string& error);        
         bool ValidateFloatType(const std::string& itemName, const std::string& defaultValue, const std::string& min, const std::string& max, std::string& error );
         bool IsFloat(const std::string& str);
+        bool IsLargerThanFloat(const std::string& strMax, const std::string& strMin);        
         bool ValidateintegerType(const std::string& itemName, const std::string& defaultValue, const std::string& min, const std::string& max, std::string& error );        
-        bool Isinteger(const std::string& str);        
+        bool Isinteger(const std::string& str);       
+        bool IsLargerThanInteger(const std::string& strMax, const std::string& strMin);             
         bool ValidateDoubleType(const std::string& itemName, const std::string& defaultValue, const std::string& min, const std::string& max, std::string& error );
         bool IsDouble(const std::string& str);
+        bool IsLargerThanDouble(const std::string& strMax, const std::string& strMin);            
     };
 } // namespace afd
 
