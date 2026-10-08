@@ -456,6 +456,10 @@ namespace afd
     
     bool ValidateFunction::IsLargerThanFloat(const std::string& strMax, const std::string& strMin)
     {   
+        if (strMax.empty() || strMax == "null" || strMin.empty() || strMin == "null")
+        {
+            return true;
+        }
         try
         {
             return std::stof(strMax) > std::stof(strMin);
@@ -505,6 +509,10 @@ namespace afd
 
     bool ValidateFunction::IsLargerThanInteger(const std::string& strMax, const std::string& strMin)
     {   
+        if (strMax.empty() || strMax == "null" || strMin.empty() || strMin == "null")
+        {
+            return true;
+        }
         try
         {
             return std::stoi(strMax) > std::stoi(strMin);
@@ -554,6 +562,10 @@ namespace afd
     
     bool ValidateFunction::IsLargerThanDouble(const std::string& strMax, const std::string& strMin)
     {   
+        if (strMax.empty() || strMax == "null" || strMin.empty() || strMin == "null")
+        {
+            return true;
+        }        
         try
         {
             return std::stod(strMax) > std::stod(strMin);
