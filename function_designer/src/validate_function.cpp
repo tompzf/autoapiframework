@@ -106,6 +106,10 @@ namespace afd
         {
             return false;
         }
+        if (!ValidateProperties(scheduling, afd::kSchedulingInterfaceTypeKey, metaModel, error))
+        {
+            return false;
+        }            
 
         // Errors
         if (errors)
@@ -114,8 +118,8 @@ namespace afd
             {
                 return false;
             }
-
-            if (!ValidateProperties(parameters, afd::kParameterInterfaceTypeKey, metaModel, error))
+            
+            if (!ValidateProperties(errors, afd::kErrorInterfaceTypeKey, metaModel, error))
             {
                 return false;
             }
@@ -253,6 +257,11 @@ namespace afd
             std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : "<unknown>";                   
             for (const auto& property : item->GetMap())
             {
+                if (SkipCertainPropertiesFromSyntaxCheck(property.first, true, false))
+                {
+                    continue;
+                }
+
                 auto it = propertiesWithEnumRef.find(property.first.c_str());
                 if (it != propertiesWithEnumRef.end())
                 {
@@ -342,6 +351,11 @@ namespace afd
             std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : "<unknown>";
             for (const auto& property : item->GetMap())
             {
+                if (SkipCertainPropertiesFromSyntaxCheck(property.first, false, true))
+                {
+                    continue;
+                }
+
                 auto it = propertiesWithMandatory.find(property.first.c_str());
                 if (it != propertiesWithMandatory.end())
                 {
@@ -574,6 +588,19 @@ namespace afd
         {
             return false;
         }
+    }
+    
+    bool ValidateFunction::SkipCertainPropertiesFromSyntaxCheck(const std::string& property, bool enumCheck, bool mandatoryCheck)
+    {
+        if (enumCheck || mandatoryCheck)
+        {
+            if ((property == kExecutionResultKey) || (property == kSupervisionKey))
+            {
+                return true;
+            }
+        }            
+
+        return false;
     }
 
 } // namespace afd
