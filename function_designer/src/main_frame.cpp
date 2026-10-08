@@ -760,9 +760,7 @@ namespace afd
     {
         if (!IsVspecAvailable())
         {
-            wxMessageBox("vss-tools is not installed, so vspec files cannot be imported.\n"
-                         "Install vss-tools and re-run CMake to enable this feature.",
-                         kApplicationName, wxOK | wxICON_WARNING, this);
+            wxMessageBox(GetVspecUnavailableMessage(), kApplicationName, wxOK | wxICON_WARNING, this);
             return;
         }
 
@@ -1640,18 +1638,39 @@ namespace afd
         return output[0];
     }
 
+    wxString MainFrame::GetVspecExecutable()
+    {
+        return wxString::FromUTF8(AFD_VSPEC_EXECUTABLE);
+    }
+
     bool MainFrame::IsVspecAvailable()
     {
-        return !wxString::FromUTF8(AFD_VSPEC_EXECUTABLE).IsEmpty();
+        const wxString executable = GetVspecExecutable();
+        return !executable.IsEmpty() && wxFileName::FileExists(executable);
+    }
+
+    wxString MainFrame::GetVspecUnavailableMessage()
+    {
+        const wxString executable = GetVspecExecutable();
+        if (executable.IsEmpty())
+        {
+            return "vss-tools was not installed when this application was built, "
+                   "so vspec files cannot be imported.\n\n"
+                   "Install vss-tools and re-run CMake to enable this feature.";
+        }
+
+        return "vss-tools is not installed on this machine, so vspec files cannot be imported.\n\n"
+               "The vspec executable configured at build time is not present:\n" + executable +
+               "\n\nInstall vss-tools at that location, or rebuild the application on this machine.";
     }
 
     wxString MainFrame::RunVspec2Json(const wxString& vspecFile, const wxString& outputFile)
     {
         wxArrayString output, errors;
-        const wxString executable = wxString::FromUTF8(AFD_VSPEC_EXECUTABLE);
-        if (executable.IsEmpty())
+        const wxString executable = GetVspecExecutable();
+        if (!IsVspecAvailable())
         {
-            return "ERROR: vss-tools is not installed - the vspec converter is unavailable.";
+            return "ERROR: " + GetVspecUnavailableMessage();
         }
 
         wxString cmd = wxString::Format(

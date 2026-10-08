@@ -131,6 +131,8 @@ namespace afd
         std::string GetVssToolsVersion();
         void ShowVssToolsVersion();
         static bool IsVspecAvailable();
+        static wxString GetVspecExecutable();
+        static wxString GetVspecUnavailableMessage();
         wxString RunVspec2Json(const wxString& vspecFile, const wxString& outputFile);
         wxString GetGitVersion(const wxString& repoDir);
         wxString GetGitTag(const wxString& repoDir);
