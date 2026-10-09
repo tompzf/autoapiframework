@@ -11,13 +11,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # 
 # Contributors:
-#   Thomas Pfleiderer - initial API and implementation
+#   Thomas Pfleiderer - initial function designer
 # *******************************************************************************
 
 cmake_minimum_required(VERSION 3.16)
 
 project(function_designer
-        VERSION 0.4.0
+        VERSION 0.1.0
         DESCRIPTION "Editor for Eclipse autoapiframework function specifications"
         LANGUAGES CXX)
 

@@ -11,7 +11,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Contributors:
- *   Thomas Pfleiderer - initial implementation
+ *   Thomas Pfleiderer - initial function designer
  ********************************************************************************/
 
 #include "yaml_parser.h"
