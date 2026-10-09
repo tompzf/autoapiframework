@@ -95,7 +95,6 @@ Typical Workflow
    meta model. You must restart the application for the change to take effect.
 6. Use **'Write .afs file as...'** to save the specification under a new name.
 7. Use **'Add via VSS'** to import signal information from a VSS file.
-8. Edit the **'supervision'** node in an external editor.
 
 The editor keeps the parsed YAML tree in memory. When the file is written, key
 order, block-style layout, folded descriptions, and quoting are preserved as
@@ -105,18 +104,13 @@ far as supported by the YAML writer.
 Limitations
 -----------
 
-The Function Designer is a work in progress, and some features may not yet be
-fully implemented. Some tasks may require additional tools or manual
-intervention.
+The 'Create API' functionality is still under development. 
 
-For example, the **supervision node** in ``scheduling`` can only be edited in an
-external editor.
+.. tip::
 
-.. attention::
-
-   Syntax checking is limited in this pre-release version. To create a valid
-   specification file, you must carefully review the meta model specification.
-   
+   To create a valid  specification file, you must carefully review the meta model 
+   specification. The syntax check will help identify obvious errors, but it 
+   cannot guarantee full compliance with the meta model.   
 
 Working with VSS Signals
 ------------------------
@@ -150,6 +144,42 @@ files. In this case, open the root VSS file instead.
 
 .. figure:: figures/error_opening_vspec_file.png
    :alt: error opening VSS file window  
+
+Supervision
+-----------
+
+The supervision functionality allows you to monitor the execution of the function 
+and detect any anomalies or errors. In the collection view it is shown as ``true`` 
+or ``false`` meaning ``required`` or ``not required``.
+
+.. figure:: figures/supervision_in_collection_window.png
+   :alt: supervision in the collection window  
+
+It can be enabled or disabled for each function, allowing you to control which 
+functions are actively supervised during execution. To do this, open the ``Edit`` dialog,
+there is a ``Edit Supervision`` button to configure the supervision settings.
+
+.. figure:: figures/supervision_edit_window.png
+   :alt: edit supervision window  
+
+If not required, the nodes are not available for editing.
+
+.. figure:: figures/supervision_not_required.png
+   :alt: supervision not required window
+
+When supervision is required, select one or more supervision types. Each type
+has its own configuration fields:
+
+* **alive:** set the minimum and maximum number of indications and the reference cycle in milliseconds.
+* **deadline:** set the minimum and maximum execution time in milliseconds.
+* **logical:** list the predecessor and successor references used for logical supervision. Enter multiple references as a comma-separated list.
+
+Only the settings for selected types are available for editing and written to
+the specification. If no type is selected, the supervision configuration
+contains no type-specific settings.
+
+.. figure:: figures/supervision_required.png
+   :alt: supervision required window
 
 Examples
 --------
@@ -194,5 +224,4 @@ In addition to the help documentation, the application can check whether the
 COVESA tools are installed correctly. This information can help with
 troubleshooting and verifying that all required dependencies are available.
 
-The **Quick Tips** section provides additional guidance, including information
-about features that are not yet implemented and may require additional tools.
+The **Quick Tips** section provides additional guidance.

@@ -602,7 +602,6 @@ directory as the executable, or if you need to load a different compatible
 meta model. You must restart the application for the change to take effect.</p></li>
 <li><p>Use <strong>‘Write .afs file as…’</strong> to save the specification under a new name.</p></li>
 <li><p>Use <strong>‘Add via VSS’</strong> to import signal information from a VSS file.</p></li>
-<li><p>Edit the <strong>‘supervision’</strong> node in an external editor.</p></li>
 </ol>
 <p>The editor keeps the parsed YAML tree in memory. When the file is written, key
 order, block-style layout, folded descriptions, and quoting are preserved as
@@ -610,15 +609,12 @@ far as supported by the YAML writer.</p>
 </section>
 <section id="limitations">
 <h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
-<p>The Function Designer is a work in progress, and some features may not yet be
-fully implemented. Some tasks may require additional tools or manual
-intervention.</p>
-<p>For example, the <strong>supervision node</strong> in <code class="docutils literal notranslate"><span class="pre">scheduling</span></code> can only be edited in an
-external editor.</p>
-<div class="admonition attention">
-<p class="admonition-title">Attention</p>
-<p>Syntax checking is limited in this pre-release version. To create a valid
-specification file, you must carefully review the meta model specification.</p>
+<p>The ‘Create API’ functionality is still under development.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>To create a valid  specification file, you must carefully review the meta model
+specification. The syntax check will help identify obvious errors, but it
+cannot guarantee full compliance with the meta model.</p>
 </div>
 </section>
 <section id="working-with-vss-signals">
@@ -644,6 +640,38 @@ signals it contains are then displayed.</p>
 files. In this case, open the root VSS file instead.</p>
 <figure class="align-default">
 <img alt="error opening VSS file window" src="../../_images/error_opening_vspec_file.png" />
+</figure>
+</section>
+<section id="supervision">
+<h2>Supervision<a class="headerlink" href="#supervision" title="Link to this heading">#</a></h2>
+<p>The supervision functionality allows you to monitor the execution of the function
+and detect any anomalies or errors. In the collection view it is shown as <code class="docutils literal notranslate"><span class="pre">true</span></code>
+or <code class="docutils literal notranslate"><span class="pre">false</span></code> meaning <code class="docutils literal notranslate"><span class="pre">required</span></code> or <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">required</span></code>.</p>
+<figure class="align-default">
+<img alt="supervision in the collection window" src="../../_images/supervision_in_collection_window.png" />
+</figure>
+<p>It can be enabled or disabled for each function, allowing you to control which
+functions are actively supervised during execution. To do this, open the <code class="docutils literal notranslate"><span class="pre">Edit</span></code> dialog,
+there is a <code class="docutils literal notranslate"><span class="pre">Edit</span> <span class="pre">Supervision</span></code> button to configure the supervision settings.</p>
+<figure class="align-default">
+<img alt="edit supervision window" src="../../_images/supervision_edit_window.png" />
+</figure>
+<p>If not required, the nodes are not available for editing.</p>
+<figure class="align-default">
+<img alt="supervision not required window" src="../../_images/supervision_not_required.png" />
+</figure>
+<p>When supervision is required, select one or more supervision types. Each type
+has its own configuration fields:</p>
+<ul class="simple">
+<li><p><strong>alive:</strong> set the minimum and maximum number of indications and the reference cycle in milliseconds.</p></li>
+<li><p><strong>deadline:</strong> set the minimum and maximum execution time in milliseconds.</p></li>
+<li><p><strong>logical:</strong> list the predecessor and successor references used for logical supervision. Enter multiple references as a comma-separated list.</p></li>
+</ul>
+<p>Only the settings for selected types are available for editing and written to
+the specification. If no type is selected, the supervision configuration
+contains no type-specific settings.</p>
+<figure class="align-default">
+<img alt="supervision required window" src="../../_images/supervision_required.png" />
 </figure>
 </section>
 <section id="examples">
@@ -683,8 +711,7 @@ this check, disable it in the settings.</p>
 <p>In addition to the help documentation, the application can check whether the
 COVESA tools are installed correctly. This information can help with
 troubleshooting and verifying that all required dependencies are available.</p>
-<p>The <strong>Quick Tips</strong> section provides additional guidance, including information
-about features that are not yet implemented and may require additional tools.</p>
+<p>The <strong>Quick Tips</strong> section provides additional guidance.</p>
 </section>
 </section>
 
@@ -740,6 +767,7 @@ about features that are not yet implemented and may require additional tools.</p
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-workflow">Typical Workflow</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#working-with-vss-signals">Working with VSS Signals</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supervision">Supervision</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application-menu-overview">Application Menu Overview</a></li>
 </ul>
