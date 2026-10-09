@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2025-2026 ZF Friedrichshafen AG
+ * Copyright (c) 2026 ZF Friedrichshafen AG
  * 
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -11,11 +11,11 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Contributors:
- *   Thomas Pfleiderer - initial API and implementation
+ *   Thomas Pfleiderer - initial function designer
  ********************************************************************************/
  
-#ifndef ACD_MAIN_FRAME_H
-#define ACD_MAIN_FRAME_H
+#ifndef AFD_MAIN_FRAME_H
+#define AFD_MAIN_FRAME_H
 
 #include <wx/wx.h>
 
@@ -27,7 +27,7 @@
 class wxListCtrl;
 class wxNotebook;
 
-namespace acd 
+namespace afd 
 {
     static constexpr const char* kApplicationName = "AutoAPI Function Designer - Preview 0.1";
 
@@ -93,6 +93,9 @@ namespace acd
                             const std::string& interfaceTypeName);
         wxListCtrl* GetSelectedCollectionList() const;
         const char* GetSelectedCollectionKey() const;
+        std::string GetSelectedInterfaceType() const;
+        /// Adds the meta model fields that are missing in @p entry so that every column can be edited.
+        void CompleteEntryFromMetaModel(const std::string& interfaceType, const YamlNodePtr& entry) const;
         void UpdateCollectionButtonStates();
         void UpdateTitleAndStatus();
 
@@ -127,6 +130,9 @@ namespace acd
 
         std::string GetVssToolsVersion();
         void ShowVssToolsVersion();
+        static bool IsVspecAvailable();
+        static wxString GetVspecExecutable();
+        static wxString GetVspecUnavailableMessage();
         wxString RunVspec2Json(const wxString& vspecFile, const wxString& outputFile);
         wxString GetGitVersion(const wxString& repoDir);
         wxString GetGitTag(const wxString& repoDir);
@@ -135,6 +141,6 @@ namespace acd
         wxDECLARE_EVENT_TABLE();
     };
 
-} // namespace acd
+} // namespace afd
 
-#endif // ACD_MAIN_FRAME_H
+#endif // AFD_MAIN_FRAME_H

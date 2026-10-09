@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2025-2026 ZF Friedrichshafen AG
+ * Copyright (c) 2026 ZF Friedrichshafen AG
  * 
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -11,16 +11,16 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Contributors:
- *   Thomas Pfleiderer - initial API and implementation
+ *   Thomas Pfleiderer - initial function designer
  ********************************************************************************/
-#ifndef ACD_YAML_WRITER_H
-#define ACD_YAML_WRITER_H
+#ifndef AFD_YAML_WRITER_H
+#define AFD_YAML_WRITER_H
 
 #include <string>
 
 #include "yaml_node.h"
 
-namespace acd 
+namespace afd 
 {
     /// Serializes a YamlNode tree back into the block style layout used by the
     /// autoapiframework function specification files.
@@ -43,6 +43,6 @@ namespace acd
         int m_wrapColumn = 72;
     };
 
-} // namespace acd
+} // namespace afd
 
-#endif // ACD_YAML_WRITER_H
+#endif // AFD_YAML_WRITER_H

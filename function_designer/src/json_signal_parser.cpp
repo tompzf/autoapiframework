@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2025-2026 ZF Friedrichshafen AG
+ * Copyright (c) 2026 ZF Friedrichshafen AG
  * 
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -11,7 +11,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Contributors:
- *   Thomas Pfleiderer - initial API and implementation
+ *   Thomas Pfleiderer - initial function designer
  ********************************************************************************/
 
 #include "json_signal_parser.h"
@@ -27,7 +27,7 @@
 #include <cctype>
 #include <cstdlib>
 
-namespace acd 
+namespace afd 
 {
     namespace 
     {
@@ -561,4 +561,4 @@ namespace acd
         }
     }
 
-} // namespace acd
+} // namespace afd

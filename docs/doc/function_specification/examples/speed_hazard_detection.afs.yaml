@@ -106,6 +106,7 @@ functionSpecification:
       resolution: 1
       precision: 1
       FuSa: false
+      ASIL: QM
       minUpdatePeriodMs: 10
       accuracy: enum-based
       protection: none

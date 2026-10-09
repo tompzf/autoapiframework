@@ -11,13 +11,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # 
 # Contributors:
-#   Thomas Pfleiderer - initial API and implementation
+#   Thomas Pfleiderer - initial function designer
 # *******************************************************************************
 
 cmake_minimum_required(VERSION 3.16)
 
 project(function_designer
-        VERSION 0.4.0
+        VERSION 0.1.0
         DESCRIPTION "Editor for Eclipse autoapiframework function specifications"
         LANGUAGES CXX)
 
@@ -38,8 +38,9 @@ find_program(VSPEC_EXECUTABLE
 )
 
 if(NOT VSPEC_EXECUTABLE)
-    message(FATAL_ERROR
-        "vss-tools not installed")
+    message(WARNING
+        "vss-tools not installed - importing signals from vspec files will be disabled at runtime.")
+    set(VSPEC_EXECUTABLE "")
 endif()
 
 
@@ -97,7 +98,7 @@ add_executable(AutoAPIFunctionDesigner WIN32
 target_include_directories(AutoAPIFunctionDesigner PRIVATE src)
 target_link_libraries(AutoAPIFunctionDesigner PRIVATE ${ACD_WX_LIBRARIES})
 target_compile_definitions(AutoAPIFunctionDesigner PRIVATE
-    ACD_VSPEC_EXECUTABLE="${VSPEC_EXECUTABLE}")
+    AFD_VSPEC_EXECUTABLE="${VSPEC_EXECUTABLE}")
 
 if(MSVC)
     target_compile_options(AutoAPIFunctionDesigner PRIVATE /W4 /WX /utf-8)

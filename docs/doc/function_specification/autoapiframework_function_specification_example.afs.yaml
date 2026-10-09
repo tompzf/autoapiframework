@@ -12,7 +12,7 @@
 #
 # Contributors:
 #   Thomas Pfleiderer - Function specification added
-#   Saran Gundlapalli - speed_hazard_detection.afs.yaml updated according to metamodel v0.4.0
+#   Saran Gundlapalli - autoapiframework_function_specification_example.afs.yaml updated according to metamodel v0.4.0
 # *******************************************************************************
 
 functionSpecification:
@@ -73,12 +73,10 @@ functionSpecification:
           datatype: enum
           enumRef: DataQuality
 
-
     # Existing VSS semantics shall be reused where available. If the selected
     # VSS release does not provide an equivalent hazard-light request node,
     # this path must be treated/documented as an conceptual extension that follows
     # VSS canonical naming.
-
     - name: Vehicle.Body.Lights.Hazard.Request
       direction: output
       dataType: boolean
@@ -94,21 +92,12 @@ functionSpecification:
       minUpdatePeriodMs: 20
       accuracy: logical
       protection: complement
+      runtimeCompanion:
+        qualityCode:
+          name: Vehicle.Body.Lights.Hazard.Request.Qualifier
+          datatype: enum
+          enumRef: DataQuality
 
-    - name: Vehicle.Speed.Qualifier
-      direction: input
-      dataType: uint8
-      description: Runtime quality qualifier for Vehicle.Speed value.
-      unit: code
-      min: 0
-      max: 5
-      defaultValue: 0
-      resolution: 1
-      precision: 1
-      FuSa: false
-      minUpdatePeriodMs: 10
-      accuracy: enum-based
-      protection: none
 
   parameters:
     - name: Vehicle.Chassis.SpeedHazardForward
@@ -131,8 +120,9 @@ functionSpecification:
       min: 0
       max: 600000
 
-  scheduling:
 
+
+  scheduling:
     - functionName: SpeedHazardDetection.Init
       runType: init
       description: Initialize internal states and latched outputs.

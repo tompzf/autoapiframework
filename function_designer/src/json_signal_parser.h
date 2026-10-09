@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2025-2026 ZF Friedrichshafen AG
+ * Copyright (c) 2026 ZF Friedrichshafen AG
  * 
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -11,11 +11,11 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Contributors:
- *   Thomas Pfleiderer - initial API and implementation
+ *   Thomas Pfleiderer - initial function designer
  ********************************************************************************/
 
-#ifndef ACD_JSON_SIGNAL_PARSER_H
-#define ACD_JSON_SIGNAL_PARSER_H
+#ifndef AFD_JSON_SIGNAL_PARSER_H
+#define AFD_JSON_SIGNAL_PARSER_H
 
 #include <cstddef>
 #include <string>
@@ -29,8 +29,10 @@ class wxListCtrl;
 class wxTextCtrl;
 class wxWindow;
 
-namespace acd 
+namespace afd 
 {
+    /// @brief Expected strings within the VSS JSON file and the corresponding keys in
+    /// the autoapiframework function specification file if they do not match.        
     static constexpr const char* kCovesaPath = "path";
     static constexpr const char* kCovesaType = "type";
     static constexpr const char* kMetaModelDataType = "dataType";
@@ -136,6 +138,6 @@ namespace acd
         std::vector<std::size_t> m_availableDisplayIndex;
     };
 
-} // namespace acd
+} // namespace afd
 
-#endif // ACD_JSON_SIGNAL_PARSER_H
+#endif // AFD_JSON_SIGNAL_PARSER_H

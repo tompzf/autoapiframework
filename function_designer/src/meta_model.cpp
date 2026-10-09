@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2025-2026 ZF Friedrichshafen AG
+ * Copyright (c) 2026 ZF Friedrichshafen AG
  * 
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -11,7 +11,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Contributors:
- *   Thomas Pfleiderer - initial API and implementation
+ *   Thomas Pfleiderer - initial function designer
  ********************************************************************************/
  
 #include "meta_model.h"
@@ -21,7 +21,7 @@
 
 #include "yaml_parser.h"
 
-namespace acd 
+namespace afd 
 {
     bool MetaModel::Load(const std::string& path, std::string& error) 
     {
@@ -147,6 +147,17 @@ namespace acd
                     columns.push_back(property.first);
                 }
             }
+            if (interfaceTypeName == kDataInterfaceTypeKey)
+            {
+                const YamlNodePtr companion = (*type)->Find(kRuntimeCompanionKey);
+                if (companion && companion->IsMap())
+                {
+                    for (const auto& property : companion->GetMap())
+                    {
+                        columns.push_back(property.first);
+                    }
+                }
+            }
         }
         for (const YamlNodePtr& entry : entries) 
         {
@@ -156,6 +167,10 @@ namespace acd
             }
             for (const auto& field : entry->GetMap()) 
             {
+                if (interfaceTypeName == kDataInterfaceTypeKey && field.first == kRuntimeCompanionKey)
+                {
+                    continue;
+                }
                 if (std::find(columns.begin(), columns.end(), field.first) == columns.end()) 
                 {
                     columns.push_back(field.first);
@@ -288,4 +303,4 @@ namespace acd
         m_enums.clear();
     }
     
-} // namespace acd
+} // namespace afd

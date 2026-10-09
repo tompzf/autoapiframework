@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2025-2026 ZF Friedrichshafen AG
+ * Copyright (c) 2026 ZF Friedrichshafen AG
  * 
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -11,11 +11,11 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Contributors:
- *   Thomas Pfleiderer - initial API and implementation
+ *   Thomas Pfleiderer - initial function designer
  ********************************************************************************/
  
-#ifndef ACD_FUNCTION_SPECIFICATION_H
-#define ACD_FUNCTION_SPECIFICATION_H
+#ifndef AFD_FUNCTION_SPECIFICATION_H
+#define AFD_FUNCTION_SPECIFICATION_H
 
 #include <cstddef>
 #include <string>
@@ -24,7 +24,7 @@
 
 #include "yaml_node.h"
 
-namespace acd 
+namespace afd 
 {
     /// In-memory representation of a function specification (*.afs, YAML content).
     ///
@@ -33,6 +33,7 @@ namespace acd
     class FunctionSpecification 
     {
     public:
+        /// @brief Expected strings within the autoapiframework function specification file
         static constexpr const char* kRootKey = "functionSpecification";
         static constexpr const char* kNameKey = "name";
         static constexpr const char* kVersionKey = "version";
@@ -45,6 +46,25 @@ namespace acd
         static constexpr const char* kPropertiesKey = "properties";   
         static constexpr const char* kNamePathKey = "name";
         static constexpr const char* kFunctionNameKey = "functionName";
+
+        static constexpr const char* kMinKey = "min";
+        static constexpr const char* kMaxKey = "max";
+        static constexpr const char* kDefaultValueKey = "defaultValue";
+        static constexpr const char* kDataTypeKey = "dataType";
+        static constexpr const char* kFloatDataType = "float";
+        static constexpr const char* kDoubleDataType = "double";
+        static constexpr const char* kInt8DataType = "int8";        
+        static constexpr const char* kInt16DataType = "int16";        
+        static constexpr const char* kInt32DataType = "int32";        
+        static constexpr const char* kUint8DataType = "uint8";        
+        static constexpr const char* kUint16DataType = "uint16";        
+        static constexpr const char* kUint32DataType = "uint32";   
+        static constexpr const char* kPrecisionKey = "precision";
+        static constexpr const char* kMinUpdatePeriodMsKey = "minUpdatePeriodMs";
+        static constexpr const char* kCycleTimeMsKey = "cycleTimeMs";
+        static constexpr const char* kMaturationTimeMsKey = "maturationTimeMs";
+        static constexpr const char* kResetTimeMsKey = "resetTimeMs";
+        static constexpr const char* kStackSizeBytesKey = "stackSizeBytes";
 
         bool Load(const std::string& expectedVersion, const std::string& path, std::string& error);
         /// Creates a fresh, empty function specification referencing the given meta model.
@@ -83,6 +103,6 @@ namespace acd
         std::string m_sourcePath;
     };
 
-} // namespace acd
+} // namespace afd
 
-#endif // ACD_FUNCTION_SPECIFICATION_H
+#endif // AFD_FUNCTION_SPECIFICATION_H

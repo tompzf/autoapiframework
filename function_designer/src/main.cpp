@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2025-2026 ZF Friedrichshafen AG
+ * Copyright (c) 2026 ZF Friedrichshafen AG
  * 
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -11,20 +11,20 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Contributors:
- *   Thomas Pfleiderer - initial API and implementation
+ *   Thomas Pfleiderer - initial function designer
  ********************************************************************************/
 #include <wx/wx.h>
 
 #include "main_frame.h"
 
-namespace acd 
+namespace afd 
 {
     class DesignerApp : public wxApp 
     {
     public:
         bool OnInit() override 
         {
-            SetAppName(acd::kApplicationName);
+            SetAppName(afd::kApplicationName);
             wxInitAllImageHandlers();
             MainFrame* frame = new MainFrame();
             frame->Show(true);
@@ -32,6 +32,6 @@ namespace acd
         }
     };
 
-} // namespace acd
+} // namespace afd
 
-wxIMPLEMENT_APP(acd::DesignerApp);
+wxIMPLEMENT_APP(afd::DesignerApp);

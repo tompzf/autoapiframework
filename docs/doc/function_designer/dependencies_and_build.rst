@@ -24,6 +24,9 @@ inspecting, validating, and writing Eclipse autoapiframework function
 specifications. Function specifications use the ``.afs`` extension and YAML
 syntax.
 
+.. figure:: figures/function_designer_window.png
+   :alt: function specification window   
+
 Dependencies
 ------------
 
@@ -31,8 +34,8 @@ The project requires:
 
 * CMake 3.16 or newer (3.21 or newer for CMake presets)
 * A C++17 compiler
-* wxWidgets
-* Python with ``vss-tools`` version 6.1.0
+* wxWidgets (included in the build, must not be installed separately)
+* Python with ``vss-tools`` version 6.1.0 (only to add vss signals from Covesa)
 
 The build uses the ``vspec`` executable from ``vss-tools`` to convert Vehicle
 Signal Specification (VSS) files to JSON. Install it in a virtual environment

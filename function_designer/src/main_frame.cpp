@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2025-2026 ZF Friedrichshafen AG
+ * Copyright (c) 2026 ZF Friedrichshafen AG
  * 
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -11,11 +11,12 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Contributors:
- *   Thomas Pfleiderer - initial API and implementation
+ *   Thomas Pfleiderer - initial function designer
  ********************************************************************************/
  
 #include "main_frame.h"
 #include "json_signal_parser.h"
+#include "meta_model.h"
 #include "validate_function.h"
 
 #include <wx/config.h>
@@ -35,7 +36,7 @@
 #include <vector>
 #include <regex>
 
-namespace acd 
+namespace afd 
 {
     namespace 
     {
@@ -44,6 +45,7 @@ namespace acd
         constexpr const char* kMetaModelDirectoryConfigKey = "/Paths/MetaModelDirectory";
         constexpr const char* kVspecDirectoryConfigKey = "/Paths/VSpecDirectory";
         constexpr const char* kCreateApiLanguageConfigKey = "/CreateAPI/Language";
+        constexpr const char* kDisableSyntaxCheckBeforeSavingConfigKey = "/Settings/DisableSyntaxCheckBeforeSaving";
         constexpr const char* kLogoFileName = "autoapiframework_logo.png";
         constexpr const char* kLogoFileNameLarge = "autoapiframework_logo_large.png";		
         constexpr const char* kIconFileName = "autoapiframework_icon.png";
@@ -55,6 +57,13 @@ namespace acd
         wxString ToWx(const std::string& text) { return wxString::FromUTF8(text.c_str()); }
 
         std::string ToStd(const wxString& text) { return std::string(text.utf8_str()); }
+
+        bool IsSyntaxCheckDisabledBeforeSaving()
+        {
+            bool disabled = false;
+            wxConfigBase::Get()->Read(kDisableSyntaxCheckBeforeSavingConfigKey, &disabled, false);
+            return disabled;
+        }
 
         wxString FindRuntimeFile(const char* fileName)
         {
@@ -91,10 +100,27 @@ namespace acd
             {
                 return wxEmptyString;
             }
-            const YamlNodePtr value = entry->Find(key);
+            YamlNodePtr value = entry->Find(key);
+            if (!value && key == kQualityCodeKey)
+            {
+                const YamlNodePtr companion = entry->Find(kRuntimeCompanionKey);
+                value = companion ? companion->Find(key) : nullptr;
+                if (value && value->IsMap())
+                {
+                    return OneLine(value->ScalarOf(kQualityNameKey));
+                }
+            }
             if (!value) 
             {
                 return wxEmptyString;
+            }
+            if (key == kExecutionResultKey && value->IsMap())
+            {
+                return OneLine(value->ScalarOf(kExecutionResultTypeKey));
+            }
+            if (key == kSupervisionKey && value->IsMap())
+            {
+                return OneLine(value->ScalarOf(kSupervisionRequiredKey));
             }
             if (value->IsScalar()) 
             {
@@ -482,7 +508,7 @@ namespace acd
         {
             return;
         }
-        if (!SyntaxCheckIsOK(true, "Not saved! "))
+        if (!IsSyntaxCheckDisabledBeforeSaving() && !SyntaxCheckIsOK(true, "Not saved! "))
         {
             return;
         }
@@ -512,7 +538,7 @@ namespace acd
                         wxOK | wxICON_INFORMATION, this);
             return;
         }
-        if (!SyntaxCheckIsOK(true))        
+        if (!IsSyntaxCheckDisabledBeforeSaving() && !SyntaxCheckIsOK(true))
         {
             return;
         }
@@ -594,8 +620,10 @@ namespace acd
         wxConfigBase* config = wxConfigBase::Get();
         wxString metaModelFile = kMetaModelFileName;
         wxString vspecDirectory;
+        bool disableSyntaxCheckBeforeSaving = false;
         config->Read(kMetaModelFileConfigKey, &metaModelFile);
         config->Read(kVspecDirectoryConfigKey, &vspecDirectory);
+        config->Read(kDisableSyntaxCheckBeforeSavingConfigKey, &disableSyntaxCheckBeforeSaving, false);
 
         MetaModel metaModel;
         std::string metaModelVersion = "unknown";
@@ -613,6 +641,9 @@ namespace acd
 
         wxTextCtrl* metaModelControl = new wxTextCtrl(&dialog, wxID_ANY, metaModelFile);
         wxTextCtrl* vspecControl = new wxTextCtrl(&dialog, wxID_ANY, vspecDirectory);
+        wxCheckBox* disableSyntaxCheckControl = new wxCheckBox(
+            &dialog, wxID_ANY, "Syntax check disabled before saving the file.");
+        disableSyntaxCheckControl->SetValue(disableSyntaxCheckBeforeSaving);
         wxStaticText* metaModelVersionLabel = new wxStaticText(&dialog, wxID_ANY, metaModelVersion);    
         
         wxString vspecVersion = ToWx(GetGitTagAndVersion("VSS version: ", vspecDirectory));
@@ -684,6 +715,7 @@ namespace acd
                  });
 
         dialogSizer->Add(fields, 1, wxEXPAND | wxALL, 12);
+        dialogSizer->Add(disableSyntaxCheckControl, 0, wxLEFT | wxRIGHT | wxBOTTOM, 12);
         dialogSizer->Add(dialog.CreateSeparatedButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 8);
         dialog.SetSizerAndFit(dialogSizer);
         dialog.SetMinSize(wxSize(700, -1));
@@ -695,6 +727,7 @@ namespace acd
 
         config->Write(kMetaModelFileConfigKey, metaModelControl->GetValue());
         config->Write(kVspecDirectoryConfigKey, vspecControl->GetValue());
+        config->Write(kDisableSyntaxCheckBeforeSavingConfigKey, disableSyntaxCheckControl->GetValue());
         config->Flush();
         SetStatusText("Global settings updated", 0);
         if (metaModelFile.CompareTo(metaModelControl->GetValue()) != 0)
@@ -725,6 +758,12 @@ namespace acd
 
     void MainFrame::OnAddWithVspecFile(wxCommandEvent&)
     {
+        if (!IsVspecAvailable())
+        {
+            wxMessageBox(GetVspecUnavailableMessage(), kApplicationName, wxOK | wxICON_WARNING, this);
+            return;
+        }
+
         wxString vspecDirectory;
         wxConfigBase::Get()->Read(kVspecDirectoryConfigKey, &vspecDirectory);
 
@@ -801,6 +840,10 @@ namespace acd
             YamlNodePtr item = YamlNode::MakeMap();
             for (const std::string& field : fields)
             {
+                if (field == kQualityCodeKey)
+                {
+                    continue;
+                }
                 std::string value;
                 if (field == FunctionSpecification::kNamePathKey)
                 {
@@ -892,11 +935,14 @@ namespace acd
         std::vector<std::pair<std::string, wxTextCtrl*>> controls;
         for (const std::string& field : fields)
         {
-            fieldSizer->Add(new wxStaticText(&dialog, wxID_ANY, ToWx(field)), 0,
+            const bool isSupervisionRequired =
+                interfaceType == kSchedulingInterfaceTypeKey && field == kSupervisionKey;
+            const std::string fieldName = isSupervisionRequired ? kSupervisionRequiredKey : field;
+            fieldSizer->Add(new wxStaticText(&dialog, wxID_ANY, ToWx(fieldName)), 0,
                             wxALIGN_CENTER_VERTICAL);
 
             wxTextCtrl* control = nullptr;
-            if (field == "description")
+            if (field == kDescriptionKey)
             {
                 control = new wxTextCtrl(
                     &dialog,
@@ -911,8 +957,27 @@ namespace acd
                 control = new wxTextCtrl(&dialog, wxID_ANY);
             }
 
+            if (interfaceType == kSchedulingInterfaceTypeKey && field == kExecutionResultKey)
+            {
+                if (const YamlNodePtr* type = m_metaModel.FindInterfaceType(interfaceType))
+                {
+                    const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
+                    const YamlNodePtr result = properties ? properties->Find(field) : nullptr;
+                    if (result)
+                    {
+                        control->SetValue(ToWx(result->ScalarOf(kEnumRefKey)));
+                    }
+                }
+                control->SetEditable(false);
+            }
+            else if (isSupervisionRequired)
+            {
+                control->SetValue("false");
+                control->SetEditable(false);
+            }
+
             fieldSizer->Add(control, 1, wxEXPAND);
-            controls.emplace_back(field, control);
+            controls.emplace_back(fieldName, control);
         }
 
         sizer->Add(fieldSizer, 1, wxEXPAND | wxALL, 12);
@@ -928,6 +993,35 @@ namespace acd
         YamlNodePtr item = YamlNode::MakeMap();
         for (const auto& control : controls)
         {
+            if (interfaceType == kSchedulingInterfaceTypeKey && control.first == kExecutionResultKey)
+            {
+                YamlNodePtr result = YamlNode::MakeMap();
+                result->Set(kExecutionResultTypeKey, YamlNode::MakeScalar(ToStd(control.second->GetValue())));
+                item->Set(control.first, std::move(result));
+                continue;
+            }
+            if (interfaceType == kSchedulingInterfaceTypeKey && control.first == kSupervisionRequiredKey)
+            {
+                YamlNodePtr supervision = YamlNode::MakeMap();
+                supervision->Set(kSupervisionRequiredKey, YamlNode::MakeScalar(ToStd(control.second->GetValue())));
+                item->Set(kSupervisionKey, std::move(supervision));
+                continue;
+            }
+            if (interfaceType == kDataInterfaceTypeKey && control.first == kQualityCodeKey)
+            {
+                const std::string name = ToStd(control.second->GetValue());
+                if (!name.empty())
+                {
+                    YamlNodePtr quality = YamlNode::MakeMap();
+                    quality->Set(kNameKey, YamlNode::MakeScalar(name));
+                    quality->Set(kDatatypeKey, YamlNode::MakeScalar(kEnumsKey));
+                    quality->Set(kEnumRefKey, YamlNode::MakeScalar(kDataQualityKey));
+                    YamlNodePtr companion = YamlNode::MakeMap();
+                    companion->Set(kQualityCodeKey , std::move(quality));
+                    item->Set(kRuntimeCompanionKey, std::move(companion));
+                }
+                continue;
+            }
             item->Set(control.first, YamlNode::MakeScalar(ToStd(control.second->GetValue())));
         }
         if (m_specification.AddCollectionItem(collectionKey, std::move(item)))
@@ -980,6 +1074,8 @@ namespace acd
             return;
         }
 
+        CompleteEntryFromMetaModel(GetSelectedInterfaceType(), entries[selectedRow]);
+
         struct EditableValue
         {
             YamlNodePtr node;
@@ -995,7 +1091,7 @@ namespace acd
 
         const auto addField =
             [&fields, &editableValues, &dialog]
-            (const wxString& name, const YamlNodePtr& node)
+            (const wxString& name, const YamlNodePtr& node, bool readOnly)
         {
             if (!node || !node->IsScalar())
             {
@@ -1005,7 +1101,7 @@ namespace acd
             fields->Add(new wxStaticText(&dialog, wxID_ANY, name), 0, wxALIGN_CENTER_VERTICAL);
 
             wxTextCtrl* control = nullptr;
-            if (name.CmpNoCase("description") == 0)
+            if (name.CmpNoCase(kDescriptionKey) == 0)
             {
                 control = new wxTextCtrl(
                     &dialog,
@@ -1020,22 +1116,45 @@ namespace acd
                 control = new wxTextCtrl(&dialog, wxID_ANY, ToWx(node->GetScalar()));
             }
 
+            if (readOnly)
+            {
+                control->SetEditable(false);
+            }
             fields->Add(control, 1, wxEXPAND);
-            editableValues.push_back({node, control});
+            if (!readOnly)
+            {
+                editableValues.push_back({node, control});
+            }
         };
 
         for (const auto& entry : entries[selectedRow]->GetMap())
         {
-            if (entry.second && entry.second->IsMap())
+            if (entry.first == kRuntimeCompanionKey && entry.second && entry.second->IsMap())
+            {
+                for (const auto& companion : entry.second->GetMap())
+                {
+                    if (companion.second && companion.second->IsMap())
+                    {
+                        for (const auto& field : companion.second->GetMap())
+                        {
+                            addField(ToWx(companion.first + "." + field.first), field.second, false);
+                        }
+                    }
+                }
+            }
+            else if (entry.second && entry.second->IsMap())
             {
                 for (const auto& nested : entry.second->GetMap())
                 {
-                    addField(ToWx(entry.first + "." + nested.first), nested.second);
+                    const std::string fieldPath = entry.first + "." + nested.first;
+                    const bool readOnly = collectionKey == FunctionSpecification::kSchedulingKey &&
+                        (fieldPath == kExecutionResultTypeFieldPath || fieldPath == kSupervisionRequiredPath);
+                    addField(ToWx(fieldPath), nested.second, readOnly);
                 }
             }
             else
             {
-                addField(ToWx(entry.first), entry.second);
+                addField(ToWx(entry.first), entry.second, false);
             }
         }
 
@@ -1083,7 +1202,7 @@ namespace acd
         {
             if (!doNotShowOnSuccess)
             {
-                wxMessageBox(contextMessage + "Minimal syntax check, no syntax errors found.",
+                wxMessageBox(contextMessage + "No syntax errors found.",
                             kApplicationName,
                             wxOK | wxICON_INFORMATION, this);
             }
@@ -1184,8 +1303,9 @@ namespace acd
     void MainFrame::OnQuickTips(wxCommandEvent&)
     {
         std::string title = "";
-        wxMessageBox( title + "\nAPI creation is not implemented yet.\n" +
-                     "\nThe supervision node in scheduling\ncan only be edited in an external editor.",
+        wxMessageBox( title + "\nThe automatic syntax check performed before saving a file to disk can be disabled.\n" +
+                     "\nAPI creation is not implemented yet.\n" +
+                     "\nThe supervision node in scheduling can only be edited in an external editor.",
                      kApplicationName,
                      wxOK | wxICON_INFORMATION, this);
     } 
@@ -1269,8 +1389,8 @@ namespace acd
         long row = 0;
         for (const auto& attribute : m_specification.GetAttributes()) 
         {
-            if (attribute.first == "name" || attribute.first == "version" ||
-                attribute.first == "description")
+            if (attribute.first == kNameKey || attribute.first == kVersionKey  ||
+                attribute.first == kDescriptionKey)
             {
                 continue;
             }
@@ -1340,6 +1460,100 @@ namespace acd
             return FunctionSpecification::kErrorsKey;
         default:
             return nullptr;
+        }
+    }
+
+    std::string MainFrame::GetSelectedInterfaceType() const
+    {
+        switch (m_notebook->GetSelection())
+        {
+        case 1:
+            return kDataInterfaceTypeKey;
+        case 2:
+            return kParameterInterfaceTypeKey;
+        case 3:
+            return kSchedulingInterfaceTypeKey;
+        case 4:
+            return kErrorInterfaceTypeKey;
+        default:
+            return std::string();
+        }
+    }
+
+    void MainFrame::CompleteEntryFromMetaModel(const std::string& interfaceType,
+                                               const YamlNodePtr& entry) const
+    {
+        if (interfaceType.empty() || !entry || !entry->IsMap())
+        {
+            return;
+        }
+
+        for (const std::string& field : m_metaModel.ColumnsFor(interfaceType, {}))
+        {
+            if (interfaceType == kSchedulingInterfaceTypeKey && field == kExecutionResultKey)
+            {
+                YamlNodePtr result = entry->Find(field);
+                if (!result || !result->IsMap())
+                {
+                    result = YamlNode::MakeMap();
+                    entry->Set(field, result);
+                }
+                if (!result->Find(kExecutionResultTypeKey))
+                {
+                    std::string enumReference;
+                    if (const YamlNodePtr* type = m_metaModel.FindInterfaceType(interfaceType))
+                    {
+                        const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
+                        const YamlNodePtr definition = properties ? properties->Find(field) : nullptr;
+                        if (definition)
+                        {
+                            enumReference = definition->ScalarOf(kEnumRefKey);
+                        }
+                    }
+                    result->Set(kExecutionResultTypeKey, YamlNode::MakeScalar(enumReference));
+                }
+                continue;
+            }
+
+            if (interfaceType == kSchedulingInterfaceTypeKey && field == kSupervisionKey)
+            {
+                YamlNodePtr supervision = entry->Find(field);
+                if (!supervision || !supervision->IsMap())
+                {
+                    supervision = YamlNode::MakeMap();
+                    entry->Set(field, supervision);
+                }
+                if (!supervision->Find(kSupervisionRequiredKey))
+                {
+                    supervision->Set(kSupervisionRequiredKey, YamlNode::MakeScalar("false"));
+                }
+                continue;
+            }
+
+            if (interfaceType == kDataInterfaceTypeKey && field == kQualityCodeKey)
+            {
+                YamlNodePtr companion = entry->Find(kRuntimeCompanionKey);
+                if (!companion || !companion->IsMap())
+                {
+                    companion = YamlNode::MakeMap();
+                    entry->Set(kRuntimeCompanionKey, companion);
+                }
+                YamlNodePtr quality = companion->Find(kQualityCodeKey);
+                if (!quality || !quality->IsMap())
+                {
+                    quality = YamlNode::MakeMap();
+                    quality->Set(kNameKey, YamlNode::MakeScalar(""));
+                    quality->Set(kDatatypeKey, YamlNode::MakeScalar(kEnumsKey));
+                    quality->Set(kEnumRefKey, YamlNode::MakeScalar(kDataQualityKey));
+                    companion->Set(kQualityCodeKey, quality);
+                }
+                continue;
+            }
+
+            if (!entry->Find(field))
+            {
+                entry->Set(field, YamlNode::MakeScalar(""));
+            }
         }
     }
 
@@ -1424,10 +1638,40 @@ namespace acd
         return output[0];
     }
 
+    wxString MainFrame::GetVspecExecutable()
+    {
+        return wxString::FromUTF8(AFD_VSPEC_EXECUTABLE);
+    }
+
+    bool MainFrame::IsVspecAvailable()
+    {
+        const wxString executable = GetVspecExecutable();
+        return !executable.IsEmpty() && wxFileName::FileExists(executable);
+    }
+
+    wxString MainFrame::GetVspecUnavailableMessage()
+    {
+        const wxString executable = GetVspecExecutable();
+        if (executable.IsEmpty())
+        {
+            return "vss-tools was not installed when this application was built, "
+                   "so vspec files cannot be imported.\n\n"
+                   "Install vss-tools and re-run CMake to enable this feature.";
+        }
+
+        return "vss-tools is not installed on this machine, so vspec files cannot be imported.\n\n"
+               "The vspec executable configured at build time is not present:\n" + executable +
+               "\n\nInstall vss-tools at that location, or rebuild the application on this machine.";
+    }
+
     wxString MainFrame::RunVspec2Json(const wxString& vspecFile, const wxString& outputFile)
     {
         wxArrayString output, errors;
-        const wxString executable = wxString::FromUTF8(ACD_VSPEC_EXECUTABLE);
+        const wxString executable = GetVspecExecutable();
+        if (!IsVspecAvailable())
+        {
+            return "ERROR: " + GetVspecUnavailableMessage();
+        }
 
         wxString cmd = wxString::Format(
             "\"%s\" export json --vspec \"%s\" --output \"%s\"",
@@ -1497,4 +1741,4 @@ namespace acd
                     wxOK | wxICON_ERROR, this);     
         }
     }
-} // namespace acd
+} // namespace afd

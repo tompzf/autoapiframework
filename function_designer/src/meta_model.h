@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2025-2026 ZF Friedrichshafen AG
+ * Copyright (c) 2026 ZF Friedrichshafen AG
  * 
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -11,11 +11,11 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Contributors:
- *   Thomas Pfleiderer - initial API and implementation
+ *   Thomas Pfleiderer - initial function designer
  ********************************************************************************/
  
-#ifndef ACD_META_MODEL_H
-#define ACD_META_MODEL_H
+#ifndef AFD_META_MODEL_H
+#define AFD_META_MODEL_H
 
 #include <map>
 #include <string>
@@ -24,11 +24,13 @@
 
 #include "yaml_node.h"
 
-namespace acd 
+namespace afd 
 {
+    /// @brief Expected strings within the the autoapiframework_meta_model.yaml file.
     static constexpr const char* kExpectedName = "Eclipse-autoapiframework-Metamodel";
     static constexpr const char* kMetaModelKey = "metamodel";
     static constexpr const char* kNameKey = "name";
+    static constexpr const char* kDescriptionKey = "description";    
     static constexpr const char* kVersionKey = "version";    
     static constexpr const char* kEnumsKey = "enums";
     static constexpr const char* kEnumRefKey = "enumRef";
@@ -40,12 +42,31 @@ namespace acd
     static constexpr const char* kErrorInterfaceTypeKey = "Error";
     static constexpr const char* kPropertiesKey = "properties";
 
+    static constexpr const char* kRuntimeCompanionKey = "runtimeCompanion";
+    static constexpr const char* kQualityCodeKey = "qualityCode";
+    static constexpr const char* kQualityNameKey = "name";
+    static constexpr const char* kDatatypeKey = "datatype";
+    static constexpr const char* kMandatoryKey = "mandatory";
+    static constexpr const char* kBooleanType = "boolean";    
+    static constexpr const char* kDataQualityKey = "DataQuality";
+    static constexpr const char* kExecutionResultTypeKey = "type";
+    static constexpr const char* kExecutionResultKey = "executionResult";
+
+    static constexpr const char* kSupervisionRequiredPath = "supervision.required";
+    static constexpr const char* kExecutionResultTypeFieldPath = "executionResult.type";
+    static constexpr const char* kSupervisionKey = "supervision";
+    static constexpr const char* kSupervisionRequiredKey = "required";
+    static constexpr const char* kFuSaKey = "FuSa";
+    static constexpr const char* kASILKey = "ASIL";    
+
+    
     /// In-memory representation of autoapiframework_meta_model.yaml.
     class MetaModel 
     {
     public:
         /// Loads the meta model from @p path. Returns false and fills @p error on failure.
         bool Load(const std::string& path, std::string& error);
+        std::vector<std::string> GetAllProperties();
         bool IsLoaded() const { return m_loaded; }
         bool FindRequiredAttributesAndInterfaces(const YamlNodePtr model, 
                                                  const std::string& path, std::string& error);
@@ -81,6 +102,6 @@ namespace acd
         void Reset();
     };
 
-} // namespace acd
+} // namespace afd
 
-#endif // ACD_META_MODEL_H
+#endif // AFD_META_MODEL_H
