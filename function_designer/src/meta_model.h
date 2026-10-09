@@ -56,6 +56,8 @@ namespace afd
     static constexpr const char* kExecutionResultTypeFieldPath = "executionResult.type";
     static constexpr const char* kSupervisionKey = "supervision";
     static constexpr const char* kSupervisionRequiredKey = "required";
+    static constexpr const char* kFuSaKey = "FuSa";
+    static constexpr const char* kASILKey = "ASIL";    
 
     
     /// In-memory representation of autoapiframework_meta_model.yaml.

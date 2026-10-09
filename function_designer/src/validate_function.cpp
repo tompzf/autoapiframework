@@ -135,14 +135,14 @@ namespace afd
         {
             return false;
         }
-        if (!ValidateEnums(dataInterfaces, interfaceTypeName, metaModel, error))
-        {
-            return false;
-        }    
         if (!ValidateBoolean(dataInterfaces, interfaceTypeName, metaModel, error))
         {
             return false;
-        }   
+        }           
+        if (!ValidateEnums(dataInterfaces, interfaceTypeName, metaModel, error))
+        {
+            return false;
+        }
         if (!ValidateMandatory(dataInterfaces, interfaceTypeName, metaModel, error))
         {
             return false;
@@ -227,6 +227,20 @@ namespace afd
         return true;
     }
 
+    bool ValidateFunction::SkipASILProperty(const YamlNodePtr& item, const std::string& interfaceTypeName)
+    {
+        if (interfaceTypeName == kDataInterfaceTypeKey)
+        {
+            std::string itemFusa = item->Find(kFuSaKey) ? item->Find(kFuSaKey)->GetScalar() : "";  
+            if (itemFusa == "false")
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     bool ValidateFunction::ValidateEnums(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
                                          const MetaModel& metaModel, std::string& error)
     {
@@ -254,13 +268,26 @@ namespace afd
                 error = "Each collection item must be a mapping.";
                 return false;
             }
+
+            bool skipASILCheck = SkipASILProperty(item, interfaceTypeName);
             std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : "<unknown>";                   
+          
             for (const auto& property : item->GetMap())
             {
                 if (SkipCertainPropertiesFromSyntaxCheck(property.first, true, false))
                 {
                     continue;
                 }
+                if (skipASILCheck && (property.first == kASILKey))
+                {
+                    if (property.second->GetScalar() != "")
+                    {
+                        error =  itemName +":\n" + kFuSaKey + " is set to false, " + kASILKey +" should be empty, instead it is " + property.second->GetScalar() + ".";
+                        return false;                        
+                    }
+
+                    continue;
+                }                
 
                 auto it = propertiesWithEnumRef.find(property.first.c_str());
                 if (it != propertiesWithEnumRef.end())
