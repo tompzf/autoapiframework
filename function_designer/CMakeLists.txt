@@ -92,6 +92,7 @@ add_executable(AutoAPIFunctionDesigner WIN32
     src/meta_model.cpp
     src/validate_function.cpp    
     src/function_specification.cpp
+    src/supervision_editor.cpp
     ${ACD_WINDOWS_RESOURCES}
 )
 

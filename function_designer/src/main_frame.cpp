@@ -17,6 +17,7 @@
 #include "main_frame.h"
 #include "json_signal_parser.h"
 #include "meta_model.h"
+#include "supervision_editor.h"
 #include "validate_function.h"
 
 #include <wx/config.h>
@@ -927,8 +928,13 @@ namespace afd
             return;
         }
 
-        wxDialog dialog(this, wxID_ANY, "Add item", wxDefaultPosition, wxDefaultSize,
-                        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+        wxString collectionName = m_notebook->GetPageText(m_notebook->GetSelection());
+        collectionName = collectionName.BeforeFirst('(').Trim();
+        collectionName.Replace(" collection", "");
+        collectionName.MakeLower();
+        wxDialog dialog(this, wxID_ANY, "Add " + collectionName + " item",
+                wxDefaultPosition, wxDefaultSize,
+                wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
         wxFlexGridSizer* fieldSizer = new wxFlexGridSizer(2, 6, 8);
         fieldSizer->AddGrowableCol(1, 1);
@@ -1082,15 +1088,22 @@ namespace afd
             wxTextCtrl* control;
         };
 
-        wxDialog dialog(this, wxID_ANY, "Edit item", wxDefaultPosition, wxDefaultSize,
-                        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+        wxString collectionName = m_notebook->GetPageText(m_notebook->GetSelection());
+        collectionName = collectionName.BeforeFirst('(').Trim();
+        collectionName.Replace(" collection", "");
+        collectionName.MakeLower();
+        wxDialog dialog(this, wxID_ANY, "Edit " + collectionName + " item",
+                wxDefaultPosition, wxDefaultSize,
+                wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
         wxFlexGridSizer* fields = new wxFlexGridSizer(2, 6, 8);
         fields->AddGrowableCol(1, 1);
         std::vector<EditableValue> editableValues;
+        YamlNodePtr editedSupervision;
+        wxTextCtrl* supervisionRequiredControl = nullptr;
 
         const auto addField =
-            [&fields, &editableValues, &dialog]
+            [&fields, &editableValues, &dialog, &supervisionRequiredControl]
             (const wxString& name, const YamlNodePtr& node, bool readOnly)
         {
             if (!node || !node->IsScalar())
@@ -1121,6 +1134,10 @@ namespace afd
                 control->SetEditable(false);
             }
             fields->Add(control, 1, wxEXPAND);
+            if (name == ToWx(kSupervisionRequiredPath))
+            {
+                supervisionRequiredControl = control;
+            }
             if (!readOnly)
             {
                 editableValues.push_back({node, control});
@@ -1163,8 +1180,58 @@ namespace afd
             return;
         }
 
+        wxButton* editSupervisionButton = nullptr;
+        if (collectionKey == FunctionSpecification::kSchedulingKey)
+        {
+            editSupervisionButton = new wxButton(&dialog, wxID_ANY, "Edit Supervision");
+            editSupervisionButton->Bind(wxEVT_BUTTON,
+                [&dialog, &entries, selectedRow, &editedSupervision, supervisionRequiredControl]
+                (wxCommandEvent&)
+                {
+                    const YamlNodePtr existingSupervision = editedSupervision
+                        ? editedSupervision
+                        : entries[selectedRow]->Find(kSupervisionKey);
+                    wxDialog supervisionDialog(&dialog, wxID_ANY, "Edit Supervision",
+                                               wxDefaultPosition, wxDefaultSize,
+                                               wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+                    wxBoxSizer* supervisionSizer = new wxBoxSizer(wxVERTICAL);
+                    SupervisionEditor editor(supervisionDialog, *supervisionSizer,
+                                             existingSupervision);
+                    supervisionSizer->Add(
+                        supervisionDialog.CreateSeparatedButtonSizer(wxOK | wxCANCEL),
+                        0, wxEXPAND | wxALL, 8);
+                    supervisionDialog.SetSizerAndFit(supervisionSizer);
+                    supervisionDialog.SetMinSize(wxSize(500, -1));
+                    supervisionDialog.CentreOnParent();
+                    if (supervisionDialog.ShowModal() == wxID_OK)
+                    {
+                        editedSupervision = editor.Build();
+                        if (supervisionRequiredControl)
+                        {
+                            supervisionRequiredControl->SetValue(
+                                ToWx(editedSupervision->ScalarOf(kSupervisionRequiredKey)));
+                        }
+                        dialog.Layout();
+                        dialog.Fit();
+                    }
+                });
+        }
+
         sizer->Add(fields, 1, wxEXPAND | wxALL, 12);
-        sizer->Add(dialog.CreateSeparatedButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 8);
+        if (editSupervisionButton)
+        {
+            wxBoxSizer* actionSizer = new wxBoxSizer(wxHORIZONTAL);
+            actionSizer->Add(editSupervisionButton, 0, wxALIGN_CENTER_VERTICAL);
+            actionSizer->AddStretchSpacer();
+            actionSizer->Add(dialog.CreateStdDialogButtonSizer(wxOK | wxCANCEL),
+                             0, wxALIGN_CENTER_VERTICAL);
+            sizer->Add(actionSizer, 0, wxEXPAND | wxALL, 8);
+        }
+        else
+        {
+            sizer->Add(dialog.CreateSeparatedButtonSizer(wxOK | wxCANCEL),
+                       0, wxEXPAND | wxALL, 8);
+        }
         dialog.SetSizerAndFit(sizer);
         dialog.SetMinSize(wxSize(450, -1));
         dialog.CentreOnParent();
@@ -1177,6 +1244,10 @@ namespace afd
         for (const EditableValue& value : editableValues)
         {
             value.node->SetScalar(ToStd(value.control->GetValue()));
+        }
+        if (editedSupervision)
+        {
+            entries[selectedRow]->Set(kSupervisionKey, std::move(editedSupervision));
         }
         RefreshAll();
         SetStatusText(wxString::Format("Edited item %ld", selectedRow + 1), 0);
@@ -1304,8 +1375,8 @@ namespace afd
     {
         std::string title = "";
         wxMessageBox( title + "\nThe automatic syntax check performed before saving a file to disk can be disabled.\n" +
-                     "\nAPI creation is not implemented yet.\n" +
-                     "\nThe supervision node in scheduling can only be edited in an external editor.",
+                     "\nThe supervision node on the Scheduling collection is editable in the 'Edit scheduling item' dialog.\n" +
+                     "\nAPI creation is not implemented yet.",
                      kApplicationName,
                      wxOK | wxICON_INFORMATION, this);
     } 
