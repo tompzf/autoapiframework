@@ -72,7 +72,8 @@ Function Designer:
    :maxdepth: 1
 
    doc/function_designer/dependencies_and_build
-   doc/function_designer/application_purpose_and_use   
+   doc/function_designer/application_purpose_and_use
+   doc/function_designer/function_designer_configuration
 
 Examples (for application-framework):
 -------------------------------------

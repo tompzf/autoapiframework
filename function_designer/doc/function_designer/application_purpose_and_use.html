@@ -66,7 +66,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'doc/function_designer/application_purpose_and_use';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Blueprint project (IFEX + VAF)" href="../examples/bp-ifex-vaf/bp-ifex-vaf.html" />
+    <link rel="next" title="Function Specification Authoring" href="function_designer_configuration.html" />
     <link rel="prev" title="Dependencies and Build" href="dependencies_and_build.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -247,6 +247,13 @@
 <li class=" current active">
   <a class="nav-link dropdown-item nav-internal" href="#">
     Application Purpose and Use
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="function_designer_configuration.html">
+    Function Specification Authoring
   </a>
 </li>
 
@@ -434,6 +441,13 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
     Application Purpose and Use
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="function_designer_configuration.html">
+    Function Specification Authoring
   </a>
 </li>
 
@@ -642,38 +656,6 @@ files. In this case, open the root VSS file instead.</p>
 <img alt="error opening VSS file window" src="../../_images/error_opening_vspec_file.png" />
 </figure>
 </section>
-<section id="supervision">
-<h2>Supervision<a class="headerlink" href="#supervision" title="Link to this heading">#</a></h2>
-<p>The supervision functionality allows you to monitor the execution of the function
-and detect any anomalies or errors. In the collection view it is shown as <code class="docutils literal notranslate"><span class="pre">true</span></code>
-or <code class="docutils literal notranslate"><span class="pre">false</span></code> meaning <code class="docutils literal notranslate"><span class="pre">required</span></code> or <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">required</span></code>.</p>
-<figure class="align-default">
-<img alt="supervision in the collection window" src="../../_images/supervision_in_collection_window.png" />
-</figure>
-<p>It can be enabled or disabled for each function, allowing you to control which
-functions are actively supervised during execution. To do this, open the <code class="docutils literal notranslate"><span class="pre">Edit</span></code> dialog,
-there is a <code class="docutils literal notranslate"><span class="pre">Edit</span> <span class="pre">Supervision</span></code> button to configure the supervision settings.</p>
-<figure class="align-default">
-<img alt="edit supervision window" src="../../_images/supervision_edit_window.png" />
-</figure>
-<p>If not required, the nodes are not available for editing.</p>
-<figure class="align-default">
-<img alt="supervision not required window" src="../../_images/supervision_not_required.png" />
-</figure>
-<p>When supervision is required, select one or more supervision types. Each type
-has its own configuration fields:</p>
-<ul class="simple">
-<li><p><strong>alive:</strong> set the minimum and maximum number of indications and the reference cycle in milliseconds.</p></li>
-<li><p><strong>deadline:</strong> set the minimum and maximum execution time in milliseconds.</p></li>
-<li><p><strong>logical:</strong> list the predecessor and successor references used for logical supervision. Enter multiple references as a comma-separated list.</p></li>
-</ul>
-<p>Only the settings for selected types are available for editing and written to
-the specification. If no type is selected, the supervision configuration
-contains no type-specific settings.</p>
-<figure class="align-default">
-<img alt="supervision required window" src="../../_images/supervision_required.png" />
-</figure>
-</section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">examples</span></code> directory contains ready-to-use specifications, including:</p>
@@ -735,11 +717,11 @@ troubleshooting and verifying that all required dependencies are available.</p>
       </div>
     </a>
     <a class="right-next"
-       href="../examples/bp-ifex-vaf/bp-ifex-vaf.html"
+       href="function_designer_configuration.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Blueprint project (IFEX + VAF)</p>
+        <p class="prev-next-title">Function Specification Authoring</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -767,7 +749,6 @@ troubleshooting and verifying that all required dependencies are available.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-workflow">Typical Workflow</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#working-with-vss-signals">Working with VSS Signals</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supervision">Supervision</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application-menu-overview">Application Menu Overview</a></li>
 </ul>

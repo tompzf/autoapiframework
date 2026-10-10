@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Software Architecture &#8212; Eclipse Automotive API Framework  documentation</title>
+    <title>Function Specification Authoring &#8212; Eclipse Automotive API Framework  documentation</title>
   
   
   
@@ -63,11 +63,11 @@
     <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'doc/runtime_specification/runtime_specification_file';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'doc/function_designer/function_designer_configuration';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Summary" href="summary.html" />
-    <link rel="prev" title="WheelSpeedPlausibilityCheck Error and Supervision Example" href="../function_specification/examples/wheel_speed_plausibility_check_example.html" />
+    <link rel="next" title="Blueprint project (IFEX + VAF)" href="../examples/bp-ifex-vaf/bp-ifex-vaf.html" />
+    <link rel="prev" title="Application Purpose and Use" href="application_purpose_and_use.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -223,36 +223,36 @@
 </li>
 
 
-<li class=" current active">
-  <a class="nav-link dropdown-item nav-internal" href="#">
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../runtime_specification/runtime_specification_file.html">
     Software Architecture
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="summary.html">
+  <a class="nav-link dropdown-item nav-internal" href="../runtime_specification/summary.html">
     Summary
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../function_designer/dependencies_and_build.html">
+  <a class="nav-link dropdown-item nav-internal" href="dependencies_and_build.html">
     Dependencies and Build
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../function_designer/application_purpose_and_use.html">
+  <a class="nav-link dropdown-item nav-internal" href="application_purpose_and_use.html">
     Application Purpose and Use
   </a>
 </li>
 
 
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../function_designer/function_designer_configuration.html">
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#">
     Function Specification Authoring
   </a>
 </li>
@@ -417,36 +417,36 @@
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../runtime_specification/runtime_specification_file.html">
     Software Architecture
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="summary.html">
+  <a class="nav-link nav-internal" href="../runtime_specification/summary.html">
     Summary
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../function_designer/dependencies_and_build.html">
+  <a class="nav-link nav-internal" href="dependencies_and_build.html">
     Dependencies and Build
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../function_designer/application_purpose_and_use.html">
+  <a class="nav-link nav-internal" href="application_purpose_and_use.html">
     Application Purpose and Use
   </a>
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../function_designer/function_designer_configuration.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
     Function Specification Authoring
   </a>
 </li>
@@ -531,7 +531,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Software Architecture</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Function Specification Authoring</span></li>
   </ul>
 </nav>
 </div>
@@ -548,45 +548,100 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <p>Current status of the project:</p>
+  <section id="function-specification-authoring">
+<h1>Function Specification Authoring<a class="headerlink" href="#function-specification-authoring" title="Link to this heading">#</a></h1>
+<p>The Function Designer edits a Function Specification (<code class="docutils literal notranslate"><span class="pre">.afs</span></code>) against a
+loaded Meta Model. Use the guidance below when creating or reviewing its
+collections. For the complete property definitions, see the
+<a class="reference internal" href="../meta_model/meta_model.html"><span class="doc">Meta Model reference</span></a> and
+<a class="reference internal" href="../function_specification/function_specification_file.html"><span class="doc">Function Specification File reference</span></a>.</p>
+<section id="signal-collection">
+<h2>Signal Collection<a class="headerlink" href="#signal-collection" title="Link to this heading">#</a></h2>
+<p>Add one entry to <code class="docutils literal notranslate"><span class="pre">dataInterfaces</span></code> for each data interface the function
+consumes or produces. Set <code class="docutils literal notranslate"><span class="pre">direction</span></code> relative to the function: <code class="docutils literal notranslate"><span class="pre">input</span></code>
+means the function consumes the value, and <code class="docutils literal notranslate"><span class="pre">output</span></code> means it produces it.
+Use the canonical VSS name and preserve the signal’s established meaning and
+datatype; do not redefine catalogue semantics for a particular function.</p>
+<p>Describe the interface contract, including its unit, range, default,
+resolution, precision, update period, accuracy, safety classification, and
+protection requirement. Use <code class="docutils literal notranslate"><span class="pre">null</span></code> where a numeric value is not defined or
+applicable. Keep runtime quality separate from static signal metadata, as
+described in the Function Specification reference.</p>
 <figure class="align-default">
-<img alt="time line of the project" src="../../_images/time_line.png" />
+<img alt="signal collection in the collection window" src="../../_images/signal_collection.png" />
 </figure>
-<section id="software-architecture">
-<h1>Software Architecture<a class="headerlink" href="#software-architecture" title="Link to this heading">#</a></h1>
-<section id="runtime-specification-file">
-<h2>Runtime Specification File<a class="headerlink" href="#runtime-specification-file" title="Link to this heading">#</a></h2>
-<p>A <a class="reference internal" href="../function_specification/function_specification_file.html"><span class="doc">Function Specification File</span></a> fully describes exactly <strong>one</strong> function in
-isolation: its signals, its parameters, and the scheduling of its own runnables. It intentionally does not know anything about the other
-functions running on the same system.</p>
-<p>A real system, however, is composed of several such functions that need to be instantiated and executed together, in a defined order, and
-connected to the same middleware. The <strong>Runtime Specification File</strong> captures this system-level composition on top of one or more Function
-Specification Files:</p>
-<ul class="simple">
-<li><p><strong>Function reference</strong> - which Function Specification Files (i.e. which functions) are part of this runtime/system.</p></li>
-<li><p><strong>Sequencing</strong> - the execution order across those functions, i.e. how the <code class="docutils literal notranslate"><span class="pre">previousRunnableRef</span></code> chains of the individual functions are
-stitched together into one overall schedule.</p></li>
-</ul>
+</section>
+<section id="parameter-collection">
+<h2>Parameter Collection<a class="headerlink" href="#parameter-collection" title="Link to this heading">#</a></h2>
+<p>Add function configuration and calibration values to <code class="docutils literal notranslate"><span class="pre">parameters</span></code> rather
+than representing them as ordinary data interfaces. Reuse canonical
+catalogue identifiers where available, and describe each parameter’s type,
+default, unit, tunability, and applicable limits. Add <code class="docutils literal notranslate"><span class="pre">dimensions</span></code> when the
+parameter is an array or map; omit it for scalars.</p>
 <figure class="align-default">
-<img alt="One Specification - many artefacts" src="../../_images/runtime_specification_architecture.png" />
+<img alt="parameter collection in the collection window" src="../../_images/parameter_collection.png" />
 </figure>
-<p>As shown above, each <code class="docutils literal notranslate"><span class="pre">Software</span> <span class="pre">Function</span></code> (the function’s business logic) is executed through its own <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">Adapter</span></code>, which wraps it
-behind the stable, middleware-independent contract defined by the meta model. The <code class="docutils literal notranslate"><span class="pre">Runtime</span> <span class="pre">Scheduler</span></code> is generated from the Runtime
-Specification File and is responsible for triggering the OS-level <code class="docutils literal notranslate"><span class="pre">Init</span></code>/<code class="docutils literal notranslate"><span class="pre">Compute</span></code>/<code class="docutils literal notranslate"><span class="pre">Terminate</span></code> calls of every function, in the order
-described by the Runtime Specification File, through the <code class="docutils literal notranslate"><span class="pre">Middleware</span> <span class="pre">Abstraction</span> <span class="pre">Layer</span></code>.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The Runtime Specification File is not yet formally defined in the meta model (unlike the Function Specification File, which is defined by
-<code class="docutils literal notranslate"><span class="pre">Eclipse-autoapiframework-Metamodel</span></code> version 0.4.0). The concepts above describe the intended scope; a versioned schema, file extension,
-and worked examples are still to be added.</p>
-</div>
-<p>Open topics still to be worked out for the Runtime Specification File:</p>
+</section>
+<section id="scheduling-collection">
+<h2>Scheduling Collection<a class="headerlink" href="#scheduling-collection" title="Link to this heading">#</a></h2>
+<p>Add one entry to <code class="docutils literal notranslate"><span class="pre">scheduling</span></code> for each independently scheduled runnable.
+Use the <code class="docutils literal notranslate"><span class="pre">&lt;FunctionName&gt;.Init</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;FunctionName&gt;.Step</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">&lt;FunctionName&gt;.Terminate</span></code> naming convention where those lifecycle stages
+apply. Select the appropriate <code class="docutils literal notranslate"><span class="pre">runType</span></code>; provide <code class="docutils literal notranslate"><span class="pre">cycleTimeMs</span></code> for cyclic
+runnables, and omit it for other run types. Explain the runnable’s purpose in
+<code class="docutils literal notranslate"><span class="pre">description</span></code> and set its <code class="docutils literal notranslate"><span class="pre">implementedASIL</span></code>.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">previousRunnableRef</span></code> only when an explicit ordering constraint exists;
+it does not mean that the referenced runnable must execute immediately before
+this one. Each entry also declares its generic execution result as
+<code class="docutils literal notranslate"><span class="pre">executionResult:</span> <span class="pre">{type:</span> <span class="pre">FunctionResult}</span></code>. The <code class="docutils literal notranslate"><span class="pre">supervision</span></code> object is
+required for every runnable; its configuration is covered in the
+Supervision section below.</p>
+<figure class="align-default">
+<img alt="scheduling collection in the collection window" src="../../_images/scheduling_collection.png" />
+</figure>
+</section>
+<section id="supervision">
+<h2>Supervision<a class="headerlink" href="#supervision" title="Link to this heading">#</a></h2>
+<p>The supervision functionality allows you to monitor the execution of the function
+and detect any anomalies or errors. In the collection view it is shown as <code class="docutils literal notranslate"><span class="pre">true</span></code>
+or <code class="docutils literal notranslate"><span class="pre">false</span></code> meaning <code class="docutils literal notranslate"><span class="pre">required</span></code> or <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">required</span></code>.</p>
+<figure class="align-default">
+<img alt="supervision in the collection window" src="../../_images/supervision_in_collection_window.png" />
+</figure>
+<p>It can be enabled or disabled for each function, allowing you to control which
+functions are actively supervised during execution. To do this, open the <code class="docutils literal notranslate"><span class="pre">Edit</span></code> dialog,
+there is a <code class="docutils literal notranslate"><span class="pre">Edit</span> <span class="pre">Supervision</span></code> button to configure the supervision settings.</p>
+<figure class="align-default">
+<img alt="edit supervision window" src="../../_images/supervision_edit_window.png" />
+</figure>
+<p>If not required, the nodes are not available for editing.</p>
+<figure class="align-default">
+<img alt="supervision not required window" src="../../_images/supervision_not_required.png" />
+</figure>
+<p>When supervision is required, select one or more supervision types. Each type
+has its own configuration fields:</p>
 <ul class="simple">
-<li><p>Mapping of an output signal of one function to the input signal of another (data flow / connections).</p></li>
-<li><p>Explicit dependency declarations between functions, beyond the ordering implied by <code class="docutils literal notranslate"><span class="pre">previousRunnableRef</span></code>.</p></li>
-<li><p>Initialization / system setup information.</p></li>
-<li><p>Deployment information.</p></li>
+<li><p><strong>alive:</strong> set the minimum and maximum number of indications and the reference cycle in milliseconds.</p></li>
+<li><p><strong>deadline:</strong> set the minimum and maximum execution time in milliseconds.</p></li>
+<li><p><strong>logical:</strong> list the predecessor and successor references used for logical supervision. Enter multiple references as a comma-separated list.</p></li>
 </ul>
+<p>Only the settings for selected types are available for editing and written to
+the specification. If no type is selected, the supervision configuration
+contains no type-specific settings.</p>
+<figure class="align-default">
+<img alt="supervision required window" src="../../_images/supervision_required.png" />
+</figure>
+</section>
+<section id="error-collection">
+<h2>Error Collection<a class="headerlink" href="#error-collection" title="Link to this heading">#</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">errorInterfaces</span></code> for function-specific diagnostic conditions when
+they are needed. Keep these distinct from <code class="docutils literal notranslate"><span class="pre">FunctionResult</span></code>, which reports
+the generic outcome of execution, and from runtime transport or adapter
+failures. The Error interface is a candidate concept; see the Function
+Specification reference for its current status and modeling guidance.</p>
+<figure class="align-default">
+<img alt="error collection in the collection window" src="../../_images/error_collection.png" />
+</figure>
 </section>
 </section>
 
@@ -601,20 +656,20 @@ and worked examples are still to be added.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../function_specification/examples/wheel_speed_plausibility_check_example.html"
+       href="application_purpose_and_use.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">WheelSpeedPlausibilityCheck Error and Supervision Example</p>
+        <p class="prev-next-title">Application Purpose and Use</p>
       </div>
     </a>
     <a class="right-next"
-       href="summary.html"
+       href="../examples/bp-ifex-vaf/bp-ifex-vaf.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Summary</p>
+        <p class="prev-next-title">Blueprint project (IFEX + VAF)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -637,7 +692,11 @@ and worked examples are still to be added.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-specification-file">Runtime Specification File</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#signal-collection">Signal Collection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-collection">Parameter Collection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scheduling-collection">Scheduling Collection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supervision">Supervision</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-collection">Error Collection</a></li>
 </ul>
   </nav></div>
 
@@ -645,7 +704,7 @@ and worked examples are still to be added.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/doc/runtime_specification/runtime_specification_file.rst.txt"
+      <li><a href="../../_sources/doc/function_designer/function_designer_configuration.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
