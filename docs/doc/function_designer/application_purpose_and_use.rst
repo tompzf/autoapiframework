@@ -145,42 +145,6 @@ files. In this case, open the root VSS file instead.
 .. figure:: figures/error_opening_vspec_file.png
    :alt: error opening VSS file window  
 
-Supervision
------------
-
-The supervision functionality allows you to monitor the execution of the function 
-and detect any anomalies or errors. In the collection view it is shown as ``true`` 
-or ``false`` meaning ``required`` or ``not required``.
-
-.. figure:: figures/supervision_in_collection_window.png
-   :alt: supervision in the collection window  
-
-It can be enabled or disabled for each function, allowing you to control which 
-functions are actively supervised during execution. To do this, open the ``Edit`` dialog,
-there is a ``Edit Supervision`` button to configure the supervision settings.
-
-.. figure:: figures/supervision_edit_window.png
-   :alt: edit supervision window  
-
-If not required, the nodes are not available for editing.
-
-.. figure:: figures/supervision_not_required.png
-   :alt: supervision not required window
-
-When supervision is required, select one or more supervision types. Each type
-has its own configuration fields:
-
-* **alive:** set the minimum and maximum number of indications and the reference cycle in milliseconds.
-* **deadline:** set the minimum and maximum execution time in milliseconds.
-* **logical:** list the predecessor and successor references used for logical supervision. Enter multiple references as a comma-separated list.
-
-Only the settings for selected types are available for editing and written to
-the specification. If no type is selected, the supervision configuration
-contains no type-specific settings.
-
-.. figure:: figures/supervision_required.png
-   :alt: supervision required window
-
 Examples
 --------
 
