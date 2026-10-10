@@ -620,17 +620,84 @@ there is a <code class="docutils literal notranslate"><span class="pre">Edit</sp
 </figure>
 <p>When supervision is required, select one or more supervision types. Each type
 has its own configuration fields:</p>
+<section id="alive-supervision">
+<h3>1. Alive Supervision<a class="headerlink" href="#alive-supervision" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p>Question answered:
+“Is the runnable still running periodically?”</p>
+</div></blockquote>
+<p>Checks whether a function is executed the expected number of times within a monitoring interval.</p>
+<p>Typical use:</p>
 <ul class="simple">
-<li><p><strong>alive:</strong> set the minimum and maximum number of indications and the reference cycle in milliseconds.</p></li>
-<li><p><strong>deadline:</strong> set the minimum and maximum execution time in milliseconds.</p></li>
-<li><p><strong>logical:</strong> list the predecessor and successor references used for logical supervision. Enter multiple references as a comma-separated list.</p></li>
+<li><p>Cyclic tasks</p></li>
+<li><p>Periodic sensor processing</p></li>
+<li><p>Communication handlers</p></li>
 </ul>
-<p>Only the settings for selected types are available for editing and written to
-the specification. If no type is selected, the supervision configuration
-contains no type-specific settings.</p>
+</section>
+<section id="deadline-supervision">
+<h3>2. Deadline Supervision<a class="headerlink" href="#deadline-supervision" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p>Question answered:
+“Was the function completed within the expected time?”</p>
+</div></blockquote>
+<p>Checks whether the execution time between two checkpoints is within configured limits.</p>
+<p>Typical use:</p>
+<ul class="simple">
+<li><p>Detect deadlocks</p></li>
+<li><p>Detect long loops</p></li>
+<li><p>Detect performance issues</p></li>
+</ul>
+</section>
+<section id="logical-supervision">
+<h3>3. Logical Supervision<a class="headerlink" href="#logical-supervision" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p>Question answered:
+“Did the software follow the correct execution flow?”</p>
+</div></blockquote>
+<p>Checks whether checkpoints are reached in the correct sequence.</p>
+<p>Typical use:</p>
+<ul class="simple">
+<li><p>State machines</p></li>
+<li><p>Safety-critical control flows</p></li>
+<li><p>Initialization sequences</p></li>
+</ul>
 <figure class="align-default">
 <img alt="supervision required window" src="../../_images/supervision_required.png" />
 </figure>
+<p>Only the settings for selected types are available for editing and written to
+the specification. If no type is selected, the supervision configuration
+contains no type-specific settings.</p>
+<p><strong>alive:</strong> set the minimum and maximum number of indications and the reference cycle in milliseconds.</p>
+<figure class="align-default">
+<img alt="supervision edit windows" src="../../_images/supervision_edit_windows.png" />
+</figure>
+<p><strong>deadline:</strong> set the minimum and maximum execution time in milliseconds.</p>
+<p><strong>logical:</strong> list the predecessor and successor references used for logical supervision. Enter multiple references as a comma-separated list.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id1">
+<caption><span class="caption-number">Table 15 </span><span class="caption-text">Summary</span><a class="headerlink" href="#id1" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Supervision Type</p></th>
+<th class="head"><p>Checks</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Alive</p></td>
+<td><p>Function runs the expected number of times</p></td>
+</tr>
+<tr class="row-odd"><td><p>Deadline</p></td>
+<td><p>Function finishes within the allowed time</p></td>
+</tr>
+<tr class="row-even"><td><p>Logical</p></td>
+<td><p>Function follows the correct sequence of execution</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 </section>
 <section id="error-collection">
 <h2>Error Collection<a class="headerlink" href="#error-collection" title="Link to this heading">#</a></h2>
@@ -695,7 +762,12 @@ Specification reference for its current status and modeling guidance.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#signal-collection">Signal Collection</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-collection">Parameter Collection</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scheduling-collection">Scheduling Collection</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supervision">Supervision</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supervision">Supervision</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alive-supervision">1. Alive Supervision</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deadline-supervision">2. Deadline Supervision</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#logical-supervision">3. Logical Supervision</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-collection">Error Collection</a></li>
 </ul>
   </nav></div>

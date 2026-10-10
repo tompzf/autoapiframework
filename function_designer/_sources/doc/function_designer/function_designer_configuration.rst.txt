@@ -99,16 +99,77 @@ If not required, the nodes are not available for editing.
 When supervision is required, select one or more supervision types. Each type
 has its own configuration fields:
 
-* **alive:** set the minimum and maximum number of indications and the reference cycle in milliseconds.
-* **deadline:** set the minimum and maximum execution time in milliseconds.
-* **logical:** list the predecessor and successor references used for logical supervision. Enter multiple references as a comma-separated list.
+1. Alive Supervision
+~~~~~~~~~~~~~~~~~~~~
+
+  Question answered:
+  "Is the runnable still running periodically?"
+
+Checks whether a function is executed the expected number of times within a monitoring interval.
+
+Typical use:
+
+- Cyclic tasks
+- Periodic sensor processing
+- Communication handlers
+
+2. Deadline Supervision
+~~~~~~~~~~~~~~~~~~~~~~~
+
+  Question answered:
+  "Was the function completed within the expected time?"
+
+Checks whether the execution time between two checkpoints is within configured limits.
+
+Typical use:
+
+- Detect deadlocks
+- Detect long loops
+- Detect performance issues
+
+3. Logical Supervision
+~~~~~~~~~~~~~~~~~~~~~~
+
+  Question answered:
+  "Did the software follow the correct execution flow?"
+
+Checks whether checkpoints are reached in the correct sequence.
+
+Typical use:
+
+- State machines
+- Safety-critical control flows
+- Initialization sequences
+
+.. figure:: figures/supervision_required.png
+   :alt: supervision required window
 
 Only the settings for selected types are available for editing and written to
 the specification. If no type is selected, the supervision configuration
 contains no type-specific settings.
 
-.. figure:: figures/supervision_required.png
-   :alt: supervision required window
+**alive:** set the minimum and maximum number of indications and the reference cycle in milliseconds.
+
+.. figure:: figures/supervision_edit_windows.png
+   :alt: supervision edit windows
+
+**deadline:** set the minimum and maximum execution time in milliseconds.
+
+**logical:** list the predecessor and successor references used for logical supervision. Enter multiple references as a comma-separated list.
+
+
+.. list-table:: Summary
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Supervision Type
+     - Checks
+   * - Alive
+     - Function runs the expected number of times
+   * - Deadline
+     - Function finishes within the allowed time
+   * - Logical
+     - Function follows the correct sequence of execution
 
 Error Collection
 -----------------
