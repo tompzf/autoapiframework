@@ -21,6 +21,9 @@ project(function_designer
         DESCRIPTION "Editor for Eclipse autoapiframework function specifications"
         LANGUAGES CXX)
 
+include(CTest)
+option(AFD_BUILD_APP "Build the wxWidgets function designer application" ON)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -44,6 +47,7 @@ if(NOT VSPEC_EXECUTABLE)
 endif()
 
 
+if(AFD_BUILD_APP)
 option(ACD_FETCH_WXWIDGETS "Download and build wxWidgets when no installation is found" ON)
 
 # vcpkg and recent wxWidgets installations provide a package config file,
@@ -131,6 +135,9 @@ add_custom_command(TARGET AutoAPIFunctionDesigner POST_BUILD
             "${CMAKE_CURRENT_SOURCE_DIR}/examples/vehicle_speed_fusion_multirate.afs"
             "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/vehicle_speed_fusion_multirate.afs"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/examples/mandatory_property_is_missing_syntax_error.afs"            
+            "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/mandatory_property_is_missing_syntax_error.afs"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/examples/wheel_speed_plausibility_check.afs"
             "$<TARGET_FILE_DIR:AutoAPIFunctionDesigner>/wheel_speed_plausibility_check.afs"            
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -149,4 +156,23 @@ if(UNIX AND NOT APPLE)
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_icon-128x128.png"
             DESTINATION bin
             RENAME autoapiframework_icon.png)
+endif()
+endif()
+
+if(BUILD_TESTING)
+    add_executable(function_designer_tests
+        tests/yaml_tests.cpp
+        src/yaml_node.cpp
+        src/yaml_parser.cpp
+        src/yaml_writer.cpp
+    )
+    target_include_directories(function_designer_tests PRIVATE src)
+    target_compile_definitions(function_designer_tests PRIVATE
+        AFD_EXAMPLES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/examples")
+    if(MSVC)
+        target_compile_options(function_designer_tests PRIVATE /W4 /WX /utf-8)
+    else()
+        target_compile_options(function_designer_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME function_designer_tests COMMAND function_designer_tests)
 endif()
