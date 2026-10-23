@@ -150,7 +150,6 @@ add_custom_command(TARGET AutoAPIFunctionDesigner POST_BUILD
     VERBATIM)
 
 install(TARGETS AutoAPIFunctionDesigner RUNTIME DESTINATION bin)
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/examples/autoapiframework_meta_model.yaml" DESTINATION bin)
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_logo.png" DESTINATION bin)
 if(UNIX AND NOT APPLE)
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/autoapiframework_icon-128x128.png"
@@ -159,12 +158,36 @@ if(UNIX AND NOT APPLE)
 endif()
 endif()
 
+add_executable(AutoAPIFunctionDesignerSyntaxCheck
+    src/syntax_check_main.cpp
+    src/yaml_node.cpp
+    src/yaml_parser.cpp
+    src/meta_model.cpp
+    src/validate_function.cpp
+)
+target_include_directories(AutoAPIFunctionDesignerSyntaxCheck PRIVATE src)
+if(MSVC)
+    target_compile_options(AutoAPIFunctionDesignerSyntaxCheck PRIVATE /W4 /WX /utf-8)
+else()
+    target_compile_options(AutoAPIFunctionDesignerSyntaxCheck PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
+add_custom_command(TARGET AutoAPIFunctionDesignerSyntaxCheck POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/examples/autoapiframework_metadata_V04.yaml"
+            "$<TARGET_FILE_DIR:AutoAPIFunctionDesignerSyntaxCheck>/autoapiframework_meta_model.yaml"
+    VERBATIM)
+install(TARGETS AutoAPIFunctionDesignerSyntaxCheck RUNTIME DESTINATION bin)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/examples/autoapiframework_metadata_V04.yaml"
+        DESTINATION bin RENAME autoapiframework_meta_model.yaml)
+
 if(BUILD_TESTING)
     add_executable(function_designer_tests
         tests/yaml_tests.cpp
         src/yaml_node.cpp
         src/yaml_parser.cpp
         src/yaml_writer.cpp
+        src/meta_model.cpp
+        src/validate_function.cpp
     )
     target_include_directories(function_designer_tests PRIVATE src)
     target_compile_definitions(function_designer_tests PRIVATE
@@ -175,4 +198,11 @@ if(BUILD_TESTING)
         target_compile_options(function_designer_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
     endif()
     add_test(NAME function_designer_tests COMMAND function_designer_tests)
+    add_test(NAME syntax_check_valid_example
+        COMMAND function_designer_tests
+                "${CMAKE_CURRENT_SOURCE_DIR}/examples/speed_hazard_detection.afs")
+    add_test(NAME syntax_check_missing_mandatory_property
+        COMMAND function_designer_tests
+                "${CMAKE_CURRENT_SOURCE_DIR}/examples/mandatory_property_is_missing_syntax_error.afs")
+    set_tests_properties(syntax_check_missing_mandatory_property PROPERTIES WILL_FAIL TRUE)
 endif()

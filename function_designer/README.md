@@ -113,6 +113,24 @@ cmake --build --preset linux-debug
 The meta model and the sample specification are copied next to the executable
 after each build.
 
+### Syntax check
+
+The test executable accepts one `.afs` path to run the syntax checker against
+the bundled meta model. It exits with `0` for valid input, `1` for a syntax
+error, or `2` for a usage or setup error. With no arguments, it runs the unit
+tests:
+
+```powershell
+.\build\windows-gcc-debug\bin\function_designer_tests.exe mandatory_property_is_missing_syntax_error.afs
+```
+
+CTest runs the valid and intentionally invalid examples as part of its test
+suite. Building compiles the tests but does not execute them; run them with:
+
+```powershell
+ctest --test-dir build/windows-gcc-debug --output-on-failure
+```
+
 ## Sample
 
 `../examples/vehicle_speed_fusion_multirate` and

@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2026 ZF Friedrichshafen AG
- * 
+ *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
  *
@@ -14,11 +14,16 @@
  *   Thomas Pfleiderer - add tests
  ********************************************************************************/
 
- #include "yaml_node.h"
+#include "meta_model.h"
+#include "validate_function.h"
+#include "yaml_node.h"
 #include "yaml_parser.h"
 #include "yaml_writer.h"
 
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -131,10 +136,81 @@ namespace
                     example + " changed its data interface count after writing and reparsing");
         }
     }
+
+    std::filesystem::path ResolveSpecificationPath(const std::string& inputPath, const char* executablePath)
+    {
+        std::error_code error;
+        const std::filesystem::path requestedPath(inputPath);
+        if (std::filesystem::exists(requestedPath, error) && !error)
+        {
+            return requestedPath;
+        }
+
+        error.clear();
+        const std::filesystem::path executable = std::filesystem::absolute(executablePath, error);
+        if (!error)
+        {
+            const std::filesystem::path besideExecutable = executable.parent_path() / requestedPath;
+            if (std::filesystem::exists(besideExecutable, error) && !error)
+            {
+                return besideExecutable;
+            }
+        }
+
+        error.clear();
+        const std::filesystem::path examplePath = std::filesystem::path(AFD_EXAMPLES_DIR) / requestedPath;
+        if (std::filesystem::exists(examplePath, error) && !error)
+        {
+            return examplePath;
+        }
+        return requestedPath;
+    }
+
+    int CheckSpecification(const std::string& inputPath, const char* executablePath)
+    {
+        const std::filesystem::path specificationPath = ResolveSpecificationPath(inputPath, executablePath);
+        std::ifstream input(specificationPath, std::ios::binary);
+        if (!input)
+        {
+            std::cerr << "Could not read function specification: " << inputPath << '\n';
+            return 2;
+        }
+        std::ostringstream content;
+        content << input.rdbuf();
+
+        afd::MetaModel metaModel;
+        std::string error;
+        const std::string metaModelPath = std::string(AFD_EXAMPLES_DIR) + "/autoapiframework_metadata_V04.yaml";
+        if (!metaModel.Load(metaModelPath, error))
+        {
+            std::cerr << "Could not load meta model: " << error << '\n';
+            return 2;
+        }
+
+        afd::ValidateFunction validator;
+        if (!validator.SyntaxCheckIsOK(metaModel, content.str(), error))
+        {
+            std::cerr << "Syntax error in " << inputPath << ":\n" << error << '\n';
+            return 1;
+        }
+
+        std::cout << "Syntax OK: " << inputPath << '\n';
+        return 0;
+    }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+    if (argc == 2)
+    {
+        return CheckSpecification(argv[1], argv[0]);
+    }
+    if (argc != 1)
+    {
+        std::cerr << "Usage: function_designer_tests [file.afs]\n";
+        return 2;
+    }
+
     try
     {
         TestOrderedNodes();
