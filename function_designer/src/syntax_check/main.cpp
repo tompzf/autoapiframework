@@ -14,11 +14,11 @@
  *   Thomas Pfleiderer - Command-line application (CLI) added
  ********************************************************************************/
 
-#include "meta_model.h"
-#include "validate_function.h"
-#include "yaml_node.h"
-#include "yaml_parser.h"
-#include "yaml_writer.h"
+#include "../meta_model.h"
+#include "../validate_function.h"
+#include "../yaml_node.h"
+#include "../yaml_parser.h"
+#include "../yaml_writer.h"
 
  #include <filesystem>
  #include <string>

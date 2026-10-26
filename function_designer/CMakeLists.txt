@@ -161,7 +161,7 @@ if(AFD_BUILD_APP)
 
     # Commandline executable for the Auto API Function Designer syntax check tool
     add_executable(AutoAPIFunctionDesigner_SyntaxCheck
-        src/main_syntax_check.cpp
+        src/syntax_check/main.cpp
         src/yaml_node.cpp
         src/yaml_parser.cpp
         src/meta_model.cpp
@@ -178,7 +178,38 @@ if(AFD_BUILD_APP)
     endif()
 endif() #(AFD_BUILD_APP)
 
+# Standalone AFS parser CLI; it does not depend on the wxWidgets application.
+add_executable(AfsFileParser
+    src/afs_file_parser/main.cpp
+    src/afs_file_parser/afs_file_parser.cpp
+    src/yaml_node.cpp
+    src/yaml_parser.cpp
+)
+target_include_directories(AfsFileParser PRIVATE src/afs_file_parser)
+if(MSVC)
+    target_compile_options(AfsFileParser PRIVATE /W4 /WX /utf-8)
+else()
+    target_compile_options(AfsFileParser PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
+install(TARGETS AfsFileParser RUNTIME DESTINATION bin)
+
 if(BUILD_TESTING)
+    add_executable(afs_file_parser_tests
+        tests/afs_file_parser_tests.cpp
+        src/afs_file_parser/afs_file_parser.cpp
+        src/yaml_node.cpp
+        src/yaml_parser.cpp
+    )
+    target_include_directories(afs_file_parser_tests PRIVATE src/afs_file_parser)
+    target_compile_definitions(afs_file_parser_tests PRIVATE
+        AFS_PARSER_EXAMPLES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/examples")
+    if(MSVC)
+        target_compile_options(afs_file_parser_tests PRIVATE /W4 /WX /utf-8)
+    else()
+        target_compile_options(afs_file_parser_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME afs_file_parser_tests COMMAND afs_file_parser_tests)
+
     add_executable(function_designer_tests
         tests/yaml_tests.cpp
         src/yaml_node.cpp

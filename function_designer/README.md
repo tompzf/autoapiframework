@@ -123,6 +123,17 @@ error, or `2` for a usage or setup error.
 .\build\windows-gcc-debug\bin\AutoAPIFunctionDesigner_SyntaxCheck.exe mandatory_property_is_missing_syntax_error.afs
 ```
 
+### AFS parser CLI
+
+`AfsFileParser` reads an `.afs` file into the typed signal, parameter,
+scheduling and error structures and reports the extracted collection counts.
+It exits with `0` on success, `1` when parsing fails, and `2` when the file
+cannot be opened.
+
+```powershell
+.\build\windows-gcc-debug\bin\AfsFileParser.exe .\examples\speed_hazard_detection.afs
+```
+
 ### CTest executable
 
 The test executable runs the unit tests:
