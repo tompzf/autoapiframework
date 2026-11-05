@@ -479,9 +479,9 @@ namespace afd
     {
         // signal related properties
         std::string itemPrecision = node->Find(FunctionSpecification::kPrecisionKey) ? node->Find(FunctionSpecification::kPrecisionKey)->GetScalar() : "";
-        if (!Isinteger(itemPrecision))
+        if (!Isinteger(itemPrecision) && !IsFloat(itemPrecision)&& !IsDouble(itemPrecision))
         {
-            error = nodeName + ":\n\n" + FunctionSpecification::kPrecisionKey + " must be integer: "  + itemPrecision;        
+            error = nodeName + ":\n\n" + FunctionSpecification::kPrecisionKey + " must be integer/float/double: "  + itemPrecision;        
             return false;
         }
         std::string itemMinUpdatePeriodMs = node->Find(FunctionSpecification::kMinUpdatePeriodMsKey) ? node->Find(FunctionSpecification::kMinUpdatePeriodMsKey)->GetScalar() : "";            

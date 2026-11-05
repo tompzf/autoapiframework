@@ -225,4 +225,60 @@ if(BUILD_TESTING)
         target_compile_options(function_designer_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
     endif()
     add_test(NAME function_designer_tests COMMAND function_designer_tests)
+
+    # Unit tests for ValidateFunction / MetaModel — no wxWidgets dependency.
+    add_executable(syntax_check_tests
+        tests/syntax_check_tests.cpp
+        src/yaml_node.cpp
+        src/yaml_parser.cpp
+        src/meta_model.cpp
+        src/validate_function.cpp
+    )
+    target_include_directories(syntax_check_tests PRIVATE src)
+    target_compile_definitions(syntax_check_tests PRIVATE
+        AFD_EXAMPLES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/examples")
+    if(MSVC)
+        target_compile_options(syntax_check_tests PRIVATE /W4 /WX /utf-8)
+    else()
+        target_compile_options(syntax_check_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME syntax_check_tests COMMAND syntax_check_tests)
+
+    # Integration tests that invoke the CLI executable as a subprocess.
+    # Each test uses PASS_REGULAR_EXPRESSION so the expected output is verified
+    # regardless of whether the exit code is zero or non-zero.
+    if(AFD_BUILD_APP)
+        set(SC_EXE "$<TARGET_FILE:AutoAPIFunctionDesigner_SyntaxCheck>")
+        set(EX_DIR "${CMAKE_CURRENT_SOURCE_DIR}/examples")
+
+        add_test(NAME syntax_check_cli_speed_hazard
+                 COMMAND "${SC_EXE}" "${EX_DIR}/speed_hazard_detection.afs")
+        set_tests_properties(syntax_check_cli_speed_hazard PROPERTIES
+                             PASS_REGULAR_EXPRESSION "Syntax OK")
+
+        add_test(NAME syntax_check_cli_vehicle_speed_fusion
+                 COMMAND "${SC_EXE}" "${EX_DIR}/vehicle_speed_fusion_multirate.afs")
+        set_tests_properties(syntax_check_cli_vehicle_speed_fusion PROPERTIES
+                             PASS_REGULAR_EXPRESSION "Syntax OK")
+
+        add_test(NAME syntax_check_cli_wheel_speed
+                 COMMAND "${SC_EXE}" "${EX_DIR}/wheel_speed_plausibility_check.afs")
+        set_tests_properties(syntax_check_cli_wheel_speed PROPERTIES
+                             PASS_REGULAR_EXPRESSION "Syntax OK")
+
+        add_test(NAME syntax_check_cli_mandatory_missing
+                 COMMAND "${SC_EXE}"
+                         "${EX_DIR}/mandatory_property_is_missing_syntax_error.afs")
+        set_tests_properties(syntax_check_cli_mandatory_missing PROPERTIES
+                             PASS_REGULAR_EXPRESSION "Syntax error")
+
+        add_test(NAME syntax_check_cli_missing_file
+                 COMMAND "${SC_EXE}" "nonexistent_file.afs")
+        set_tests_properties(syntax_check_cli_missing_file PROPERTIES
+                             PASS_REGULAR_EXPRESSION "Could not read")
+
+        add_test(NAME syntax_check_cli_no_args COMMAND "${SC_EXE}")
+        set_tests_properties(syntax_check_cli_no_args PROPERTIES
+                             PASS_REGULAR_EXPRESSION "Usage:")
+    endif() #(AFD_BUILD_APP)
 endif() #(BUILD_TESTING)
