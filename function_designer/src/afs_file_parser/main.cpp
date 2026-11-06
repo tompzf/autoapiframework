@@ -11,7 +11,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Contributors:
- *   Thomas Pfleiderer - Command-line application (CLI) added
+ *   Thomas Pfleiderer - afs file parser added
  ********************************************************************************/
 
 #include "afs_file_expectation.h"
