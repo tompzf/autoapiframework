@@ -181,7 +181,7 @@ namespace afd
         return columns;
     }
 
-   void MetaModel::CollectEnums(const YamlNodePtr& model) 
+    void MetaModel::CollectEnums(const YamlNodePtr& model) 
     {
         if (const YamlNodePtr enums = model->Find(kEnumsKey)) 
         {

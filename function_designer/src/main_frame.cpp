@@ -1412,11 +1412,9 @@ namespace afd
             return false;
         }
 
-        std::string content = m_specification.ToText();
         std::string error;
-
         ValidateFunction validateFunction;
-        if (validateFunction.SyntaxCheckIsOK(m_metaModel, content, error))
+        if (validateFunction.SyntaxCheckIsOK(m_metaModel, m_specification.ToText(), error))
         {
             if (!doNotShowOnSuccess)
             {

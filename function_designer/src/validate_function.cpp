@@ -157,7 +157,7 @@ namespace afd
         {
             return false;
         }
-        if (!ValidateProperties(dataInterfaces, afd::kDataInterfaceTypeKey, metaModel, error))
+        if (!ValidateProperties(root, dataInterfaces, afd::kDataInterfaceTypeKey, metaModel, error))
         {
             return false;
         }       
@@ -167,7 +167,7 @@ namespace afd
         {
             return false;
         }
-        if (!ValidateProperties(parameters, afd::kParameterInterfaceTypeKey, metaModel, error))
+        if (!ValidateProperties(root, parameters, afd::kParameterInterfaceTypeKey, metaModel, error))
         {
             return false;
         }                          
@@ -177,7 +177,7 @@ namespace afd
         {
             return false;
         }
-        if (!ValidateProperties(scheduling, afd::kSchedulingInterfaceTypeKey, metaModel, error))
+        if (!ValidateProperties(root, scheduling, afd::kSchedulingInterfaceTypeKey, metaModel, error))
         {
             return false;
         } 
@@ -195,7 +195,7 @@ namespace afd
                 return false;
             }
             
-            if (!ValidateProperties(errors, afd::kErrorInterfaceTypeKey, metaModel, error))
+            if (!ValidateProperties(root, errors, afd::kErrorInterfaceTypeKey, metaModel, error))
             {
                 return false;
             }
@@ -204,8 +204,8 @@ namespace afd
         return true;
     }
 
-    bool ValidateFunction::ValidateProperties(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
-                                            const MetaModel& metaModel, std::string& error)
+    bool ValidateFunction::ValidateProperties(const YamlNodePtr& functionSpecification, const YamlNodePtr& dataInterfaces, 
+                            const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error)
     {
         if (!ValidatePropertyExists(dataInterfaces, interfaceTypeName, metaModel, error))
         {
@@ -223,7 +223,7 @@ namespace afd
         {
             return false;
         }  
-        if (!ValidateType(dataInterfaces, error))
+        if (!ValidateType(functionSpecification, dataInterfaces, metaModel, error))
         {
             return false;
         }
@@ -440,6 +440,38 @@ namespace afd
         return true;
     }
 
+    bool ValidateFunction::ValidateDefaultValueEnum(const YamlNodePtr& functionSpecification, const std::string& defaultValue, 
+                            const std::string& enumName, const MetaModel& metaModel, std::string& error)
+    {    
+        auto enums = GetEnums(functionSpecification);
+        for (const auto& enumPair : enums)
+        {
+            if (enumPair.first == enumName)
+            {
+                for (const auto& enumValue : enumPair.second)
+                {
+                    if (enumValue == defaultValue)
+                    {
+                        return true;
+                    }
+                }
+                error = "Invalid enum value '" + defaultValue +"' for property '" + enumName + "'.";
+                error += "\n\nValid would be:\n";
+                for (const auto& value : enumPair.second)
+                {
+                    error += "  - " + value + "\n";
+                }
+                return false;
+            }
+        }
+
+        if (!metaModel.ValidateEnumValue( "", enumName, defaultValue, error))
+        {
+            return false;
+        }
+        return true;
+    }
+
     bool ValidateFunction::ValidateBoolean(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
                                          const MetaModel& metaModel, std::string& error)
     {
@@ -553,7 +585,8 @@ namespace afd
         return true;
     }
 
-    bool ValidateFunction::ValidateType(const YamlNodePtr& dataInterfaces, std::string& error)
+    bool ValidateFunction::ValidateType(const YamlNodePtr& functionSpecification, const YamlNodePtr& dataInterfaces, 
+                                        const MetaModel& metaModel, std::string& error)
     {
         for (const YamlNodePtr& item : dataInterfaces->GetSequence())
         {
@@ -575,7 +608,7 @@ namespace afd
                 {
                     return false;
                 }   
-            }   
+            }
             if ((itemDataType == FunctionSpecification::kInt8DataType ) || (itemDataType == FunctionSpecification::kUInt8DataType ) 
                || (itemDataType == FunctionSpecification::kInt16DataType ) || (itemDataType == FunctionSpecification::kUInt16DataType ) 
                || (itemDataType == FunctionSpecification::kInt32DataType ) || (itemDataType == FunctionSpecification::kUInt32DataType )
@@ -585,7 +618,7 @@ namespace afd
                 {
                     return false;
                 }   
-            } 
+            }
             if (itemDataType == FunctionSpecification::kDoubleDataType) 
             {                
                 if (!ValidateDoubleType(itemName, itemDefault, itemMin, itemMax, error))
@@ -599,7 +632,20 @@ namespace afd
                 {
                     return false;
                 }   
-            }            
+            }
+            if (itemDataType == kEnumKey)                  
+            {
+                std::string enumRef = item->Find(kEnumRefKey) ? item->Find(kEnumRefKey)->GetScalar() : "";
+                if (enumRef.empty())
+                {
+                    error = itemName + ":\ntype = enum, enumRef expected but not found.";
+                    return false;
+                }
+                if (!ValidateDefaultValueEnum(functionSpecification, itemDefault, enumRef, metaModel, error))
+                {
+                    return false;
+                }
+            }
 
             if (!ValidateCertainProperties(item, itemName, error))
             {     
@@ -614,7 +660,7 @@ namespace afd
     {
         // signal related properties
         std::string itemPrecision = node->Find(FunctionSpecification::kPrecisionKey) ? node->Find(FunctionSpecification::kPrecisionKey)->GetScalar() : "";
-        if (!Isinteger(itemPrecision) && !IsFloat(itemPrecision)&& !IsDouble(itemPrecision))
+        if (!Isinteger(itemPrecision) && !IsFloat(itemPrecision) && !IsDouble(itemPrecision))
         {
             error = nodeName + ":\n\n" + FunctionSpecification::kPrecisionKey + " must be integer/float/double: "  + itemPrecision;        
             return false;
@@ -865,5 +911,36 @@ namespace afd
             }
         }
         return true;
+    }
+
+    std::vector<std::pair<std::string, std::vector<std::string>>> ValidateFunction::GetEnums(const YamlNodePtr functionSpecification) const
+    {
+        std::vector<std::pair<std::string, std::vector<std::string>>> result;
+        const YamlNodePtr enums = functionSpecification ? functionSpecification->Find(kEnumsKey) : nullptr;
+        if (!enums || !enums->IsMap())
+        {
+            return result;
+        }
+        for (const auto& entry : enums->GetMap())
+        {
+            YamlNodePtr valueList = entry.second;
+            if (valueList && valueList->IsMap())
+            {
+                valueList = valueList->Find(kEnumValuesKey);
+            }
+            std::vector<std::string> values;
+            if (valueList && valueList->IsSequence())
+            {
+                for (const YamlNodePtr& value : valueList->GetSequence())
+                {
+                    if (value && value->IsScalar())
+                    {
+                        values.push_back(value->GetScalar());
+                    }
+                }
+            }
+            result.emplace_back(entry.first, std::move(values));
+        }
+        return result;
     }
 } // namespace afd
