@@ -45,7 +45,8 @@ int main(int argc, char* argv[])
 
         if(result)
         {
-            std::cout << "Parsing successful: " << functionSpec.signals.size() << " signals, "
+            std::cout << "Parsing successful: " << functionSpec.enums.size() << " enums, "
+                      << functionSpec.signals.size() << " signals, "
                       << functionSpec.parameters.size() << " parameters, "
                       << functionSpec.scheduling.size() << " schedules, "
                       << functionSpec.errors.size() << " errors.\n";

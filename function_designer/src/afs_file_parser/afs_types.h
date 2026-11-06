@@ -102,6 +102,13 @@ namespace afp
         std::string runtimeCompanion;
     };    
 
+    struct EnumDefinition
+    {
+        std::string name;
+        std::string description;
+        std::vector<std::string> values;
+    };
+
     struct FunctionSpecification
     {
         std::vector<Signal> signals;
@@ -111,6 +118,7 @@ namespace afp
         SupervisionAlive supervisionAlive;
         SupervisionDeadline supervisionDead;
         SupervisionLogical supervisionLogical;
+        std::vector<EnumDefinition> enums;
     };
 } // namespace afp
 

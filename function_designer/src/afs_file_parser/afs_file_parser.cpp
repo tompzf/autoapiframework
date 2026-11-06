@@ -167,6 +167,48 @@ namespace afp
                                     schedule.supervisionLogical.successorRefs, error);
         }
 
+        bool ParseEnums(const afd::YamlNodePtr& specification,
+                                        FunctionSpecification& functionSpec, std::string& error)
+        {
+            const afd::YamlNodePtr enums = specification->Find("enums");
+            if (!enums)
+            {
+                return true;
+            }
+            if (!enums->IsMap())
+            {
+                error = "enums must be a mapping";
+                return false;
+            }
+            for (const auto& entry : enums->GetMap())
+            {
+                EnumDefinition definition{};
+                definition.name = entry.first;
+                afd::YamlNodePtr valueList = entry.second;
+                if (valueList && valueList->IsMap())
+                {
+                    definition.description = Scalar(valueList, "description");
+                    valueList = valueList->Find("values");
+                }
+                if (!valueList || !valueList->IsSequence())
+                {
+                    error = "enums." + entry.first + " must be a sequence or define 'values'";
+                    return false;
+                }
+                for (const afd::YamlNodePtr& value : valueList->GetSequence())
+                {
+                    if (!value || !value->IsScalar())
+                    {
+                        error = "enums." + entry.first + " entries must be scalar values";
+                        return false;
+                    }
+                    definition.values.push_back(value->GetScalar());
+                }
+                functionSpec.enums.push_back(std::move(definition));
+            }
+            return true;
+        }
+
         bool ParseSignals(const afd::YamlNodePtr& specification,
                                         FunctionSpecification& functionSpec, std::string& error)
         {
@@ -392,7 +434,8 @@ namespace afp
         }
 
         FunctionSpecification parsedStructure{};
-        if (!ParseSignals(specification, parsedStructure, error)
+        if (!ParseEnums(specification, parsedStructure, error)
+            || !ParseSignals(specification, parsedStructure, error)
             || !ParseParameters(specification, parsedStructure, error)
             || !ParseScheduling(specification, parsedStructure, error)
             || !ParseErrors(specification, parsedStructure, error))
