@@ -1,4 +1,4 @@
-/********************************************************************************
+﻿/********************************************************************************
  * Copyright (c) 2026 ZF Friedrichshafen AG
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -14,9 +14,8 @@
  *   Thomas Pfleiderer - Command-line application (CLI) added
  ********************************************************************************/
 
+#include "afs_file_expectation.h"
 #include "afs_file_parser.h"
-#include "../yaml_node.h"
-#include "../yaml_parser.h"
 
 #include <fstream>
 #include <iostream>
@@ -25,7 +24,7 @@
 
 int main(int argc, char* argv[])
 {
-    if (argc == 2)
+    if (argc == 2 || argc == 3)
     {
         const std::string afsFile = argv[1];
         std::ifstream input(afsFile);
@@ -50,6 +49,17 @@ int main(int argc, char* argv[])
                       << functionSpec.parameters.size() << " parameters, "
                       << functionSpec.scheduling.size() << " schedules, "
                       << functionSpec.errors.size() << " errors.\n";
+
+            if (argc == 3)
+            {
+                afp::AfsFileExpectation expectation;
+                if (!expectation.CheckExpectation(argv[2], functionSpec, error))
+                {
+                    std::cerr << error << "\n";
+                    return 3;
+                }
+                std::cout << "All expectations met.\n";
+            }
         }
         else
         {
@@ -60,6 +70,6 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    std::cout << "Usage: AfsFileParser [file.afs]\n";
+    std::cout << "Usage: AfsFileParser [file.afs] [expectations.txt]\n";
     return 1;
 }

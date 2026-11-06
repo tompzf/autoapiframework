@@ -181,6 +181,7 @@ endif() #(AFD_BUILD_APP)
 # Standalone AFS parser CLI; it does not depend on the wxWidgets application.
 add_executable(AfsFileParser
     src/afs_file_parser/main.cpp
+    src/afs_file_parser/afs_file_expectation.cpp
     src/afs_file_parser/afs_file_parser.cpp
     src/yaml_node.cpp
     src/yaml_parser.cpp
