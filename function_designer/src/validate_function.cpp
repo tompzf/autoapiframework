@@ -180,7 +180,12 @@ namespace afd
         if (!ValidateProperties(scheduling, afd::kSchedulingInterfaceTypeKey, metaModel, error))
         {
             return false;
-        }            
+        } 
+
+        if (!ValidateSupervision(scheduling, error))        
+        {
+            return false;
+        }                
 
         // Errors
         if (errors)
@@ -224,6 +229,64 @@ namespace afd
         }
         return true;
     }
+
+    bool ValidateFunction::ValidateSupervision(const YamlNodePtr& dataInterfaces, std::string& error)
+    {
+        for (const YamlNodePtr& item : dataInterfaces->GetSequence())
+        {
+            if (!item || !item->IsMap())
+            {
+                error = "Each collection item must be a mapping.";
+                return false;
+            }
+
+            // in scheduling it is functionName
+            std::string itemFunctionName = item->Find(kFunctionNameKey) ? item->Find(kFunctionNameKey)->GetScalar() : "<unknown>";               
+            auto itemSupervision = item->Find(kSupervisionKey);  
+            if (itemSupervision)
+            {
+                std::string required = itemSupervision->Find(kSupervisionRequiredKey) ? itemSupervision->Find(kSupervisionRequiredKey)->GetScalar() : "<unknown>";
+                if (required == "false")
+                {
+                    continue;
+                }
+                else if (required == "true")
+                {
+                    auto type = itemSupervision->Find(kSupervisionTypeKey);                    
+                    auto alive = itemSupervision->Find(kSupervisionAliveKey);
+                    auto deadline = itemSupervision->Find(kSupervisionDeadlineKey);
+                    auto logical = itemSupervision->Find(kSupervisionLogicalKey);
+                    if(!type || (!alive && !deadline && !logical))
+                    {
+                        error = "Missing supervision fields for item " + itemFunctionName;
+                        return false;
+                    }
+                    for (const YamlNodePtr& typeItem : type->GetSequence())
+                    {
+                        if (!typeItem || !typeItem->IsScalar() || typeItem->GetScalar().empty())
+                        {
+                            error = "Each supervision type must be a non-empty scalar for item " + itemFunctionName;
+                            return false;
+                        }
+
+                        auto requiredType = itemSupervision->Find(typeItem->GetScalar());     
+                        if (!requiredType)
+                        {
+                            error = "Missing required supervision type " + typeItem->GetScalar() + " for item " + itemFunctionName;
+                            return false;
+                        }
+                    }
+                    continue;
+                }                
+                else
+                {
+                    error = "Invalid supervision node: " + itemFunctionName;
+                    return false;
+                }             
+            }
+        }
+        return true;
+    }    
 
     bool ValidateFunction::SyntaxCheckForSequence(const YamlNodePtr& node, const std::string& key, std::string& error, const std::string& displayName)
     {

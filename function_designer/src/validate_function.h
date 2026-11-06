@@ -39,6 +39,7 @@ namespace afd
         bool ValidatePropertyExists(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);
         bool ValidateProperties(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);
         bool ValidateEnums(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);        
+        bool ValidateSupervision(const YamlNodePtr& dataInterfaces, std::string& error);
         bool ValidateBoolean(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);        
         bool ValidateMandatory(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);        
         bool ValidateType(const YamlNodePtr& dataInterfaces, std::string& error);    

@@ -48,6 +48,7 @@ namespace afd
         static constexpr const char* kPropertiesKey = "properties";   
         static constexpr const char* kNamePathKey = "name";
         static constexpr const char* kFunctionNameKey = "functionName";
+        static constexpr const char* kSupervisionKey = "supervision";        
 
         static constexpr const char* kMinKey = "min";
         static constexpr const char* kMaxKey = "max";

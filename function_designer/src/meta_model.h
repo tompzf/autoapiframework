@@ -31,6 +31,10 @@ namespace afd
     static constexpr const char* kMetaModelKey = "metamodel";
     static constexpr const char* kNameKey = "name";
     static constexpr const char* kFunctionNameKey = "functionName";
+    static constexpr const char* kSupervisionTypeKey = "type";    
+    static constexpr const char* kSupervisionAliveKey = "alive";    
+    static constexpr const char* kSupervisionDeadlineKey = "deadline";
+    static constexpr const char* kSupervisionLogicalKey = "logical";
     static constexpr const char* kDescriptionKey = "description";    
     static constexpr const char* kVersionKey = "version";    
     static constexpr const char* kEnumKey = "enum";
