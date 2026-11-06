@@ -273,7 +273,7 @@ namespace afp
         bool ParseErrors(const afd::YamlNodePtr& specification,
                                         FunctionSpecification& functionSpec, std::string& error)
         {
-            const afd::YamlNodePtr values = specification->Find("errors");
+            afd::YamlNodePtr values = specification->Find("errorInterfaces");
             if (!values)
             {
                 return true;
