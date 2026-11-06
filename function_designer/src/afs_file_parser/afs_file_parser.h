@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2026 ZF Friedrichshafen AG
- * 
+ *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
  *
@@ -11,9 +11,9 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Contributors:
- *   Thomas Pfleiderer - afs file parser
+ *   Thomas Pfleiderer - afs file parser added
  ********************************************************************************/
- 
+
 #ifndef AFP_AFS_FILE_PARSER_H
 #define AFP_AFS_FILE_PARSER_H
 
