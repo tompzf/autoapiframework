@@ -44,6 +44,7 @@ namespace afd
         static constexpr const char* kSchedulingKey = "scheduling";
         static constexpr const char* kErrorsKey = "errorInterfaces";
         static constexpr const char* kEnumsKey = "enums";
+        static constexpr const char* kEnumValuesKey = "values";
         static constexpr const char* kPropertiesKey = "properties";   
         static constexpr const char* kNamePathKey = "name";
         static constexpr const char* kFunctionNameKey = "functionName";

@@ -225,7 +225,7 @@ namespace afd
             YamlNodePtr valueList = entry.second;
             if (valueList && valueList->IsMap())
             {
-                valueList = valueList->Find("values");
+                valueList = valueList->Find(kEnumValuesKey);
             }
             std::vector<std::string> values;
             if (valueList && valueList->IsSequence())
@@ -262,7 +262,7 @@ namespace afd
             const YamlNodePtr old = previous ? previous->Find(entry.first) : nullptr;
             if (old && old->IsMap())
             {
-                old->Set("values", values);
+                old->Set(kEnumValuesKey, values);
                 updated->Set(entry.first, old);
             }
             else

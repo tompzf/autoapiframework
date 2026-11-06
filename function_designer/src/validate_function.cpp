@@ -46,6 +46,11 @@ namespace afd
             return false;
         }
 
+        if (!ValidateEnumDefinitions(functionSpecification, metaModel, error))
+        {
+            return false;
+        }
+
         if (!InterfaceTypesSyntaxCheck(functionSpecification, metaModel, error))
         {
             return false;
@@ -65,6 +70,72 @@ namespace afd
                     + std::string(" in the function specification not found.");  
             return false;
         }        
+        return true;
+    }
+
+    bool ValidateFunction::ValidateEnumDefinitions(const YamlNodePtr& root, const MetaModel& metaModel, std::string& error)
+    {
+        const YamlNodePtr enums = root->Find(FunctionSpecification::kEnumsKey);
+        if (!enums)
+        {
+            return true;
+        }
+        if (!enums->IsMap())
+        {
+            error = std::string(FunctionSpecification::kEnumsKey) + " must be a mapping.";
+            return false;
+        }
+        for (const auto& entry : enums->GetMap())
+        {
+            YamlNodePtr valueList = entry.second;
+            if (valueList && valueList->IsMap())
+            {
+                for (const auto& attribute : valueList->GetMap())
+                {
+                    if (attribute.first != kDescriptionKey && attribute.first != FunctionSpecification::kEnumValuesKey)
+                    {
+                        error = "Enum '" + entry.first + "': invalid property '" + attribute.first + "'.";
+                        return false;
+                    }
+                }
+                valueList = valueList->Find(FunctionSpecification::kEnumValuesKey);
+            }
+            if (!valueList || !valueList->IsSequence())
+            {
+                error = "Enum '" + entry.first + "' must be a list of values or a mapping with '" + FunctionSpecification::kEnumValuesKey + "'.";
+                return false;
+            }
+
+            std::vector<std::string> values;
+            for (const YamlNodePtr& value : valueList->GetSequence())
+            {
+                if (!value || !value->IsScalar() || value->GetScalar().empty())
+                {
+                    error = "Enum '" + entry.first + "': values must be non-empty scalars.";
+                    return false;
+                }
+                if (std::find(values.begin(), values.end(), value->GetScalar()) != values.end())
+                {
+                    error = "Enum '" + entry.first + "': duplicate value '" + value->GetScalar() + "'.";
+                    return false;
+                }
+                values.push_back(value->GetScalar());
+            }
+
+            // An enum that also exists in the meta model must be identical to it.
+            if (const std::vector<std::string>* expected = metaModel.FindEnumValues(entry.first))
+            {
+                if (*expected != values)
+                {
+                    error = "Enum '" + entry.first + "' differs from the meta model definition.\n\nValid would be:\n";
+                    for (const std::string& value : *expected)
+                    {
+                        error += "  - " + value + "\n";
+                    }
+                    return false;
+                }
+            }
+        }
         return true;
     }
 

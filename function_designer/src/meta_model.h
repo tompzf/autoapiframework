@@ -34,7 +34,8 @@ namespace afd
     static constexpr const char* kDescriptionKey = "description";    
     static constexpr const char* kVersionKey = "version";    
     static constexpr const char* kEnumKey = "enum";
-    static constexpr const char* kEnumsKey = "enums";    
+    static constexpr const char* kEnumsKey = "enums";  
+    static constexpr const char* kEnumValuesKey = "values";      
     static constexpr const char* kEnumRefKey = "enumRef";
     static constexpr const char* kInterfaceTypesKey = "interfaceTypes";
 
@@ -87,6 +88,9 @@ namespace afd
 
         bool ValidateEnumValue(const std::string& propertyName, const std::string& enumName, 
                                const std::string& entry, std::string& error) const;
+
+        /// Values of the meta model enum @p name or nullptr if it is not defined.
+        const std::vector<std::string>* FindEnumValues(const std::string& name) const;
 
     private:                                            
         void CollectEnums(const YamlNodePtr& model);                                    
