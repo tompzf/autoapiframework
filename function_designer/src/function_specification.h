@@ -95,6 +95,8 @@ namespace afd
 
         /// Enums declared in the specification (name and values in file order).
         std::vector<std::pair<std::string, std::vector<std::string>>> GetEnums() const;
+        /// Replaces the enum set; descriptions of enums that keep their name are preserved.
+        void SetEnums(const std::vector<std::pair<std::string, std::vector<std::string>>>& enums);
 
         /// Entries of the signal, parameter or scheduling collection.
         std::vector<YamlNodePtr> GetCollection(const std::string& key) const;

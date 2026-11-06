@@ -50,6 +50,7 @@ namespace afd
             ID_GetVssToolsVersion,
             ID_QuickTips,            
             ID_AddVWithVspecFile,
+            ID_EditEnums,
             ID_Add,
             ID_Delete,
             ID_Edit,
@@ -72,6 +73,7 @@ namespace afd
         void OnGetVssToolVersion(wxCommandEvent& event);
         void OnQuickTips(wxCommandEvent& event);      
         void OnAddWithVspecFile(wxCommandEvent& event);     
+        void OnEditEnums(wxCommandEvent& event);
         void OnAdd(wxCommandEvent& event);
         void OnDelete(wxCommandEvent& event);
         void OnEdit(wxCommandEvent& event);
@@ -121,6 +123,7 @@ namespace afd
         wxButton* m_saveButton = nullptr;
         wxButton* m_saveAsButton = nullptr;
         wxButton* m_addWithVspecFileButton = nullptr;
+        wxButton* m_editEnumsButton = nullptr;
         wxButton* m_addButton = nullptr;
         wxButton* m_deleteButton = nullptr;
         wxButton* m_editButton = nullptr;

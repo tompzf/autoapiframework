@@ -243,6 +243,36 @@ namespace afd
         return result;
     }
 
+    void FunctionSpecification::SetEnums(
+        const std::vector<std::pair<std::string, std::vector<std::string>>>& enums)
+    {
+        if (!m_spec)
+        {
+            return;
+        }
+        const YamlNodePtr previous = m_spec->Find(kEnumsKey);
+        YamlNodePtr updated = YamlNode::MakeMap();
+        for (const auto& entry : enums)
+        {
+            YamlNodePtr values = YamlNode::MakeSequence();
+            for (const std::string& value : entry.second)
+            {
+                values->Append(YamlNode::MakeScalar(value));
+            }
+            const YamlNodePtr old = previous ? previous->Find(entry.first) : nullptr;
+            if (old && old->IsMap())
+            {
+                old->Set("values", values);
+                updated->Set(entry.first, old);
+            }
+            else
+            {
+                updated->Set(entry.first, values);
+            }
+        }
+        m_spec->Set(kEnumsKey, updated);
+    }
+
     std::vector<YamlNodePtr> FunctionSpecification::GetCollection(const std::string& key) const 
     {
         if (!m_spec) 

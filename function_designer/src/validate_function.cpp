@@ -173,13 +173,14 @@ namespace afd
     bool ValidateFunction::ValidatePropertyExists(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
                                             const MetaModel& metaModel, std::string& error)
     {
-        const std::vector<std::string> validPropertyNamesFromMetaModel = metaModel.ColumnsFor(interfaceTypeName, {});
+        std::vector<std::string> validPropertyNamesFromMetaModel = metaModel.ColumnsFor(interfaceTypeName, {});
         YamlNodePtr companionDefinitions;
         if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
         {
             companionDefinitions = interfaceTypeName == kDataInterfaceTypeKey
                 ? (*type)->Find(kRuntimeCompanionKey) : nullptr;
         }
+        validPropertyNamesFromMetaModel.push_back(kEnumRefKey); // exception: enumRef is allowed too
 
         bool syntaxError = false;
         std::string text = "";
