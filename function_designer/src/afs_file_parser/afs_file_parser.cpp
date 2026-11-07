@@ -245,11 +245,10 @@ namespace afp
                     signal.runtimeCompanion = Scalar(runtimeCompanion->Find("qualityCode"), "name");
                 }
                 uint32_t minUpdatePeriod = 0;
-                uint32_t precision = 0;
                 if (!ParseDouble(Scalar(value, "min"), signal.min, "dataInterfaces.min", error)
                     || !ParseDouble(Scalar(value, "max"), signal.max, "dataInterfaces.max", error)
                     || !ParseDouble(Scalar(value, "resolution"), signal.resolution, "dataInterfaces.resolution", error)
-                    || !ParseUnsigned(Scalar(value, "precision"), precision, "dataInterfaces.precision", error)
+                    || !ParseDouble(Scalar(value, "precision"), signal.precision, "dataInterfaces.precision", error)
                     || !ParseUnsigned(Scalar(value, "minUpdatePeriodMs"), minUpdatePeriod,
                                     "dataInterfaces.minUpdatePeriodMs", error)
                     || !ParseBool(Scalar(value, "FuSa"), signal.FuSa, "dataInterfaces.FuSa", error)
@@ -258,7 +257,6 @@ namespace afp
                 {
                     return false;
                 }
-                signal.precision = static_cast<double>(precision);
                 if (minUpdatePeriod > std::numeric_limits<uint16_t>::max())
                 {
                     error = "dataInterfaces.minUpdatePeriodMs exceeds uint16 range";

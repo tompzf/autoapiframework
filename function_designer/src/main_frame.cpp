@@ -1497,7 +1497,8 @@ namespace afd
             sizer->Add(new wxStaticBitmap(&dialog, wxID_ANY, wxBitmap(logoImage)), 0,
                        wxALIGN_CENTER_HORIZONTAL | wxALL, 12);
         }
-        sizer->Add(new wxStaticText(&dialog, wxID_ANY, wxString(kApplicationName) + "\n\n"
+        sizer->Add(new wxStaticText(&dialog, wxID_ANY, wxString(kApplicationName)
+                    + " - " + wxString(kApplicationVersion) + "\n\n"
                     "Reads, displays and writes Eclipse autoapiframework function\n"
                     "specifications (*.afs, YAML content) based on the framework meta model.",
                     wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL),

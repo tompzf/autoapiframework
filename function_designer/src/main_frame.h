@@ -29,7 +29,8 @@ class wxNotebook;
 
 namespace afd 
 {
-    static constexpr const char* kApplicationName = "AutoAPI Function Designer - Preview 0.1";
+    static constexpr const char* kApplicationName = "AutoAPI Function Designer";
+    static constexpr const char* kApplicationVersion = "Version 0.2";
 
     /// Main window of the AutoAPI Function Designer application.
     class MainFrame : public wxFrame 
