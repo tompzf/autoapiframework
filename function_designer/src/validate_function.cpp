@@ -21,6 +21,7 @@
 
 #include <cstdint>
 #include <algorithm>
+#include <regex>
 
 #include "yaml_parser.h"
 
@@ -164,6 +165,10 @@ namespace afd
 
         // Parameters
         if (!SyntaxCheckForSequence(parameters, FunctionSpecification::kNamePathKey, error, FunctionSpecification::kParametersKey)) 
+        {
+            return false;
+        }
+        if (!ValidateParameterNames(parameters, error))
         {
             return false;
         }
@@ -333,7 +338,23 @@ namespace afd
             }
         }        
         return true;
-    }    
+    }
+
+    bool ValidateFunction::ValidateParameterNames(const YamlNodePtr& parameters, std::string& error)
+    {
+        static const std::regex parameterNamePattern(R"(^Vehicle(?:\.[A-Za-z0-9_]+){2,}$)");
+        for (const YamlNodePtr& parameter : parameters->GetSequence())
+        {
+            const std::string name = parameter->Find(FunctionSpecification::kNamePathKey)->GetScalar();
+            if (!std::regex_match(name, parameterNamePattern))
+            {
+                error = "Parameter name '" + name + "' must follow the hierarchical naming convention "
+                    "Vehicle.<Domain/Subdomains>.<Parameter>.";
+                return false;
+            }
+        }
+        return true;
+    }
 
     bool ValidateFunction::ValidatePropertyExists(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName,
                                             const MetaModel& metaModel, std::string& error)

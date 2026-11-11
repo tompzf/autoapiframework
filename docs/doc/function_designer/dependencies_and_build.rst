@@ -34,7 +34,7 @@ The project requires:
 
 * CMake 3.16 or newer (3.21 or newer for CMake presets)
 * A C++17 compiler
-* wxWidgets (included in the build, must not be installed separately)
+* wxWidgets (included in the Windows build; must be installed separately on Linux)
 * Python with ``vss-tools`` version 6.1.0 (only to add vss signals from Covesa)
 
 The build uses the ``vspec`` executable from ``vss-tools`` to convert Vehicle

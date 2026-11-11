@@ -71,8 +71,18 @@ if(AFD_BUILD_APP)
         FetchContent_Declare(wxWidgets
             GIT_REPOSITORY https://github.com/wxWidgets/wxWidgets.git
             GIT_TAG v3.2.6
-            GIT_SHALLOW TRUE)
+            GIT_SHALLOW TRUE
+            SYSTEM)
+        # wxWidgets itself must never be built with warnings as errors.
+        set(CMAKE_COMPILE_WARNING_AS_ERROR OFF)
         FetchContent_MakeAvailable(wxWidgets)
+        if(CMAKE_VERSION VERSION_LESS 3.24)
+            foreach(wx_target wxbase wxcore wxadv)
+                if(TARGET ${wx_target})
+                    target_compile_options(${wx_target} PRIVATE /WX-)
+                endif()
+            endforeach()
+        endif()
         set(ACD_WX_LIBRARIES wx::core wx::base)
     else()
         message(FATAL_ERROR
@@ -107,8 +117,18 @@ if(AFD_BUILD_APP)
         AFD_VSPEC_EXECUTABLE="${VSPEC_EXECUTABLE}")
 
     if(MSVC)
-        target_compile_options(AutoAPIFunctionDesigner PRIVATE /W4 /WX /utf-8)
-        target_compile_definitions(AutoAPIFunctionDesigner PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+        # /external:W0 silences warnings from wx headers (SYSTEM include dirs) while /WX stays active for our code.
+        target_compile_options(AutoAPIFunctionDesigner PRIVATE /W4 /WX /utf-8 /external:W0)
+        target_compile_definitions(AutoAPIFunctionDesigner PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN _CRT_SECURE_NO_WARNINGS)
+        # CMake < 3.25 ignores SYSTEM for FetchContent, so mark the wx include dirs external manually.
+        if(TARGET wxbase)
+            get_target_property(ACD_WX_INCLUDES wxbase INTERFACE_INCLUDE_DIRECTORIES)
+            foreach(ACD_WX_INC IN LISTS ACD_WX_INCLUDES)
+                if(NOT ACD_WX_INC MATCHES "^\\$<")
+                    target_compile_options(AutoAPIFunctionDesigner PRIVATE "/external:I${ACD_WX_INC}")
+                endif()
+            endforeach()
+        endif()
         set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT AutoAPIFunctionDesigner)
     else()
         target_compile_options(AutoAPIFunctionDesigner PRIVATE -Wall -Wextra -Wpedantic -Werror)

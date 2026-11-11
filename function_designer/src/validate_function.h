@@ -36,6 +36,7 @@ namespace afd
         bool ValidateEnumDefinitions(const YamlNodePtr& root, const MetaModel& metaModel, std::string& error);
         bool InterfaceTypesSyntaxCheck(const YamlNodePtr& root, const MetaModel& metaModel, std::string& error);
         bool SyntaxCheckForSequence(const YamlNodePtr& node, const std::string& key, std::string& error, const std::string& displayName);
+        bool ValidateParameterNames(const YamlNodePtr& parameters, std::string& error);
         bool ValidatePropertyExists(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);
         bool ValidateProperties(const YamlNodePtr& functionSpecification, const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);
         bool ValidateEnums(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);
