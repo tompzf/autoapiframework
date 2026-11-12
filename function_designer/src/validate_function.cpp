@@ -492,8 +492,8 @@ namespace afd
         return true;
     }
 
-    bool ValidateFunction::ValidateDefaultValueEnum(const YamlNodePtr& functionSpecification, const std::string& defaultValue, 
-                            const std::string& enumName, const MetaModel& metaModel, std::string& error)
+    bool ValidateFunction::ValidateDefaultValueEnum(const std::string& itemName, const YamlNodePtr& functionSpecification, 
+                            const std::string& defaultValue, const std::string& enumName, const MetaModel& metaModel, std::string& error)
     {    
         auto enums = GetEnums(functionSpecification);
         for (const auto& enumPair : enums)
@@ -507,7 +507,7 @@ namespace afd
                         return true;
                     }
                 }
-                error = "Invalid enum value '" + defaultValue +"' for property '" + enumName + "'.";
+                error = "Default value syntax check: failed\n\nInvalid enum value '" + defaultValue +"' for property '" + enumName + "'. (" + itemName + ")";
                 error += "\n\nValid would be:\n";
                 for (const auto& value : enumPair.second)
                 {
@@ -693,7 +693,7 @@ namespace afd
                     error = itemName + ":\ntype = enum, enumRef expected but not found.";
                     return false;
                 }
-                if (!ValidateDefaultValueEnum(functionSpecification, itemDefault, enumRef, metaModel, error))
+                if (!ValidateDefaultValueEnum(itemName, functionSpecification, itemDefault, enumRef, metaModel, error))
                 {
                     return false;
                 }

@@ -1086,6 +1086,8 @@ namespace afd
         wxFlexGridSizer* fieldSizer = new wxFlexGridSizer(2, 6, 8);
         fieldSizer->AddGrowableCol(1, 1);
         std::vector<std::pair<std::string, wxTextCtrl*>> controls;
+        wxTextCtrl* dataTypeControl = nullptr;
+        wxTextCtrl* enumRefControl = nullptr;
         for (const std::string& field : fields)
         {
             const bool isSupervisionRequired =
@@ -1129,8 +1131,44 @@ namespace afd
                 control->SetEditable(false);
             }
 
+            if (field == FunctionSpecification::kDataTypeKey)
+            {
+                dataTypeControl = control;
+            }
+
             fieldSizer->Add(control, 1, wxEXPAND);
             controls.emplace_back(fieldName, control);
+
+            if (field == FunctionSpecification::kDataTypeKey && dataTypeControl)
+            {
+                fieldSizer->Add(new wxStaticText(&dialog, wxID_ANY, ToWx(kEnumRefKey)), 0,
+                                wxALIGN_CENTER_VERTICAL);
+                enumRefControl = new wxTextCtrl(&dialog, wxID_ANY);
+                enumRefControl->SetEditable(false);
+                fieldSizer->Add(enumRefControl, 1, wxEXPAND);
+                controls.emplace_back(kEnumRefKey, enumRefControl);
+
+                dataTypeControl->Bind(wxEVT_TEXT,
+                    [dataTypeControl, enumRefControl](wxEvent&)
+                    {
+                        wxTextCtrl* dataType = dynamic_cast<wxTextCtrl*>(dataTypeControl);
+                        wxTextCtrl* textCtrl = dynamic_cast<wxTextCtrl*>(enumRefControl);
+                        if (dataType && textCtrl)
+                        {
+                            wxString value = dataType->GetValue();
+                            value = value.Trim();
+                            if (value == ToWx(kEnumKey))
+                            {
+                                textCtrl->SetEditable(true);
+                            }
+                            else
+                            {
+                                textCtrl->SetEditable(false);
+                                textCtrl->Clear();
+                            }
+                        }
+                    });
+            }
         }
 
         sizer->Add(fieldSizer, 1, wxEXPAND | wxALL, 12);
@@ -1144,23 +1182,34 @@ namespace afd
         }
 
         YamlNodePtr item = YamlNode::MakeMap();
+        std::string dataTypeValue;
+        std::string enumRefValue;
         for (const auto& control : controls)
         {
-            if (interfaceType == kSchedulingInterfaceTypeKey && control.first == kExecutionResultKey)
+            if (control.first == FunctionSpecification::kDataTypeKey)
+            {
+                dataTypeValue = ToStd(control.second->GetValue());
+            }
+            else if (control.first == kEnumRefKey)
+            {
+                enumRefValue = ToStd(control.second->GetValue());
+                continue;
+            }
+            else if (interfaceType == kSchedulingInterfaceTypeKey && control.first == kExecutionResultKey)
             {
                 YamlNodePtr result = YamlNode::MakeMap();
                 result->Set(kExecutionResultTypeKey, YamlNode::MakeScalar(ToStd(control.second->GetValue())));
                 item->Set(control.first, std::move(result));
                 continue;
             }
-            if (interfaceType == kSchedulingInterfaceTypeKey && control.first == kSupervisionRequiredKey)
+            else if (interfaceType == kSchedulingInterfaceTypeKey && control.first == kSupervisionRequiredKey)
             {
                 YamlNodePtr supervision = YamlNode::MakeMap();
                 supervision->Set(kSupervisionRequiredKey, YamlNode::MakeScalar(ToStd(control.second->GetValue())));
                 item->Set(kSupervisionKey, std::move(supervision));
                 continue;
             }
-            if (interfaceType == kDataInterfaceTypeKey && control.first == kQualityCodeKey)
+            else if (interfaceType == kDataInterfaceTypeKey && control.first == kQualityCodeKey)
             {
                 const std::string name = ToStd(control.second->GetValue());
                 if (!name.empty())
@@ -1177,6 +1226,12 @@ namespace afd
             }
             item->Set(control.first, YamlNode::MakeScalar(ToStd(control.second->GetValue())));
         }
+
+        if (dataTypeValue == kEnumKey && !enumRefValue.empty())
+        {
+            item->Set(kEnumRefKey, YamlNode::MakeScalar(enumRefValue));
+        }
+
         if (m_specification.AddCollectionItem(collectionKey, std::move(item)))
         {
             m_contentChanged = true;
@@ -1248,9 +1303,11 @@ namespace afd
         std::vector<EditableValue> editableValues;
         YamlNodePtr editedSupervision;
         wxTextCtrl* supervisionRequiredControl = nullptr;
+        wxTextCtrl* dataTypeControl = nullptr;
+        wxTextCtrl* enumRefControl = nullptr;
 
         const auto addField =
-            [&fields, &editableValues, &dialog, &supervisionRequiredControl]
+            [&fields, &editableValues, &dialog, &supervisionRequiredControl, &dataTypeControl, &enumRefControl, &entries, selectedRow]
             (const wxString& name, const YamlNodePtr& node, bool readOnly)
         {
             if (!node || !node->IsScalar())
@@ -1284,6 +1341,54 @@ namespace afd
             if (name == ToWx(kSupervisionRequiredPath))
             {
                 supervisionRequiredControl = control;
+            }
+            if (name == ToWx(FunctionSpecification::kDataTypeKey))
+            {
+                dataTypeControl = control;
+                if (!readOnly && !editableValues.empty())
+                {
+                    fields->Add(new wxStaticText(&dialog, wxID_ANY, ToWx(kEnumRefKey)), 0,
+                                wxALIGN_CENTER_VERTICAL);
+                    enumRefControl = new wxTextCtrl(&dialog, wxID_ANY);
+                    
+                    const YamlNodePtr existingEnumRef = entries[selectedRow]->Find(kEnumRefKey);
+                    if (existingEnumRef && existingEnumRef->IsScalar())
+                    {
+                        enumRefControl->SetValue(ToWx(existingEnumRef->GetScalar()));
+                    }
+                    
+                    if (control->GetValue() == ToWx(kEnumKey))
+                    {
+                        enumRefControl->SetEditable(true);
+                    }
+                    else
+                    {
+                        enumRefControl->SetEditable(false);
+                    }
+                    
+                    fields->Add(enumRefControl, 1, wxEXPAND);
+
+                    dataTypeControl->Bind(wxEVT_TEXT,
+                        [dataTypeControl, enumRefControl](wxEvent&)
+                        {
+                            wxTextCtrl* dataType = dynamic_cast<wxTextCtrl*>(dataTypeControl);
+                            wxTextCtrl* textCtrl = dynamic_cast<wxTextCtrl*>(enumRefControl);
+                            if (dataType && textCtrl)
+                            {
+                                wxString value = dataType->GetValue();
+                                value = value.Trim();
+                                if (value == ToWx(kEnumKey))
+                                {
+                                    textCtrl->SetEditable(true);
+                                }
+                                else
+                                {
+                                    textCtrl->SetEditable(false);
+                                    textCtrl->Clear();
+                                }
+                            }
+                        });
+                }
             }
             if (!readOnly)
             {
@@ -1320,6 +1425,51 @@ namespace afd
             {
                 addField(ToWx(entry.first), entry.second, false);
             }
+        }
+
+        if (enumRefControl == nullptr && dataTypeControl != nullptr)
+        {
+            fields->Add(new wxStaticText(&dialog, wxID_ANY, ToWx(kEnumRefKey)), 0,
+                        wxALIGN_CENTER_VERTICAL);
+            enumRefControl = new wxTextCtrl(&dialog, wxID_ANY);
+            const YamlNodePtr existingEnumRef = entries[selectedRow]->Find(kEnumRefKey);
+            if (existingEnumRef && existingEnumRef->IsScalar())
+            {
+                enumRefControl->SetValue(ToWx(existingEnumRef->GetScalar()));
+            }
+            
+            const std::string currentDataType = ToStd(dataTypeControl->GetValue()).c_str();
+            if (currentDataType == kEnumKey)
+            {
+                enumRefControl->SetEditable(true);
+            }
+            else
+            {
+                enumRefControl->SetEditable(false);
+            }
+            
+            fields->Add(enumRefControl, 1, wxEXPAND);
+
+            dataTypeControl->Bind(wxEVT_TEXT,
+                [dataTypeControl, enumRefControl](wxEvent&)
+                {
+                    wxTextCtrl* dataType = dynamic_cast<wxTextCtrl*>(dataTypeControl);
+                    wxTextCtrl* textCtrl = dynamic_cast<wxTextCtrl*>(enumRefControl);
+                    if (dataType && textCtrl)
+                    {
+                        wxString value = dataType->GetValue();
+                        value = value.Trim();
+                        if (value == ToWx(kEnumKey))
+                        {
+                            textCtrl->SetEditable(true);
+                        }
+                        else
+                        {
+                            textCtrl->SetEditable(false);
+                            textCtrl->Clear();
+                        }
+                    }
+                });
         }
 
         if (editableValues.empty())
@@ -1392,6 +1542,17 @@ namespace afd
         {
             value.node->SetScalar(ToStd(value.control->GetValue()));
         }
+
+        if (dataTypeControl && enumRefControl)
+        {
+            const std::string dataTypeValue = ToStd(dataTypeControl->GetValue());
+            const std::string enumRefValue = ToStd(enumRefControl->GetValue());
+            if (dataTypeValue == kEnumKey && !enumRefValue.empty())
+            {
+                entries[selectedRow]->Set(kEnumRefKey, YamlNode::MakeScalar(enumRefValue));
+            }
+        }
+
         if (editedSupervision)
         {
             entries[selectedRow]->Set(kSupervisionKey, std::move(editedSupervision));
