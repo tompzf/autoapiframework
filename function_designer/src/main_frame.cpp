@@ -47,6 +47,7 @@ namespace afd
         constexpr const char* kMetaModelFileConfigKey = "/Paths/MetaModelFile";
         constexpr const char* kMetaModelDirectoryConfigKey = "/Paths/MetaModelDirectory";
         constexpr const char* kVspecDirectoryConfigKey = "/Paths/VSpecDirectory";
+        constexpr const char* kRecentFilesConfigKey = "/Paths/RecentFiles";
         constexpr const char* kCreateApiLanguageConfigKey = "/CreateAPI/Language";
         constexpr const char* kDisableSyntaxCheckBeforeSavingConfigKey = "/Settings/DisableSyntaxCheckBeforeSaving";
         constexpr const char* kLogoFileName = "autoapiframework_logo.png";
@@ -56,6 +57,7 @@ namespace afd
         constexpr int kFirstColumnWidth = 25;
         constexpr int kMinColumnWidth = 90;
         constexpr int kMaxColumnWidth = 320;
+        constexpr int kMaxRecentFiles = 10;
 
         wxString ToWx(const std::string& text) { return wxString::FromUTF8(text.c_str()); }
 
@@ -178,6 +180,9 @@ namespace afd
     wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
         EVT_BUTTON(MainFrame::ID_NewSpecification, MainFrame::OnNewSpecification)
         EVT_BUTTON(MainFrame::ID_OpenSpecification, MainFrame::OnOpenSpecification)
+        EVT_DROP_FILES(MainFrame::OnDropFiles)
+        EVT_MENU_RANGE(MainFrame::ID_RecentFiles, MainFrame::ID_RecentFilesLast,
+                       MainFrame::OnRecentFileSelected)
         EVT_BUTTON(MainFrame::ID_SaveSpecification, MainFrame::OnSaveSpecification)
         EVT_BUTTON(MainFrame::ID_SaveSpecificationAs, MainFrame::OnSaveSpecificationAs)
         EVT_BUTTON(MainFrame::ID_OpenMetaModel, MainFrame::OnOpenMetaModel)
@@ -217,7 +222,9 @@ namespace afd
             SetIcon(appIcon);
         }
 #endif
+        DragAcceptFiles(true);
         BuildUi();
+        RefreshRecentFiles();
         AutoLoadMetaModel();
         UpdateMetaModelButtonStates();
         UpdateTitleAndStatus();
@@ -228,6 +235,9 @@ namespace afd
         wxMenu* fileMenu = new wxMenu();
         fileMenu->Append(ID_NewSpecification, "&New function specification\tCtrl-N");
         fileMenu->Append(ID_OpenSpecification, "&Read function specification...\tCtrl-O");
+        m_recentFilesMenu = new wxMenu();
+        fileMenu->AppendSubMenu(m_recentFilesMenu, "Recent files");
+        fileMenu->AppendSeparator();
         fileMenu->Append(ID_SaveSpecification, "&Save function specification\tCtrl-S");
         fileMenu->Enable(ID_SaveSpecification, false);        
         fileMenu->Append(ID_SaveSpecificationAs, "&Write function specification as...\tCtrl-W");
@@ -527,6 +537,34 @@ namespace afd
         LoadSpecification(dialog.GetPath());
     }
 
+    void MainFrame::OnDropFiles(wxDropFilesEvent& event)
+    {
+        if (event.GetNumberOfFiles() > 1)
+        {
+            wxMessageBox("Drop one function specification at a time.", kApplicationName,
+                         wxOK | wxICON_INFORMATION, this);
+            return;
+        }
+        if (event.GetNumberOfFiles() == 1)
+        {
+            LoadSpecification(event.GetFiles()[0]);
+        }
+    }
+
+    void MainFrame::OnRecentFileSelected(wxCommandEvent& event)
+    {
+        const long index = event.GetId() - ID_RecentFiles;
+        wxString path;
+        if (index >= 0 &&
+            wxConfigBase::Get()->Read(wxString(kRecentFilesConfigKey) + "/" +
+                                      wxString::Format("%ld", index), &path) &&
+            !path.empty())
+        {
+            LoadSpecification(path);
+        }
+        RefreshRecentFiles();
+    }
+
     void MainFrame::OnSaveSpecification(wxCommandEvent& e)
     {
         if (!m_specification.IsLoaded())
@@ -554,6 +592,7 @@ namespace afd
         }
         m_contentChanged = false;
         UpdateSaveButtonState();
+        AddRecentFile(path);
         SetStatusText("Written: " + path, 0);
     }
 
@@ -607,6 +646,7 @@ namespace afd
         }
         m_contentChanged = false;
         UpdateSaveButtonState();
+        AddRecentFile(dialog.GetPath());
         SetStatusText("Written: " + dialog.GetPath(), 0);
     }
 
@@ -1735,6 +1775,7 @@ namespace afd
         }
         m_contentChanged = false;
         m_specification = std::move(specification);
+        AddRecentFile(path);
         m_newButton->Enable(false);
         GetMenuBar()->Enable(ID_NewSpecification, false);
         m_saveButton->Enable(m_saveButton);
@@ -1747,6 +1788,76 @@ namespace afd
 		m_createAPIButton->Enable(true);
         RefreshAll();
         UpdateTitleAndStatus();
+    }
+
+    void MainFrame::AddRecentFile(const wxString& path)
+    {
+        wxConfigBase* config = wxConfigBase::Get();
+        long count = 0;
+        config->Read(wxString(kRecentFilesConfigKey) + "/Count", &count, 0);
+
+        const wxString fullPath = wxFileName(path).GetFullPath();
+        wxArrayString recentFiles;
+        recentFiles.Add(fullPath);
+        for (long index = 0; index < count && index < kMaxRecentFiles; ++index)
+        {
+            wxString recentPath;
+            config->Read(wxString(kRecentFilesConfigKey) + "/" + wxString::Format("%ld", index),
+                         &recentPath);
+            if (!recentPath.empty() && recentPath != fullPath &&
+                recentFiles.size() < static_cast<unsigned int>(kMaxRecentFiles))
+            {
+                recentFiles.Add(recentPath);
+            }
+        }
+
+        config->Write(wxString(kRecentFilesConfigKey) + "/Count",
+                      static_cast<long>(recentFiles.size()));
+        for (std::size_t index = 0; index < recentFiles.size(); ++index)
+        {
+            config->Write(wxString(kRecentFilesConfigKey) + "/" +
+                          wxString::Format("%lu", static_cast<unsigned long>(index)),
+                          recentFiles[index]);
+        }
+        config->Flush();
+        RefreshRecentFiles();
+    }
+
+    void MainFrame::RefreshRecentFiles()
+    {
+        for (int id = ID_RecentFiles; id <= ID_RecentFilesLast; ++id)
+        {
+            if (m_recentFilesMenu->FindItem(id))
+            {
+                m_recentFilesMenu->Delete(id);
+            }
+        }
+        if (m_recentFilesMenu->FindItem(ID_NoRecentFiles))
+        {
+            m_recentFilesMenu->Delete(ID_NoRecentFiles);
+        }
+        wxConfigBase* config = wxConfigBase::Get();
+        long count = 0;
+        config->Read(wxString(kRecentFilesConfigKey) + "/Count", &count, 0);
+        count = std::max(0L, std::min(count, static_cast<long>(kMaxRecentFiles)));
+
+        int itemCount = 0;
+        for (long index = 0; index < count; ++index)
+        {
+            wxString path;
+            if (config->Read(wxString(kRecentFilesConfigKey) + "/" +
+                             wxString::Format("%ld", index), &path) && !path.empty())
+            {
+                m_recentFilesMenu->Append(ID_RecentFiles + static_cast<int>(index), path);
+                ++itemCount;
+            }
+        }
+
+        if (itemCount == 0)
+        {
+            wxMenuItem* emptyItem = m_recentFilesMenu->Append(ID_NoRecentFiles, "No recent files");
+            emptyItem->Enable(false);
+        }
     }
 
     bool MainFrame::LoadMetaModel(const wxString& path, bool reportErrors) 
