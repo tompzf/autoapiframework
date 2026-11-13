@@ -90,6 +90,7 @@ namespace afd
         void OnAbout(wxCommandEvent& event);   
         void OnHelp(wxCommandEvent& event);
         void OnExit(wxCommandEvent& event);
+        void OnClose(wxCloseEvent& event);
 
         void LoadSpecification(const wxString& path);
         void AddRecentFile(const wxString& path);

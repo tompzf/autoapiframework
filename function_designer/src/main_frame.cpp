@@ -207,6 +207,7 @@ namespace afd
         EVT_MENU(MainFrame::ID_QuickTips, MainFrame::OnQuickTips)
         EVT_MENU(wxID_HELP, MainFrame::OnHelp)
         EVT_MENU(wxID_EXIT, MainFrame::OnExit)
+        EVT_CLOSE(MainFrame::OnClose)
     wxEND_EVENT_TABLE()
 
     MainFrame::MainFrame()
@@ -1766,7 +1767,20 @@ namespace afd
 
     void MainFrame::OnHelp(wxCommandEvent&) { wxLaunchDefaultBrowser(kHelpUrl); }
 
-    void MainFrame::OnExit(wxCommandEvent&) { Close(true); }
+    void MainFrame::OnExit(wxCommandEvent&) { Close(); }
+
+    void MainFrame::OnClose(wxCloseEvent& event)
+    {
+        if (event.CanVeto() && m_contentChanged &&
+            wxMessageBox("The current function specification has unsaved changes.\n\n"
+                         "Discard changes and close the application?",
+                         kApplicationName, wxYES_NO | wxNO_DEFAULT | wxICON_WARNING, this) != wxYES)
+        {
+            event.Veto();
+            return;
+        }
+        event.Skip();
+    }
 
     void MainFrame::LoadSpecification(const wxString& path) 
     {
