@@ -75,5 +75,4 @@ Function Designer:
    doc/function_designer/application_purpose_and_use
    doc/function_designer/function_designer_configuration
    doc/function_designer/executables
-
-
+   doc/function_designer/yaml_comments
