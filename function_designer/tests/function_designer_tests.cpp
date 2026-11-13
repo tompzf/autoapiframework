@@ -14,6 +14,7 @@
  *   Thomas Pfleiderer - CTest added
  ********************************************************************************/
 
+#include "function_specification.h"
 #include "yaml_node.h"
 #include "yaml_parser.h"
 #include "yaml_writer.h"
@@ -133,6 +134,46 @@ namespace
             Require(reparsedInterfaces && reparsedInterfaces->IsSequence() &&
                     reparsedInterfaces->GetSequence().size() == interfaces->GetSequence().size(),
                     example + " changed its data interface count after writing and reparsing");
+        }
+
+    }
+
+    void TestAddMissingCollections()
+    {
+        afd::FunctionSpecification specification;
+        std::string error;
+        const std::string path = std::string(AFD_TESTS_DIR) + "/missing_collections.afs";
+        Require(specification.Load("0.4.1", path, error), "load failed: " + error);
+
+        const std::vector<std::string> keys = {
+            afd::FunctionSpecification::kErrorsKey,
+            afd::FunctionSpecification::kParametersKey,
+            afd::FunctionSpecification::kSchedulingKey
+        };
+        afd::YamlNodePtr item = afd::YamlNode::MakeMap();
+        item->Set("name", afd::YamlNode::MakeScalar("Added"));
+        for (const std::string& key : keys)
+        {
+            Require(specification.GetCollection(key).empty(), key + " should initially be absent");
+            Require(specification.AddCollectionItem(key, item), "could not add to missing " + key);
+            Require(specification.AddCollectionItem(key, item), "could not append to " + key);
+            Require(specification.GetCollection(key).size() == 2, key + " entries were not retained");
+        }
+        Require(!specification.AddCollectionItem("invalidCollection", item),
+                "non-sequence collection should not be overwritten");
+
+        afd::YamlParser parser;
+        const afd::YamlNodePtr root = Parse(parser, specification.ToText());
+        const afd::YamlNodePtr spec = root->Find("functionSpecification");
+        Require(spec->ScalarOf("invalidCollection") == "not-a-sequence",
+                "invalid collection was overwritten");
+        Require(spec->Find("dataInterfaces")->GetSequence().size() == 1,
+                "existing data interface was lost");
+        for (const std::string& key : keys)
+        {
+            const afd::YamlNodePtr collection = spec->Find(key);
+            Require(collection && collection->IsSequence() && collection->GetSequence().size() == 2,
+                    key + " was not serialized as a sequence");
         }
     }
 
@@ -409,6 +450,7 @@ int main()
         {"TestOrderedNodes", TestOrderedNodes},
         {"TestScalarsAndInvalidInput", TestScalarsAndInvalidInput},
         {"TestExampleRoundTrips", TestExampleRoundTrips},     
+        {"TestAddMissingCollections", TestAddMissingCollections},
         {"TestSequenceMapLeadingCommentRoundTrip", TestSequenceMapLeadingCommentRoundTrip},
         // Node API tests           
         {"TestFindReturnsNullForMissingKey", TestFindReturnsNullForMissingKey},

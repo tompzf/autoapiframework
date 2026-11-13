@@ -1,0 +1,8 @@
+functionSpecification:
+  name: Example
+  metaModelRef:
+    name: Example
+    version: 0.4.1
+  dataInterfaces:
+    - name: Vehicle.Speed
+  invalidCollection: not-a-sequence

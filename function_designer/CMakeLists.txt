@@ -233,13 +233,15 @@ if(BUILD_TESTING)
 
     add_executable(function_designer_tests
         tests/function_designer_tests.cpp
+        src/function_specification.cpp
         src/yaml_node.cpp
         src/yaml_parser.cpp
         src/yaml_writer.cpp
     )
     target_include_directories(function_designer_tests PRIVATE src)
     target_compile_definitions(function_designer_tests PRIVATE
-        AFD_EXAMPLES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/examples")
+        AFD_EXAMPLES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/examples"
+        AFD_TESTS_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests")
     if(MSVC)
         target_compile_options(function_designer_tests PRIVATE /W4 /WX /utf-8)
     else()

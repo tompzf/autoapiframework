@@ -293,8 +293,13 @@ namespace afd
         {
             return false;
         }
-        const YamlNodePtr collection = m_spec->Find(key);
-        if (!collection || !collection->IsSequence())
+        YamlNodePtr collection = m_spec->Find(key);
+        if (!collection)
+        {
+            collection = YamlNode::MakeSequence();
+            m_spec->Set(key, collection);
+        }
+        else if (!collection->IsSequence())
         {
             return false;
         }

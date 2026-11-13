@@ -1109,6 +1109,12 @@ namespace afd
             {
                 ++added;
             }
+            else
+            {
+                wxMessageBox("Could not add signals: dataInterfaces is not a sequence.",
+                             kApplicationName, wxOK | wxICON_ERROR, this);
+                break;
+            }
         }
 
         if (added > 0)
@@ -1134,6 +1140,8 @@ namespace afd
         const std::vector<std::string> fields = m_metaModel.ColumnsFor(interfaceType, {});
         if (fields.empty())
         {
+            wxMessageBox("Cannot add an item: the meta model has no fields for " + ToWx(interfaceType) + ".",
+                         kApplicationName, wxOK | wxICON_ERROR, this);
             return;
         }
 
@@ -1299,6 +1307,11 @@ namespace afd
             m_contentChanged = true;
             RefreshAll();
             SetStatusText("Added item", 0);
+        }
+        else
+        {
+            wxMessageBox("Could not add item: " + ToWx(collectionKey) + " is not a sequence.",
+                         kApplicationName, wxOK | wxICON_ERROR, this);
         }
     }
 
