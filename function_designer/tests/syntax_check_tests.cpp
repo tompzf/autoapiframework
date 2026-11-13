@@ -713,54 +713,69 @@ int main()
         return 1;
     }
 
-    try
+    struct TestCase
     {
-        // Example file tests
-        TestAllExamplesPassValidation(metaModel);
-        TestMandatoryPropertyMissingFails(metaModel);
+        const char* name;
+        void (*run)(const afd::MetaModel&);
+    };
 
-        // Header validation
-        TestNoRootKeyFails(metaModel);
-        TestMissingHeaderNameFails(metaModel);
-        TestMissingHeaderVersionFails(metaModel);
+    const TestCase tests[] = {
+        // Example file tests        
+        {"TestAllExamplesPassValidation", TestAllExamplesPassValidation},
+        {"TestMandatoryPropertyMissingFails", TestMandatoryPropertyMissingFails},
+        // Header validation        
+        {"TestNoRootKeyFails", TestNoRootKeyFails},
+        {"TestMissingHeaderNameFails", TestMissingHeaderNameFails},
+        {"TestMissingHeaderVersionFails", TestMissingHeaderVersionFails},
+        // Required section tests        
+        {"TestMissingRequiredSectionFails", TestMissingRequiredSectionFails},
+        // Property name validation        
+        {"TestUnknownPropertyFails", TestUnknownPropertyFails},
+        {"TestUnqualifiedParameterNameFails", TestUnqualifiedParameterNameFails},
+        // Enum validation        
+        {"TestInvalidDirectionEnumFails", TestInvalidDirectionEnumFails},
+        {"TestInvalidASILEnumFails", TestInvalidASILEnumFails},
+        {"TestInvalidRunTypeEnumFails", TestInvalidRunTypeEnumFails},
+        {"TestFuSaFalseWithASILFails", TestFuSaFalseWithASILFails},
+        // Boolean validation        
+        {"TestInvalidBooleanFuSaFails", TestInvalidBooleanFuSaFails},
+        {"TestInvalidBooleanTunableFails", TestInvalidBooleanTunableFails},
+        // Type validation        
+        {"TestNumericParameterValueTypes", TestNumericParameterValueTypes},
+        {"TestFloatMinGreaterThanMaxFails", TestFloatMinGreaterThanMaxFails},
+        {"TestIntegerMinGreaterThanMaxFails", TestIntegerMinGreaterThanMaxFails},
+        {"TestNonIntegerCycleTimeFails", TestNonIntegerCycleTimeFails},   
+        {"TestNonIntegerMaturationTimeFails", TestNonIntegerMaturationTimeFails},
+        // Supervision validation             
+        {"TestSupervisionValidation", TestSupervisionValidation},
+        // Error interface tests        
+        {"TestValidErrorInterfacesPasses", TestValidErrorInterfacesPasses},
+        {"TestValidErrorInterfaceEnumPasses", TestValidErrorInterfaceEnumPasses},
+    };
 
-        // Required section tests
-        TestMissingRequiredSectionFails(metaModel);
-
-        // Property name validation
-        TestUnknownPropertyFails(metaModel);
-        TestUnqualifiedParameterNameFails(metaModel);
-
-        // Enum validation
-        TestInvalidDirectionEnumFails(metaModel);
-        TestInvalidASILEnumFails(metaModel);
-        TestInvalidRunTypeEnumFails(metaModel);
-        TestFuSaFalseWithASILFails(metaModel);
-
-        // Boolean validation
-        TestInvalidBooleanFuSaFails(metaModel);
-        TestInvalidBooleanTunableFails(metaModel);
-
-        // Type validation
-        TestNumericParameterValueTypes(metaModel);
-        TestFloatMinGreaterThanMaxFails(metaModel);
-        TestIntegerMinGreaterThanMaxFails(metaModel);
-        TestNonIntegerCycleTimeFails(metaModel);
-        TestNonIntegerMaturationTimeFails(metaModel);
-
-        // Supervision validation
-        TestSupervisionValidation(metaModel);
-
-        // Error interface tests
-        TestValidErrorInterfacesPasses(metaModel);
-        TestValidErrorInterfaceEnumPasses(metaModel);
-    }
-    catch (const std::exception& error)
+    int failedTests = 0;
+    for (const TestCase& test : tests)
     {
-        std::cerr << error.what() << '\n';
-        return 1;
+        try
+        {
+            test.run(metaModel);
+            std::cout << "[PASS] " << test.name << '\n';
+        }
+        catch (const std::exception& error)
+        {
+            std::cerr << "[FAIL] " << test.name << ": " << error.what() << '\n';
+            ++failedTests;
+        }
     }
 
-    std::cout << "All syntax check tests passed.\n";
-    return 0;
+    if (failedTests == 0)
+    {
+        std::cout << "All " << (sizeof(tests) / sizeof(tests[0]))
+                  << " syntax check tests passed.\n";
+        return 0;
+    }
+
+    std::cerr << failedTests << " of " << (sizeof(tests) / sizeof(tests[0]))
+              << " syntax check tests failed.\n";
+    return 1;
 }

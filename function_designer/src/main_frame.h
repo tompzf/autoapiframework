@@ -87,6 +87,7 @@ namespace afd
 
         void LoadSpecification(const wxString& path);
         bool LoadMetaModel(const wxString& path, bool reportErrors);
+        void UpdateSaveButtonState();
 
         bool SyntaxCheckIsOK(bool doNotShowOnSuccess, const std::string& contextMessage = "");
 

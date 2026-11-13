@@ -23,7 +23,8 @@ Autoapiframework Function Specifications (`*.afs`, YAML content).
 
 * **Read .afs file** – opens a function specification, parses it and builds
   the in-memory structures (`FunctionSpecification`, order preserving `YamlNode`
-  tree).
+  tree). If the current specification has unsaved changes, the application asks
+  for confirmation before replacing it. Choose No to return and save first.
 * Displays the content on four tabs:
   * **Attributes** – `name`, `version`, `metaModelRef.*`, collection sizes and
     the full `description`.

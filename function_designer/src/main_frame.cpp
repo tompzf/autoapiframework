@@ -329,15 +329,33 @@ namespace afd
                                         wxSize(-1, 140), wxTE_MULTILINE | wxTE_BESTWRAP);
         m_nameText->Bind(wxEVT_TEXT, [this](wxCommandEvent&)
         {
+            if (!m_specification.IsLoaded())
+            {
+                return;
+            }
             m_specification.SetName(ToStd(m_nameText->GetValue()));
+            m_contentChanged = true;
+            UpdateSaveButtonState();
         });
         m_versionText->Bind(wxEVT_TEXT, [this](wxCommandEvent&)
         {
+            if (!m_specification.IsLoaded())
+            {
+                return;
+            }
             m_specification.SetVersion(ToStd(m_versionText->GetValue()));
+            m_contentChanged = true;
+            UpdateSaveButtonState();
         });
         m_descriptionText->Bind(wxEVT_TEXT, [this](wxCommandEvent&)
         {
+            if (!m_specification.IsLoaded())
+            {
+                return;
+            }
             m_specification.SetDescription(ToStd(m_descriptionText->GetValue()));
+            m_contentChanged = true;
+            UpdateSaveButtonState();
         });
         wxBoxSizer* attributeSizer = new wxBoxSizer(wxVERTICAL);
         wxFlexGridSizer* editableAttributes = new wxFlexGridSizer(2, 5, 5);
@@ -534,6 +552,8 @@ namespace afd
                         wxOK | wxICON_ERROR, this);
             return;
         }
+        m_contentChanged = false;
+        UpdateSaveButtonState();
         SetStatusText("Written: " + path, 0);
     }
 
@@ -585,6 +605,8 @@ namespace afd
                         wxOK | wxICON_ERROR, this);
             return;
         }
+        m_contentChanged = false;
+        UpdateSaveButtonState();
         SetStatusText("Written: " + dialog.GetPath(), 0);
     }
 
@@ -1695,6 +1717,14 @@ namespace afd
 
     void MainFrame::LoadSpecification(const wxString& path) 
     {
+        if (m_contentChanged &&
+            wxMessageBox("The current function specification has unsaved changes.\n\n"
+                         "Discard changes and open another file?",
+                         kApplicationName, wxYES_NO | wxNO_DEFAULT | wxICON_WARNING, this) != wxYES)
+        {
+            return;
+        }
+
         std::string error;
         FunctionSpecification specification;
         if (!specification.Load(m_metaModel.GetVersion(), ToStd(path), error)) 
@@ -1739,8 +1769,7 @@ namespace afd
 
     void MainFrame::RefreshAll() 
     {
-        GetMenuBar()->Enable(ID_SaveSpecification, m_contentChanged);	        
-        m_saveButton->Enable(m_contentChanged);  
+        UpdateSaveButtonState();
         m_editEnumsButton->Enable(m_specification.IsLoaded());
         FillAttributes();
         FillCollection(m_signalList, FunctionSpecification::kDataInterfacesKey, kDataInterfaceTypeKey);
@@ -1763,6 +1792,12 @@ namespace afd
         UpdateCollectionButtonStates();
     }
 
+    void MainFrame::UpdateSaveButtonState()
+    {
+        GetMenuBar()->Enable(ID_SaveSpecification, m_contentChanged);
+        m_saveButton->Enable(m_contentChanged);
+    }
+
     void MainFrame::FillAttributes() 
     {
         m_attributeList->DeleteAllItems();
@@ -1778,9 +1813,9 @@ namespace afd
             m_attributeList->SetItem(row, 1, OneLine(attribute.second));
             ++row;
         }
-        m_nameText->SetValue(ToWx(m_specification.GetName()));
-        m_versionText->SetValue(ToWx(m_specification.GetVersion()));
-        m_descriptionText->SetValue(ToWx(m_specification.GetDescription()));
+        m_nameText->ChangeValue(ToWx(m_specification.GetName()));
+        m_versionText->ChangeValue(ToWx(m_specification.GetVersion()));
+        m_descriptionText->ChangeValue(ToWx(m_specification.GetDescription()));
     }
 
     void MainFrame::FillCollection(wxListCtrl* list, const std::string& collectionKey,

@@ -232,7 +232,7 @@ if(BUILD_TESTING)
     add_test(NAME afs_file_parser_tests COMMAND afs_file_parser_tests)
 
     add_executable(function_designer_tests
-        tests/yaml_tests.cpp
+        tests/function_designer_tests.cpp
         src/yaml_node.cpp
         src/yaml_parser.cpp
         src/yaml_writer.cpp
@@ -246,6 +246,20 @@ if(BUILD_TESTING)
         target_compile_options(function_designer_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
     endif()
     add_test(NAME function_designer_tests COMMAND function_designer_tests)
+
+    add_executable(yaml_comment_tests
+        tests/yaml_comment_tests.cpp
+        src/yaml_node.cpp
+        src/yaml_parser.cpp
+        src/yaml_writer.cpp
+    )
+    target_include_directories(yaml_comment_tests PRIVATE src)
+    if(MSVC)
+        target_compile_options(yaml_comment_tests PRIVATE /W4 /WX /utf-8)
+    else()
+        target_compile_options(yaml_comment_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME yaml_comment_tests COMMAND yaml_comment_tests)
 
     # Unit tests for ValidateFunction / MetaModel — no wxWidgets dependency.
     add_executable(syntax_check_tests
