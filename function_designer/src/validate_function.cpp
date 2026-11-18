@@ -63,8 +63,8 @@ namespace afd
 
     bool ValidateFunction::HeaderSyntaxCheck(const YamlNodePtr& root, std::string& error)
     {
-        auto name = root->ScalarOf(FunctionSpecification::kNameKey);
-        auto version = root->ScalarOf(FunctionSpecification::kVersionKey);
+        const auto name = root->ScalarOf(FunctionSpecification::kNameKey);
+        const auto version = root->ScalarOf(FunctionSpecification::kVersionKey);
      
         if (name.size() == 0 || version.size() == 0)
         {
@@ -247,8 +247,8 @@ namespace afd
             }
 
             // in scheduling it is functionName
-            std::string itemFunctionName = item->Find(kFunctionNameKey) ? item->Find(kFunctionNameKey)->GetScalar() : "<unknown>";               
-            auto itemSupervision = item->Find(kSupervisionKey);  
+            const std::string itemFunctionName = item->Find(kFunctionNameKey) ? item->Find(kFunctionNameKey)->GetScalar() : "<unknown>";               
+            const auto itemSupervision = item->Find(kSupervisionKey);  
             if (itemSupervision)
             {
                 std::string required = itemSupervision->Find(kSupervisionRequiredKey) ? itemSupervision->Find(kSupervisionRequiredKey)->GetScalar() : "<unknown>";
@@ -258,10 +258,10 @@ namespace afd
                 }
                 else if (required == kTrueKey)
                 {
-                    auto type = itemSupervision->Find(kSupervisionTypeKey);                    
-                    auto alive = itemSupervision->Find(kSupervisionAliveKey);
-                    auto deadline = itemSupervision->Find(kSupervisionDeadlineKey);
-                    auto logical = itemSupervision->Find(kSupervisionLogicalKey);
+                    const auto type = itemSupervision->Find(kSupervisionTypeKey);                    
+                    const auto alive = itemSupervision->Find(kSupervisionAliveKey);
+                    const auto deadline = itemSupervision->Find(kSupervisionDeadlineKey);
+                    const auto logical = itemSupervision->Find(kSupervisionLogicalKey);
                     if(!type || (!alive && !deadline && !logical))
                     {
                         error = "Missing supervision fields for item '" + itemFunctionName + "'";
@@ -275,7 +275,7 @@ namespace afd
                             return false;
                         }
 
-                        auto requiredType = itemSupervision->Find(typeItem->GetScalar());     
+                        const auto requiredType = itemSupervision->Find(typeItem->GetScalar());     
                         if (!requiredType)
                         {
                             error = "Missing required supervision type " + typeItem->GetScalar() + " for item '" + itemFunctionName + "'";
@@ -284,9 +284,9 @@ namespace afd
                     }
                     if (alive)
                     {
-                        auto minIndications = alive->Find(kMinIndicationsKey);
-                        auto maxIndications = alive->Find(kMaxIndicationsKey);
-                        auto referenceCycleMs = alive->Find(kReferenceCycleMsKey);
+                        const auto minIndications = alive->Find(kMinIndicationsKey);
+                        const auto maxIndications = alive->Find(kMaxIndicationsKey);
+                        const auto referenceCycleMs = alive->Find(kReferenceCycleMsKey);
                         if (!minIndications && !maxIndications && !referenceCycleMs)
                         {
                             error = "Supervision of type '" + std::string(kSupervisionAliveKey) + "' has no content for item '" + itemFunctionName + "'";
@@ -295,7 +295,7 @@ namespace afd
                     }
                     if (deadline)
                     {
-                        auto maxExecutionTimeMs = deadline->Find(kMaxExecutionTimeMsKey);
+                        const auto maxExecutionTimeMs = deadline->Find(kMaxExecutionTimeMsKey);
                         if (!maxExecutionTimeMs)
                         {
                             error = "Supervision of type '" + std::string(kSupervisionDeadlineKey) + "' has no content for item '" + itemFunctionName + "'";
@@ -304,8 +304,8 @@ namespace afd
                     }
                     if (logical)
                     {
-                        auto predecessorRefs = logical->Find(kPredecessorRefsKey);
-                        auto successorRefs = logical->Find(kSuccessorRefsKey);
+                        const auto predecessorRefs = logical->Find(kPredecessorRefsKey);
+                        const auto successorRefs = logical->Find(kSuccessorRefsKey);
                         if (!predecessorRefs && !successorRefs)
                         {
                             error = "Supervision of type '" + std::string(kSupervisionLogicalKey) + "' has no content for item '" + itemFunctionName + "'";
@@ -419,7 +419,7 @@ namespace afd
     {
         if (interfaceTypeName == kDataInterfaceTypeKey)
         {
-            std::string itemFusa = item->Find(kFuSaKey) ? item->Find(kFuSaKey)->GetScalar() : "";  
+            const std::string itemFusa = item->Find(kFuSaKey) ? item->Find(kFuSaKey)->GetScalar() : "";  
             if (itemFusa == kFalseKey)
             {
                 return true;
@@ -459,8 +459,8 @@ namespace afd
 
             bool skipASILCheck = SkipASILProperty(item, interfaceTypeName);
             // in scheduling it is functionName
-            std::string itemFunctionName = item->Find(kFunctionNameKey) ? item->Find(kFunctionNameKey)->GetScalar() : "<unknown>";               
-            std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : itemFunctionName;                   
+            const std::string itemFunctionName = item->Find(kFunctionNameKey) ? item->Find(kFunctionNameKey)->GetScalar() : "<unknown>";               
+            const std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : itemFunctionName;                   
           
             for (const auto& property : item->GetMap())
             {
@@ -496,7 +496,7 @@ namespace afd
     bool ValidateFunction::ValidateDefaultValueEnum(const std::string& itemName, const YamlNodePtr& functionSpecification, 
                             const std::string& defaultValue, const std::string& enumName, const MetaModel& metaModel, std::string& error)
     {    
-        auto enums = GetEnums(functionSpecification);
+        const auto enums = GetEnums(functionSpecification);
         for (const auto& enumPair : enums)
         {
             if (enumPair.first == enumName)
@@ -553,8 +553,8 @@ namespace afd
                 return false;
             }
             // in scheduling it is functionName
-            std::string itemFunctionName = item->Find(kFunctionNameKey) ? item->Find(kFunctionNameKey)->GetScalar() : "<unknown>";               
-            std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : itemFunctionName;            
+            const std::string itemFunctionName = item->Find(kFunctionNameKey) ? item->Find(kFunctionNameKey)->GetScalar() : "<unknown>";               
+            const std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : itemFunctionName;            
             for (const auto& property : item->GetMap())
             {
                 auto it = propertiesWithBooleanType.find(property.first.c_str());
@@ -615,8 +615,8 @@ namespace afd
             }
 
             // in scheduling it is functionName
-            std::string itemFunctionName = item->Find(kFunctionNameKey) ? item->Find(kFunctionNameKey)->GetScalar() : "<unknown>";            
-            std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : itemFunctionName;
+            const std::string itemFunctionName = item->Find(kFunctionNameKey) ? item->Find(kFunctionNameKey)->GetScalar() : "<unknown>";            
+            const std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : itemFunctionName;
             for (const auto& property : item->GetMap())
             {
                 if (SkipCertainPropertiesFromSyntaxCheck(property.first, false, true))
@@ -649,12 +649,12 @@ namespace afd
                 return false;
             }
             // in scheduling it is functionName
-            std::string itemFunctionName = item->Find(kFunctionNameKey) ? item->Find(kFunctionNameKey)->GetScalar() : "<unknown>";               
-            std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : itemFunctionName;  
-            std::string itemMin = item->Find(FunctionSpecification::kMinKey) ? item->Find(FunctionSpecification::kMinKey)->GetScalar() : "";
-            std::string itemMax = item->Find(FunctionSpecification::kMaxKey) ? item->Find(FunctionSpecification::kMaxKey)->GetScalar() : "";
-            std::string itemDefault = item->Find(FunctionSpecification::kDefaultValueKey) ? item->Find(FunctionSpecification::kDefaultValueKey)->GetScalar() : "";                        
-            std::string itemDataType = item->Find(FunctionSpecification::kDataTypeKey) ? item->Find(FunctionSpecification::kDataTypeKey)->GetScalar() : "";
+            const std::string itemFunctionName = item->Find(kFunctionNameKey) ? item->Find(kFunctionNameKey)->GetScalar() : "<unknown>";               
+            const std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : itemFunctionName;  
+            const std::string itemMin = item->Find(FunctionSpecification::kMinKey) ? item->Find(FunctionSpecification::kMinKey)->GetScalar() : "";
+            const std::string itemMax = item->Find(FunctionSpecification::kMaxKey) ? item->Find(FunctionSpecification::kMaxKey)->GetScalar() : "";
+            const std::string itemDefault = item->Find(FunctionSpecification::kDefaultValueKey) ? item->Find(FunctionSpecification::kDefaultValueKey)->GetScalar() : "";                        
+            const std::string itemDataType = item->Find(FunctionSpecification::kDataTypeKey) ? item->Find(FunctionSpecification::kDataTypeKey)->GetScalar() : "";
             if (itemDataType == FunctionSpecification::kFloatDataType)
             {                
                 if (!ValidateFloatType(itemName, itemDefault, itemMin, itemMax, error))
@@ -712,33 +712,33 @@ namespace afd
     bool ValidateFunction::ValidateCertainProperties(const YamlNodePtr& node, const std::string& nodeName, std::string& error )
     {
         // signal related properties
-        std::string itemPrecision = node->Find(FunctionSpecification::kPrecisionKey) ? node->Find(FunctionSpecification::kPrecisionKey)->GetScalar() : "";
+        const std::string itemPrecision = node->Find(FunctionSpecification::kPrecisionKey) ? node->Find(FunctionSpecification::kPrecisionKey)->GetScalar() : "";
         if (!Isinteger(itemPrecision) && !IsFloat(itemPrecision) && !IsDouble(itemPrecision))
         {
             error = nodeName + ":\n\n" + FunctionSpecification::kPrecisionKey + " must be integer/float/double: "  + itemPrecision;        
             return false;
         }
-        std::string itemMinUpdatePeriodMs = node->Find(FunctionSpecification::kMinUpdatePeriodMsKey) ? node->Find(FunctionSpecification::kMinUpdatePeriodMsKey)->GetScalar() : "";            
+        const std::string itemMinUpdatePeriodMs = node->Find(FunctionSpecification::kMinUpdatePeriodMsKey) ? node->Find(FunctionSpecification::kMinUpdatePeriodMsKey)->GetScalar() : "";            
         if (!Isinteger(itemMinUpdatePeriodMs))
         {
             error = nodeName + ":\n\n" + FunctionSpecification::kMinUpdatePeriodMsKey + " must be integer: "  + itemMinUpdatePeriodMs;        
             return false;
         }
         // scheduling related properties
-        std::string itemStackSizeBytes = node->Find(FunctionSpecification::kStackSizeBytesKey) ? node->Find(FunctionSpecification::kStackSizeBytesKey)->GetScalar() : "";              
+        const std::string itemStackSizeBytes = node->Find(FunctionSpecification::kStackSizeBytesKey) ? node->Find(FunctionSpecification::kStackSizeBytesKey)->GetScalar() : "";              
         if (!Isinteger(itemStackSizeBytes))
         {
             error = nodeName + ":\n\n" + FunctionSpecification::kStackSizeBytesKey + " must be integer: "  + itemStackSizeBytes;        
             return false;
         }          
-        std::string itemRunType = node->Find(FunctionSpecification::kRunTypeKey) ? node->Find(FunctionSpecification::kRunTypeKey)->GetScalar() : "";              
-        std::string itemCycleTimeMs = node->Find(FunctionSpecification::kCycleTimeMsKey) ? node->Find(FunctionSpecification::kCycleTimeMsKey)->GetScalar() : "";   
+        const std::string itemRunType = node->Find(FunctionSpecification::kRunTypeKey) ? node->Find(FunctionSpecification::kRunTypeKey)->GetScalar() : "";              
+        const std::string itemCycleTimeMs = node->Find(FunctionSpecification::kCycleTimeMsKey) ? node->Find(FunctionSpecification::kCycleTimeMsKey)->GetScalar() : "";   
         if (!Isinteger(itemCycleTimeMs))
         {
             error = nodeName + ":\n\n" + FunctionSpecification::kCycleTimeMsKey + " must be integer: "  + itemCycleTimeMs;        
             return false;
         }  
-        if (itemRunType == "cyclic")
+        if (itemRunType == FunctionSpecification::kRunTypeCyclic)
         {
             uint32_t cycleTime = 0;
             try
@@ -756,19 +756,19 @@ namespace afd
             }
             if (cycleTime == 0)
             {
-                error = nodeName + ":\n\n'" + FunctionSpecification::kCycleTimeMsKey + "' must be specified for 'cyclic' run type";        
+                error = nodeName + ":\n\n'" + FunctionSpecification::kCycleTimeMsKey + "' must be specified for '" + FunctionSpecification::kRunTypeCyclic + "' run type";        
                 return false;
             }
         }
-        else if (!(itemRunType == "cyclic") && !itemCycleTimeMs.empty())
+        else if (!(itemRunType == FunctionSpecification::kRunTypeCyclic) && !itemCycleTimeMs.empty())
         {
-            error = nodeName + ":\n\n'" + FunctionSpecification::kCycleTimeMsKey + "' requires 'cyclic' run type";        
+            error = nodeName + ":\n\n'" + FunctionSpecification::kCycleTimeMsKey + "' requires '" + FunctionSpecification::kRunTypeCyclic + "' run type";        
             return false;
         }
 
 
         // Error interface related properties
-        std::string itemMaturationTimeMs = node->Find(FunctionSpecification::kMaturationTimeMsKey) ? node->Find(FunctionSpecification::kMaturationTimeMsKey)->GetScalar() : "";              
+        const std::string itemMaturationTimeMs = node->Find(FunctionSpecification::kMaturationTimeMsKey) ? node->Find(FunctionSpecification::kMaturationTimeMsKey)->GetScalar() : "";              
         if (!Isinteger(itemMaturationTimeMs))
         {
             error = nodeName + ":\n\n" + FunctionSpecification::kMaturationTimeMsKey + " must be integer: "  + itemMaturationTimeMs;        
