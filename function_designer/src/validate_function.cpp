@@ -125,7 +125,7 @@ namespace afd
             }
 
             // An enum that also exists in the meta model must be identical to it.
-            if (const std::vector<std::string>* expected = metaModel.FindEnumValues(entry.first))
+            if (const std::vector<std::string>* const expected = metaModel.FindEnumValues(entry.first))
             {
                 if (*expected != values)
                 {
@@ -251,7 +251,7 @@ namespace afd
             const auto itemSupervision = item->Find(kSupervisionKey);  
             if (itemSupervision)
             {
-                std::string required = itemSupervision->Find(kSupervisionRequiredKey) ? itemSupervision->Find(kSupervisionRequiredKey)->GetScalar() : "<unknown>";
+                const std::string required = itemSupervision->Find(kSupervisionRequiredKey) ? itemSupervision->Find(kSupervisionRequiredKey)->GetScalar() : "<unknown>";
                 if (required == kFalseKey)
                 {
                     continue;
@@ -361,12 +361,9 @@ namespace afd
                                             const MetaModel& metaModel, std::string& error)
     {
         std::vector<std::string> validPropertyNamesFromMetaModel = metaModel.ColumnsFor(interfaceTypeName, {});
-        YamlNodePtr companionDefinitions;
-        if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
-        {
-            companionDefinitions = interfaceTypeName == kDataInterfaceTypeKey
-                ? (*type)->Find(kRuntimeCompanionKey) : nullptr;
-        }
+        const YamlNodePtr* const type = metaModel.FindInterfaceType(interfaceTypeName);
+        const YamlNodePtr companionDefinitions = type && interfaceTypeName == kDataInterfaceTypeKey
+            ? (*type)->Find(kRuntimeCompanionKey) : nullptr;
         validPropertyNamesFromMetaModel.push_back(kEnumRefKey); // exception: enumRef is allowed too
 
         bool syntaxError = false;
@@ -397,7 +394,7 @@ namespace afd
                     }
                     continue;
                 }
-                auto it = std::find(validPropertyNamesFromMetaModel.begin(), 
+                const auto it = std::find(validPropertyNamesFromMetaModel.begin(),
                                     validPropertyNamesFromMetaModel.end(), property.first);
                 if (it == validPropertyNamesFromMetaModel.end())
                 {
@@ -433,7 +430,7 @@ namespace afd
                                          const MetaModel& metaModel, std::string& error)
     {
         std::map<std::string, std::string> propertiesWithEnumRef;
-        if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
+        if (const YamlNodePtr* const type = metaModel.FindInterfaceType(interfaceTypeName))
         {
             const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
             if (properties && properties->IsMap())
@@ -457,7 +454,7 @@ namespace afd
                 return false;
             }
 
-            bool skipASILCheck = SkipASILProperty(item, interfaceTypeName);
+            const bool skipASILCheck = SkipASILProperty(item, interfaceTypeName);
             // in scheduling it is functionName
             const std::string itemFunctionName = item->Find(kFunctionNameKey) ? item->Find(kFunctionNameKey)->GetScalar() : "<unknown>";               
             const std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : itemFunctionName;                   
@@ -479,7 +476,7 @@ namespace afd
                     continue;
                 }                
 
-                auto it = propertiesWithEnumRef.find(property.first.c_str());
+                const auto it = propertiesWithEnumRef.find(property.first.c_str());
                 if (it != propertiesWithEnumRef.end())
                 {
                     if (!metaModel.ValidateEnumValue(property.first, it->second, property.second->GetScalar(), error))
@@ -529,7 +526,7 @@ namespace afd
                                          const MetaModel& metaModel, std::string& error)
     {
         std::map<std::string, std::string> propertiesWithBooleanType;
-        if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
+        if (const YamlNodePtr* const type = metaModel.FindInterfaceType(interfaceTypeName))
         {
             const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
             if (properties && properties->IsMap())
@@ -557,7 +554,7 @@ namespace afd
             const std::string itemName = item->Find(kNameKey) ? item->Find(kNameKey)->GetScalar() : itemFunctionName;            
             for (const auto& property : item->GetMap())
             {
-                auto it = propertiesWithBooleanType.find(property.first.c_str());
+                const auto it = propertiesWithBooleanType.find(property.first.c_str());
                 if (it != propertiesWithBooleanType.end())
                 {
                     if (property.second->GetScalar() != kTrueKey && property.second->GetScalar() != kFalseKey)
@@ -568,7 +565,7 @@ namespace afd
                     }
                 }
             }
-        }        
+        }
         return true;
     }
     
@@ -576,7 +573,7 @@ namespace afd
                                          const MetaModel& metaModel, std::string& error)
     {
         std::map<std::string, std::string> propertiesWithMandatory;
-        if (const YamlNodePtr* type = metaModel.FindInterfaceType(interfaceTypeName))
+        if (const YamlNodePtr* const type = metaModel.FindInterfaceType(interfaceTypeName))
         {
             const YamlNodePtr properties = (*type)->Find(kPropertiesKey);
             if (properties && properties->IsMap())
@@ -624,7 +621,7 @@ namespace afd
                     continue;
                 }
 
-                auto it = propertiesWithMandatory.find(property.first.c_str());
+                const auto it = propertiesWithMandatory.find(property.first.c_str());
                 if (it != propertiesWithMandatory.end())
                 {
                     if (property.second->GetScalar() == "" || property.second->GetScalar() == " ")
@@ -688,7 +685,7 @@ namespace afd
             }
             if (itemDataType == kEnumKey)                  
             {
-                std::string enumRef = item->Find(kEnumRefKey) ? item->Find(kEnumRefKey)->GetScalar() : "";
+                const std::string enumRef = item->Find(kEnumRefKey) ? item->Find(kEnumRefKey)->GetScalar() : "";
                 if (enumRef.empty())
                 {
                     error = itemName + ":\ntype = enum, enumRef expected but not found.";
@@ -774,7 +771,7 @@ namespace afd
             error = nodeName + ":\n\n" + FunctionSpecification::kMaturationTimeMsKey + " must be integer: "  + itemMaturationTimeMs;        
             return false;
         }  
-        std::string itemresetTimeMs = node->Find(FunctionSpecification::kResetTimeMsKey) ? node->Find(FunctionSpecification::kResetTimeMsKey)->GetScalar() : "";              
+        const std::string itemresetTimeMs = node->Find(FunctionSpecification::kResetTimeMsKey) ? node->Find(FunctionSpecification::kResetTimeMsKey)->GetScalar() : "";
         if (!Isinteger(itemresetTimeMs))
         {
             error = nodeName + ":\n\n" + FunctionSpecification::kResetTimeMsKey + " must be integer: "  + itemresetTimeMs;        
@@ -986,7 +983,7 @@ namespace afd
             return true;
         }
 
-        for (char c : str)
+        for (const char c : str)
         {
             if (!std::isdigit(static_cast<unsigned char>(c)))
             {
