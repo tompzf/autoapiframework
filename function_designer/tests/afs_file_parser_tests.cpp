@@ -199,7 +199,7 @@ namespace
             if (s.functionName == "VehicleSpeedFusion.Step") { stepSchedule = &s; break; }
         }
         Require(stepSchedule != nullptr, "VehicleSpeedFusion.Step schedule not found");
-        Require(stepSchedule->previousRunnableRef == "VehicleSpeedPreProcessor.Step",
+        Require(stepSchedule->previousRunnableRef == "VehicleSpeedFusion.Init",
                 "VehicleSpeedFusion.Step should reference VehicleSpeedPreProcessor.Step");
         Require(stepSchedule->cycleTimeMs == "20",
                 "VehicleSpeedFusion.Step cycleTimeMs should be '20'");

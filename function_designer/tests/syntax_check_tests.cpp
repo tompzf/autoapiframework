@@ -642,6 +642,62 @@ namespace
             }
         }
 
+    void TestFunctionExecutionOrder(const afd::MetaModel& mm)
+    {
+        struct Case
+        {
+            const char* name;
+            std::vector<std::pair<std::string, std::string>> entries;
+            bool expectedValid;
+            const char* expectedError;
+        };
+        const Case cases[] = {
+            {"empty scheduling", {}, true, ""},
+            {"out-of-order chain", {{"C", "B"}, {"A", ""}, {"B", "A"}}, true, ""},
+            {"independent and branching chains", {{"A", ""}, {"B", "A"}, {"C", "A"}, {"D", ""}}, true, ""},
+            {"empty reference", {{"A", "\"\""}}, true, ""},
+            {"missing predecessor", {{"A", "Missing"}}, false, "Missing"},
+            {"self cycle", {{"A", "A"}}, false, "Cycle"},
+            {"multi-node cycle", {{"A", "B"}, {"B", "C"}, {"C", "B"}}, false, "Cycle"},
+            {"cycle in separate chain", {{"A", ""}, {"B", "C"}, {"C", "B"}}, false, "Cycle"},
+            {"duplicate function name", {{"A", ""}, {"A", ""}}, false, "Duplicate"},
+            {"non-scalar reference", {{"A", "[]"}}, false, "must be a scalar"},
+        };
+
+        for (const Case& testCase : cases)
+        {
+            std::string yaml =
+                "functionSpecification:\n"
+                "  name: TestFunc\n"
+                "  version: 1.0.0\n"
+                "  dataInterfaces: []\n"
+                "  parameters: []\n";
+            yaml += testCase.entries.empty() ? "  scheduling: []\n" : "  scheduling:\n";
+            for (const auto& entry : testCase.entries)
+            {
+                yaml += "    - functionName: " + entry.first + "\n"
+                    "      runType: init\n"
+                    "      description: Test runnable.\n"
+                    "      implementedASIL: B\n"
+                    "      supervision:\n"
+                    "        required: false\n";
+                if (!entry.second.empty())
+                {
+                    yaml += "      previousRunnableRef: " + entry.second + "\n";
+                }
+            }
+            std::string error;
+            const bool valid = Validate(mm, yaml, error);
+            Require(valid == testCase.expectedValid,
+                    std::string("execution order case '") + testCase.name + "' had unexpected result: " + error);
+            if (!testCase.expectedValid)
+            {
+                Require(error.find(testCase.expectedError) != std::string::npos,
+                        std::string("execution order case '") + testCase.name + "' produced an unexpected error: " + error);
+            }
+        }
+    }
+
     // -------------------------------------------------------------------------
     // Error interface tests
     // -------------------------------------------------------------------------
@@ -749,6 +805,7 @@ int main()
         {"TestNonIntegerMaturationTimeFails", TestNonIntegerMaturationTimeFails},
         // Supervision validation             
         {"TestSupervisionValidation", TestSupervisionValidation},
+        {"TestFunctionExecutionOrder", TestFunctionExecutionOrder},
         // Error interface tests        
         {"TestValidErrorInterfacesPasses", TestValidErrorInterfacesPasses},
         {"TestValidErrorInterfaceEnumPasses", TestValidErrorInterfaceEnumPasses},

@@ -44,6 +44,8 @@ namespace afd
         bool ValidateDefaultValueEnum(const std::string& itemName, const YamlNodePtr& functionSpecification, const std::string& defaultValue, 
                                       const std::string& enumName,const MetaModel& metaModel, std::string& error);
         bool ValidateSupervision(const YamlNodePtr& dataInterfaces, std::string& error);
+        bool ValidateFunctionExecutionOrder(const YamlNodePtr& scheduling, std::string& error);
+
         bool ValidateBoolean(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);        
         bool ValidateMandatory(const YamlNodePtr& dataInterfaces, const std::string& interfaceTypeName, const MetaModel& metaModel, std::string& error);        
         bool ValidateType(const YamlNodePtr& functionSpecification, const YamlNodePtr& dataInterfaces, const MetaModel& metaModel, std::string& error);    

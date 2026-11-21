@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <regex>
+#include <set>
 
 #include "yaml_parser.h"
 
@@ -192,6 +193,10 @@ namespace afd
         {
             return false;
         }                
+        if (!ValidateFunctionExecutionOrder(scheduling, error))
+        {
+            return false;
+        }
 
         // Errors
         if (errors)
@@ -325,6 +330,52 @@ namespace afd
         return true;
     }    
 
+    bool ValidateFunction::ValidateFunctionExecutionOrder(const YamlNodePtr& scheduling, std::string& error)
+    {
+        std::map<std::string, std::string> predecessors;
+        for (const YamlNodePtr& item : scheduling->GetSequence())
+        {
+            const std::string& name = item->Find(kFunctionNameKey)->GetScalar();
+            const YamlNodePtr previous = item->Find("previousRunnableRef");
+            if (previous && !previous->IsScalar())
+            {
+                error = "previousRunnableRef for '" + name + "' must be a scalar.";
+                return false;
+            }
+            if (!predecessors.emplace(name, previous ? previous->GetScalar() : "").second)
+            {
+                error = "Duplicate scheduling functionName '" + name + "'.";
+                return false;
+            }
+        }
+
+        for ( auto& entry : predecessors)
+        {
+            if (!entry.second.empty() && predecessors.find(entry.second) == predecessors.end())
+            {
+                entry.second.clear();  // or: entry.second = "";;
+            }
+        }
+
+        std::set<std::string> completed;
+        for (const auto& entry : predecessors)
+        {
+            std::set<std::string> path;
+            std::string current = entry.first;
+            while (!current.empty() && completed.find(current) == completed.end())
+            {
+                if (!path.insert(current).second)
+                {
+                    error = "Cycle in scheduling previousRunnableRef involving '" + current + "'.";
+                    return false;
+                }
+                current = predecessors.at(current);
+            }
+            completed.insert(path.begin(), path.end());
+        }
+        return true;
+    }
+    
     bool ValidateFunction::SyntaxCheckForSequence(const YamlNodePtr& node, const std::string& key, std::string& error, const std::string& displayName)
     {
         for (const YamlNodePtr& dataInterface : node->GetSequence())

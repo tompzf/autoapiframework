@@ -14,7 +14,6 @@
 #   Thomas Pfleiderer - Function specification added
 #   Saran Gundlapalli - speed_hazard_detection.afs.yaml updated according to metamodel v0.4.1
 # *******************************************************************************
-
 functionSpecification:
   name: SpeedHazardDetection
   version: 1.0.0
@@ -99,7 +98,6 @@ functionSpecification:
           name: Vehicle.Body.Lights.Hazard.Request.Qualifier
           datatype: enum
           enumRef: DataQuality
-
 
   parameters:
     - name: Vehicle.Chassis.SpeedHazardForward

@@ -14,7 +14,6 @@
 #   Thomas Pfleiderer - Function specification added
 #   Saran Gundlapalli - wheel_speed_plausibility_check.afs.yaml updated according to metamodel v0.4.1
 # *******************************************************************************
-
 functionSpecification:
   name: WheelSpeedPlausibilityCheck
   version: 1.0.0
@@ -23,9 +22,9 @@ functionSpecification:
     version: 0.4.1
 
   description: >-
-    Checks standard VSS wheel-speed inputs for plausibility and signal loss,
-    publishes a vehicle-speed result, and exposes candidate function-specific
-    error interfaces.
+    Checks standard VSS wheel-speed inputs for plausibility and signal
+    loss, publishes a vehicle-speed result, and exposes candidate
+    function-specific error interfaces.
 
   # Reuse standard VSS wheel-speed semantics rather than introducing a generic
   # Vehicle.WheelBasedSpeed node.
@@ -157,8 +156,8 @@ functionSpecification:
     - name: WheelSpeedPlausibilityCheck.RangeError.ErrorStatus
       dataType: boolean
       description: >-
-        Set when one or more wheel-speed values or their rate of change exceed
-        the plausibility limits defined for this example.
+        Set when one or more wheel-speed values or their rate of change
+        exceed the plausibility limits defined for this example.
       severity: degraded
       maturationTimeMs: 100
       resetTimeMs: 200
@@ -192,21 +191,27 @@ functionSpecification:
         type: FunctionResult
       supervision:
         required: false
+      cycleTimeMs:
+      previousRunnableRef:
+      schedulingPolicy:
+      stackSizeBytes:
 
     - functionName: WheelSpeedPlausibilityCheck.Step
       runType: cyclic
       description: >-
-        Evaluate wheel-speed plausibility and signal-loss conditions and publish
-        Vehicle.Speed. Deadline supervision verifies that execution completes
-        within the configured execution-time limit. Logical supervision ensures
-        the required WheelSpeedPreProcessor.Step predecessor has completed.
+        Evaluate wheel-speed plausibility and signal-loss conditions and
+        publish Vehicle.Speed. Deadline supervision verifies that
+        execution completes within the configured execution-time limit.
+        Logical supervision ensures the required
+        WheelSpeedPreProcessor.Step predecessor has completed.
       cycleTimeMs: 20
       implementedASIL: B
-      previousRunnableRef: WheelSpeedPreProcessor.Step
+      previousRunnableRef: WheelSpeedPlausibilityCheck.Init
       executionResult:
         type: FunctionResult
       supervision:
         required: true
+
         type:
           - deadline
           - logical
@@ -216,6 +221,8 @@ functionSpecification:
           predecessorRefs:
             - WheelSpeedPreProcessor.Step
           successorRefs: []
+      schedulingPolicy:
+      stackSizeBytes:
 
     - functionName: WheelSpeedPlausibilityCheck.Terminate
       runType: terminate

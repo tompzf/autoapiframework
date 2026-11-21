@@ -15,14 +15,12 @@
 #   Saran Gundlapalli - vehicle_speed_fusion_multirate.afs.yaml updated according to metamodel v0.4.1
 #   Thomas Pfleiderer - Support YAML comments, Drag & Drop, Enums in afs files added
 # *******************************************************************************
-
 functionSpecification:
   name: VehicleSpeedFusion
   version: 1.0.0
   metaModelRef:
     name: Eclipse-autoapiframework-Metamodel
     version: 0.4.1
-
   description: Fuses standard VSS wheel-speed inputs into Vehicle.Speed. Input preprocessing is modeled as a separate function/runnable and referenced through the predecessor relationship.
 
   dataInterfaces:
@@ -162,18 +160,25 @@ functionSpecification:
         type: FunctionResult
       supervision:
         required: false
+      cycleTimeMs:
+      previousRunnableRef:
+      schedulingPolicy:
+      stackSizeBytes:
 
     - functionName: VehicleSpeedFusion.Step
       runType: cyclic
       description: >-
-        20 ms cyclic runnable that performs source fusion and publishes Vehicle.Speed.
+        20 ms cyclic runnable that performs source fusion and publishes
+        Vehicle.Speed.
       cycleTimeMs: 20
       implementedASIL: B
-      previousRunnableRef: VehicleSpeedPreProcessor.Step
+      previousRunnableRef: VehicleSpeedFusion.Init
       executionResult:
         type: FunctionResult
       supervision:
         required: false
+      schedulingPolicy:
+      stackSizeBytes:
 
     - functionName: VehicleSpeedFusion.Terminate
       runType: terminate
