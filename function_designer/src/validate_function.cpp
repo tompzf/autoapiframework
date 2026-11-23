@@ -72,7 +72,12 @@ namespace afd
             error = std::string(FunctionSpecification::kNameKey) + " or " + std::string(FunctionSpecification::kVersionKey) 
                     + std::string(" in the function specification not found.");  
             return false;
-        }        
+        }
+        if (name.find('-') != std::string::npos)
+        {
+            error = "Function specification name '" + name + "' must not contain '-'.";
+            return false;
+        }
         return true;
     }
 
@@ -183,6 +188,18 @@ namespace afd
         if (!SyntaxCheckForSequence(scheduling, FunctionSpecification::kFunctionNameKey, error, FunctionSpecification::kSchedulingKey)) 
         {
             return false;
+        }
+        for (const YamlNodePtr& item : scheduling->GetSequence())
+        {
+            const std::string& name = item->Find(FunctionSpecification::kFunctionNameKey)->GetScalar();
+            const std::string::size_type dot = name.find('.');
+            if (dot == std::string::npos || dot == 0 || dot == name.size() - 1 ||
+                name.find('.', dot + 1) != std::string::npos)
+            {
+                error = "Scheduling functionName '" + name
+                    + "' must have two non-empty parts separated by a single '.'.";
+                return false;
+            }
         }
         if (!ValidateProperties(root, scheduling, afd::kSchedulingInterfaceTypeKey, metaModel, error))
         {

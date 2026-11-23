@@ -119,7 +119,8 @@ after each build.
 
 The Command-line application (CLI) accepts one `.afs` path to run the syntax checker against
 the bundled meta model. It exits with `0` for valid input, `1` for a syntax
-error, or `2` for a usage or setup error. 
+error, or `2` for a usage or setup error. The `functionSpecification.name`
+value must not contain `-`. e,g, SpeedHazardDetection instead
 
 ```powershell
 .\build\windows-gcc-debug\bin\AutoAPIFunctionDesigner_SyntaxCheck.exe mandatory_property_is_missing_syntax_error.afs

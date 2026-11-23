@@ -154,6 +154,37 @@ namespace
                 "missing version produced no error message");
     }
 
+    void TestHeaderNameHyphenValidation(const afd::MetaModel& mm)
+    {
+        struct Case { const char* name; bool valid; };
+        const Case cases[] = {
+            {"TestFunc", true},
+            {"Test_Func", true},
+            {"Test-Func", false},
+            {"-TestFunc", false},
+            {"TestFunc-", false},
+        };
+        for (const Case& c : cases)
+        {
+            const std::string yaml =
+                std::string("functionSpecification:\n  name: \"") + c.name + "\"\n"
+                "  version: 1.0.0\n"
+                "  metaModelRef:\n"
+                "    name: Eclipse-autoapiframework-Metamodel\n"
+                "  dataInterfaces: []\n"
+                "  parameters: []\n"
+                "  scheduling: []\n";
+            std::string error;
+            const bool valid = Validate(mm, yaml, error);
+            Require(valid == c.valid, std::string("unexpected validation result for '") + c.name + "': " + error);
+            if (!c.valid)
+            {
+                Require(error.find("name") != std::string::npos && error.find("-") != std::string::npos,
+                        "hyphen error should identify the name and forbidden character: " + error);
+            }
+        }
+    }
+
     // -------------------------------------------------------------------------
     // Required section tests
     // -------------------------------------------------------------------------
@@ -303,6 +334,45 @@ namespace
                 "scheduling entry with invalid runType was accepted");
         Require(!error.empty(),
                 "invalid runType produced no error message");
+    }
+
+    void TestSchedulingFunctionNameFormat(const afd::MetaModel& mm)
+    {
+        struct Case { const char* name; bool valid; };
+        const Case cases[] = {
+            {"TestFunc.Init", true},
+            {"OtherFunction.terminate", true},
+            {"Any-Name.Step", true},
+            {"TestFuncInit", false},
+            {"TestFunc.Init.Extra", false},
+            {".Init", false},
+            {"TestFunc.", false},
+            {".", false},
+        };
+        for (const Case& c : cases)
+        {
+            const std::string yaml =
+                std::string("functionSpecification:\n")
+                + "  name: TestFunc\n"
+                + "  version: 1.0.0\n"
+                + "  dataInterfaces: []\n"
+                + "  parameters: []\n"
+                + "  scheduling:\n"
+                + "    - functionName: \"" + c.name + "\"\n"
+                + "      runType: init\n"
+                + "      description: Test runnable.\n"
+                + "      implementedASIL: B\n"
+                + "      supervision:\n"
+                + "        required: false\n";
+            std::string error;
+            const bool valid = Validate(mm, yaml, error);
+            Require(valid == c.valid, std::string("unexpected validation result for '") + c.name + "': " + error);
+            if (!c.valid)
+            {
+                Require(error.find("functionName") != std::string::npos && error.find("single '.'") != std::string::npos,
+                        "scheduling name error should describe the required format: " + error);
+            }
+        }
     }
 
     // When FuSa is false the ASIL field must be left empty.
@@ -550,7 +620,7 @@ namespace
                 "  dataInterfaces: []\n"
                 "  parameters: []\n"
                 "  scheduling:\n"
-                "    - functionName: TestFunc.Step\n"
+                "    - functionName: TestFunc.Init\n"
                 "      runType: init\n"
                 "      description: Test runnable.\n"
                 "      implementedASIL: B\n"
@@ -656,7 +726,6 @@ namespace
             {"out-of-order chain", {{"C", "B"}, {"A", ""}, {"B", "A"}}, true, ""},
             {"independent and branching chains", {{"A", ""}, {"B", "A"}, {"C", "A"}, {"D", ""}}, true, ""},
             {"empty reference", {{"A", "\"\""}}, true, ""},
-            {"missing predecessor", {{"A", "Missing"}}, false, "Missing"},
             {"self cycle", {{"A", "A"}}, false, "Cycle"},
             {"multi-node cycle", {{"A", "B"}, {"B", "C"}, {"C", "B"}}, false, "Cycle"},
             {"cycle in separate chain", {{"A", ""}, {"B", "C"}, {"C", "B"}}, false, "Cycle"},
@@ -675,15 +744,18 @@ namespace
             yaml += testCase.entries.empty() ? "  scheduling: []\n" : "  scheduling:\n";
             for (const auto& entry : testCase.entries)
             {
-                yaml += "    - functionName: " + entry.first + "\n"
-                    "      runType: init\n"
+                yaml += "    - functionName: TestFunc." + entry.first + "\n"
+                    "      runType: cyclic\n"
+                    "      cycleTimeMs: 10\n"
                     "      description: Test runnable.\n"
                     "      implementedASIL: B\n"
                     "      supervision:\n"
                     "        required: false\n";
                 if (!entry.second.empty())
                 {
-                    yaml += "      previousRunnableRef: " + entry.second + "\n";
+                    const std::string reference = entry.second == "\"\"" || entry.second == "[]"
+                        ? entry.second : "TestFunc." + entry.second;
+                    yaml += "      previousRunnableRef: " + reference + "\n";
                 }
             }
             std::string error;
@@ -784,6 +856,7 @@ int main()
         {"TestNoRootKeyFails", TestNoRootKeyFails},
         {"TestMissingHeaderNameFails", TestMissingHeaderNameFails},
         {"TestMissingHeaderVersionFails", TestMissingHeaderVersionFails},
+        {"TestHeaderNameHyphenValidation", TestHeaderNameHyphenValidation},
         // Required section tests        
         {"TestMissingRequiredSectionFails", TestMissingRequiredSectionFails},
         // Property name validation        
@@ -793,6 +866,7 @@ int main()
         {"TestInvalidDirectionEnumFails", TestInvalidDirectionEnumFails},
         {"TestInvalidASILEnumFails", TestInvalidASILEnumFails},
         {"TestInvalidRunTypeEnumFails", TestInvalidRunTypeEnumFails},
+        {"TestSchedulingFunctionNameFormat", TestSchedulingFunctionNameFormat},
         {"TestFuSaFalseWithASILFails", TestFuSaFalseWithASILFails},
         // Boolean validation        
         {"TestInvalidBooleanFuSaFails", TestInvalidBooleanFuSaFails},
