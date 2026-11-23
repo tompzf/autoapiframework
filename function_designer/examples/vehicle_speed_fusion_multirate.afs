@@ -125,12 +125,11 @@ functionSpecification:
       protectionRequired: true
       runtimeCompanion:
         qualityCode:
+          # Runtime quality companions are shown explicitly for the Data interfaces.
+          # Each qualifier is an enum-based runtime interface with DataQuality semantics.        
           name: Vehicle.Speed.Qualifier
           datatype: enum
           enumRef: DataQuality
-
-  # Runtime quality companions are shown explicitly for the Data interfaces.
-  # Each qualifier is an enum-based runtime interface with DataQuality semantics.
 
   parameters:
     - name: Vehicle.Chassis.SpeedFusion.Alpha
