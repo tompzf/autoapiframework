@@ -88,8 +88,8 @@ Validation & Code Generation:
    doc/function_designer/afs_validation
    doc/function_designer/code_generator_1
 
-Certification:
---------------
+Certification Aspects:
+----------------------
 
 .. toctree::
    :maxdepth: 1
