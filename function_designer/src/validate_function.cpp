@@ -751,14 +751,9 @@ namespace afd
                     return false;
                 }   
             }
-            if (itemDataType == kEnumKey)                  
+            const std::string enumRef = item->Find(kEnumRefKey) ? item->Find(kEnumRefKey)->GetScalar() : "";
+            if (!enumRef.empty())
             {
-                const std::string enumRef = item->Find(kEnumRefKey) ? item->Find(kEnumRefKey)->GetScalar() : "";
-                if (enumRef.empty())
-                {
-                    error = itemName + ":\ntype = enum, enumRef expected but not found.";
-                    return false;
-                }
                 if (!ValidateDefaultValueEnum(itemName, functionSpecification, itemDefault, enumRef, metaModel, error))
                 {
                     return false;
