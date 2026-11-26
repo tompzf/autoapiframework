@@ -77,3 +77,13 @@ Function Designer:
    doc/function_designer/function_designer_configuration
    doc/function_designer/executables
    doc/function_designer/yaml_comments
+   
+Certification Aspects:
+----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   doc/certification/activities
+   doc/certification/iso26262_checklist
+   doc/certification/v-model_diagram
